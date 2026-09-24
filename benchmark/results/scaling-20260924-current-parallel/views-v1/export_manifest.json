@@ -1,0 +1,58 @@
+{
+  "export_id": "views-v1",
+  "created_at": "2026-09-24T17:44:36.09928+02:00",
+  "source_run": "scaling-20260924-current-parallel",
+  "source_directory": "..",
+  "source_hashes": {
+    "results.json": "a86d4e37cda896f150881388c23a34386a77f1230abfc340fb42a663274ef07d",
+    "manifest.json": "fc9cf7b97ef927d2432df0a47942df524c8c760c3a155cb55ae6b64d3d6a1023",
+    "integrity-check.json": "96efb8ee5dec561b617ea7e2ddd05ba74fe9a902434d4039ecbddabe11dceb12",
+    "protocol.json": "e1f7286f2579964e7d1745e2455b26073e1790c798fc19702830b7012671d9d6"
+  },
+  "method_mapping": {
+    "F": "XG",
+    "T": "XH",
+    "B": "XT",
+    "G": "XE",
+    "T-B": "XHT",
+    "T-G": "XHE",
+    "B-G": "XTE",
+    "T-B-G": "XHTE",
+    "NSGA-II": "NSGA-II",
+    "SPEA2": "SPEA2",
+    "MOEA-D": "MOEA/D",
+    "SMS-EMOA": "SMS-EMOA"
+  },
+  "analysis_code_sha256": "757881b321c5a81eb45adbb78605c274ac074c699f2ff4433e40a38ff60f37e4",
+  "naming_file_sha256": "5bafbfc4e8c393b772887deb0dc885c2a5a5ee7f501bda5ad5aac36f7293fbac",
+  "planned_instances": 88,
+  "paired_instances": 69,
+  "paired_class_counts": {
+    "FJSP": 32,
+    "JSP": 19,
+    "PFSP": 18
+  },
+  "row_counts": {
+    "overall": 12,
+    "by_problem_class": 36,
+    "by_size": 96,
+    "by_family": 60,
+    "by_cohort": 72,
+    "overall_class_balanced": 12,
+    "coverage": 12,
+    "per_instance": 1056,
+    "raw_runs": 3168
+  },
+  "status_counts": {
+    "completed": 2906,
+    "timeout": 262
+  },
+  "aggregation": "Median of successful seed outcomes within each fully paired instance, then arithmetic mean with equal instance weights. Fully paired means every method and every seed succeeded. Class-balanced view averages the three class means equally.",
+  "missing_values": "Null/blank means unavailable. Timeout quality is never imputed as zero. Per-instance medians use available seeds and disclose the valid count; aggregate quality uses fully paired instances only.",
+  "metric_units": "Gap/deficit values are percentages: 3.5 means 3.5%, not 350%. Time is measured internal wall seconds. Processing-time MS/FT use the source instances' units, not asserted seconds.",
+  "raw_scope": "Raw metrics contain one row per run, including failures. Full original JSON with traces, archives and phase evidence remains in source_json, unchanged. method_internal preserves original identifiers.",
+  "evidence_role": "Post-result descriptive export; class balancing and family views are supplementary perspectives, not independent confirmation.",
+  "runtime_scope": "Eight concurrent single-worker experiments; XG uses one construction, searches up to 1000 evaluations. Runtime and timeout outcomes include shared-host effects.",
+  "data_modified": false,
+  "experiments_rerun": 0
+}

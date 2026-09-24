@@ -1,0 +1,589 @@
+{
+  "instance": "sm01_2",
+  "method": "F",
+  "seed": 19,
+  "nominal_evaluations": 1000,
+  "kind": "FJSP",
+  "size_block": "10x20",
+  "operations": 50,
+  "cohort": "extension",
+  "started_at": "2026-09-24T12:13:22.047101+00:00",
+  "archive": [
+    {
+      "objectives": [
+        114.0,
+        873.0
+      ],
+      "schedule": [
+        [
+          0,
+          0,
+          3,
+          11,
+          24
+        ],
+        [
+          0,
+          1,
+          5,
+          24,
+          38
+        ],
+        [
+          0,
+          2,
+          10,
+          38,
+          50
+        ],
+        [
+          0,
+          3,
+          8,
+          50,
+          71
+        ],
+        [
+          0,
+          4,
+          18,
+          71,
+          85
+        ],
+        [
+          1,
+          0,
+          3,
+          0,
+          11
+        ],
+        [
+          1,
+          1,
+          5,
+          11,
+          21
+        ],
+        [
+          1,
+          2,
+          15,
+          21,
+          37
+        ],
+        [
+          1,
+          3,
+          14,
+          37,
+          56
+        ],
+        [
+          1,
+          4,
+          19,
+          56,
+          71
+        ],
+        [
+          2,
+          0,
+          2,
+          0,
+          14
+        ],
+        [
+          2,
+          1,
+          9,
+          14,
+          26
+        ],
+        [
+          2,
+          2,
+          8,
+          34,
+          50
+        ],
+        [
+          2,
+          3,
+          11,
+          52,
+          63
+        ],
+        [
+          2,
+          4,
+          17,
+          63,
+          85
+        ],
+        [
+          3,
+          0,
+          1,
+          0,
+          11
+        ],
+        [
+          3,
+          1,
+          10,
+          11,
+          23
+        ],
+        [
+          3,
+          2,
+          12,
+          23,
+          33
+        ],
+        [
+          3,
+          3,
+          7,
+          33,
+          46
+        ],
+        [
+          3,
+          4,
+          17,
+          46,
+          61
+        ],
+        [
+          4,
+          0,
+          0,
+          0,
+          10
+        ],
+        [
+          4,
+          1,
+          10,
+          23,
+          36
+        ],
+        [
+          4,
+          2,
+          5,
+          38,
+          48
+        ],
+        [
+          4,
+          3,
+          9,
+          48,
+          59
+        ],
+        [
+          4,
+          4,
+          19,
+          71,
+          81
+        ],
+        [
+          5,
+          0,
+          0,
+          23,
+          42
+        ],
+        [
+          5,
+          1,
+          5,
+          48,
+          60
+        ],
+        [
+          5,
+          2,
+          12,
+          60,
+          72
+        ],
+        [
+          5,
+          3,
+          14,
+          72,
+          82
+        ],
+        [
+          5,
+          4,
+          19,
+          82,
+          95
+        ],
+        [
+          6,
+          0,
+          1,
+          11,
+          27
+        ],
+        [
+          6,
+          1,
+          12,
+          33,
+          43
+        ],
+        [
+          6,
+          2,
+          12,
+          43,
+          57
+        ],
+        [
+          6,
+          3,
+          10,
+          57,
+          83
+        ],
+        [
+          6,
+          4,
+          16,
+          83,
+          94
+        ],
+        [
+          7,
+          0,
+          2,
+          14,
+          33
+        ],
+        [
+          7,
+          1,
+          15,
+          37,
+          53
+        ],
+        [
+          7,
+          2,
+          15,
+          53,
+          69
+        ],
+        [
+          7,
+          3,
+          8,
+          71,
+          83
+        ],
+        [
+          7,
+          4,
+          18,
+          85,
+          111
+        ],
+        [
+          8,
+          0,
+          0,
+          10,
+          23
+        ],
+        [
+          8,
+          1,
+          8,
+          23,
+          34
+        ],
+        [
+          8,
+          2,
+          11,
+          34,
+          52
+        ],
+        [
+          8,
+          3,
+          7,
+          52,
+          63
+        ],
+        [
+          8,
+          4,
+          16,
+          63,
+          76
+        ],
+        [
+          9,
+          0,
+          3,
+          24,
+          52
+        ],
+        [
+          9,
+          1,
+          5,
+          60,
+          71
+        ],
+        [
+          9,
+          2,
+          12,
+          72,
+          82
+        ],
+        [
+          9,
+          3,
+          5,
+          82,
+          92
+        ],
+        [
+          9,
+          4,
+          19,
+          95,
+          114
+        ]
+      ]
+    }
+  ],
+  "evaluations": 1,
+  "failed_evaluations": 0,
+  "handoff": "Single validated incumbent; T-to-B transfers replay policy; GA receives an unpinned schedule genome",
+  "observed_attempts": 1,
+  "options": {
+    "budget_ms": 0,
+    "decision_prefix": [],
+    "evolution": {
+      "crossover_share": 0.5,
+      "discount": 0.99,
+      "exploration": 1.0,
+      "parent_selection": "tournament",
+      "population_size": null,
+      "random_share": 0.1,
+      "selection": "discounted_ucb"
+    },
+    "improve": {
+      "evolution_share": 0.0,
+      "policies": 3,
+      "trainer_share": 0.4
+    },
+    "iterations": 1000,
+    "mode_choices": {},
+    "plus": {
+      "branching": 4,
+      "depth": 8,
+      "exploration": 1.4,
+      "workers": 1
+    },
+    "queue_policy": null,
+    "route_choices": {},
+    "seed": 19,
+    "strategy": "queues",
+    "top_k": 1,
+    "trainer": {
+      "archive_limit": 32,
+      "crossover_rate": 0.25,
+      "generations": null,
+      "max_evaluations": null,
+      "mutation_rate": 0.75,
+      "population_size": 16,
+      "selection": "pareto",
+      "workers": 1
+    },
+    "weights": null
+  },
+  "phases": [
+    {
+      "evaluations": 1,
+      "nodes": null,
+      "observed_attempts": 1,
+      "operators": null,
+      "phase": "F",
+      "seconds": 0.0067101,
+      "settings": {
+        "budget_ms": 0,
+        "decision_prefix": [],
+        "evolution": {
+          "crossover_share": 0.5,
+          "discount": 0.99,
+          "exploration": 1.0,
+          "parent_selection": "tournament",
+          "population_size": null,
+          "random_share": 0.1,
+          "selection": "discounted_ucb"
+        },
+        "improve": {
+          "evolution_share": 0.0,
+          "policies": 3,
+          "trainer_share": 0.4
+        },
+        "iterations": 1000,
+        "mode_choices": {},
+        "plus": {
+          "branching": 4,
+          "depth": 8,
+          "exploration": 1.4,
+          "workers": 1
+        },
+        "queue_policy": null,
+        "route_choices": {},
+        "seed": 19,
+        "strategy": "queues",
+        "top_k": 1,
+        "trainer": {
+          "archive_limit": 32,
+          "crossover_rate": 0.25,
+          "generations": null,
+          "max_evaluations": null,
+          "mutation_rate": 0.75,
+          "population_size": 16,
+          "selection": "pareto",
+          "workers": 1
+        },
+        "weights": null
+      },
+      "stop_reason": null
+    }
+  ],
+  "seconds": 0.0067199,
+  "trace": [
+    {
+      "archive_changed": true,
+      "evaluation": 1,
+      "objectives": [
+        114.0,
+        873.0
+      ],
+      "phase": "F",
+      "seconds": 0.0066938
+    }
+  ],
+  "cold_process_seconds": 0.023092999937944114,
+  "cpu_seconds": null,
+  "cpu_seconds_note": "Not measured for native process; wall time is measured inside the process",
+  "audit_seconds": 8.680007886141539e-05,
+  "valid": true,
+  "hypervolume": 1.0536747296073314,
+  "best_ms": 114.0,
+  "best_ft": 873.0,
+  "archive_size": 1,
+  "preference_results": [
+    {
+      "ms_weight": 0.0,
+      "objectives": [
+        114.0,
+        873.0
+      ],
+      "value": 0.06372262773722628
+    },
+    {
+      "ms_weight": 0.1,
+      "objectives": [
+        114.0,
+        873.0
+      ],
+      "value": 0.06567153284671533
+    },
+    {
+      "ms_weight": 0.2,
+      "objectives": [
+        114.0,
+        873.0
+      ],
+      "value": 0.06762043795620439
+    },
+    {
+      "ms_weight": 0.3,
+      "objectives": [
+        114.0,
+        873.0
+      ],
+      "value": 0.06956934306569343
+    },
+    {
+      "ms_weight": 0.4,
+      "objectives": [
+        114.0,
+        873.0
+      ],
+      "value": 0.07151824817518249
+    },
+    {
+      "ms_weight": 0.5,
+      "objectives": [
+        114.0,
+        873.0
+      ],
+      "value": 0.07346715328467154
+    },
+    {
+      "ms_weight": 0.6,
+      "objectives": [
+        114.0,
+        873.0
+      ],
+      "value": 0.07541605839416059
+    },
+    {
+      "ms_weight": 0.7,
+      "objectives": [
+        114.0,
+        873.0
+      ],
+      "value": 0.07736496350364963
+    },
+    {
+      "ms_weight": 0.8,
+      "objectives": [
+        114.0,
+        873.0
+      ],
+      "value": 0.07931386861313867
+    },
+    {
+      "ms_weight": 0.9,
+      "objectives": [
+        114.0,
+        873.0
+      ],
+      "value": 0.08126277372262775
+    },
+    {
+      "ms_weight": 1.0,
+      "objectives": [
+        114.0,
+        873.0
+      ],
+      "value": 0.08321167883211679
+    }
+  ],
+  "milliseconds_per_evaluation": 6.7199,
+  "first_valid_seconds": 0.0066938,
+  "status": "completed",
+  "worker_seconds": 0.02373080002143979,
+  "finished_at": "2026-09-24T12:13:22.069896+00:00",
+  "process_seconds": 0.7502771000145003,
+  "recorded_at": "2026-09-24T12:13:22.115717+00:00"
+}

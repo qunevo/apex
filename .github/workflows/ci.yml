@@ -1,0 +1,121 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  rust:
+    name: Rust (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install stable Rust
+        run: |
+          rustup toolchain install stable --profile minimal --component rustfmt --component clippy --no-self-update
+          rustup default stable
+      - name: Format, lint, test and release build
+        run: |
+          cargo fmt --check
+          cargo clippy --locked --all-targets -- -D warnings
+          cargo test --locked
+          cargo build --locked --release
+
+  integration:
+    name: MCP, HTTP and viewer
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install stable Rust
+        run: |
+          rustup toolchain install stable --profile minimal --no-self-update
+          rustup default stable
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+      - name: Build the tested executable
+        run: cargo build --locked --release
+      - name: Install test dependencies
+        run: |
+          npm ci --ignore-scripts
+          npx playwright install --with-deps chromium
+      - name: MCP and HTTP integration
+        run: |
+          npm run test:mcp
+          npm run test:http
+      - name: Viewer integration
+        run: |
+          target/release/apex serve --port 8765 > "$RUNNER_TEMP/apex-viewer.log" 2>&1 &
+          viewer_pid=$!
+          trap 'kill "$viewer_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..60}; do
+            if curl --fail --silent http://127.0.0.1:8765/ > /dev/null; then
+              break
+            fi
+            if ! kill -0 "$viewer_pid" 2>/dev/null; then
+              cat "$RUNNER_TEMP/apex-viewer.log"
+              exit 1
+            fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:8765/ > /dev/null
+          npm run test:viewer
+          node tests/viewer-plan-smoke.mjs
+
+  publication:
+    name: Source publication
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.14'
+      - name: Validate wiki publication and scan the source distribution
+        run: |
+          python -B -m unittest discover -s tests -p 'test_wiki.py' -v
+          python -B -m unittest discover -s tests -p 'test_publication.py' -v
+          python -B scripts/build_wiki.py
+          python -B scripts/check_publication.py
+
+  required:
+    name: Required checks
+    if: ${{ always() }}
+    needs: [rust, integration, publication]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Require every job to pass
+        env:
+          RUST_RESULT: ${{ needs.rust.result }}
+          INTEGRATION_RESULT: ${{ needs.integration.result }}
+          PUBLICATION_RESULT: ${{ needs.publication.result }}
+        run: |
+          test "$RUST_RESULT" = success
+          test "$INTEGRATION_RESULT" = success
+          test "$PUBLICATION_RESULT" = success

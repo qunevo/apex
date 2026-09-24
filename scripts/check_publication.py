@@ -5,9 +5,12 @@ Git history requires a separate audit.
 """
 
 import argparse
+import hashlib
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import re
+import stat
+import zipfile
 
 
 ARTIFACT_SUFFIXES = {
@@ -22,8 +25,78 @@ SECRET_PATTERNS = [
     re.compile(r"sk-(?:proj-|svcacct-)?[A-Za-z0-9_-]{20,}"),
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
     re.compile(r'"(?:apiKey|api_key|access_token|password)"\s*:\s*"[^"<>\s]{8,}"', re.I),
+    re.compile(r"gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}"),
 ]
 WORKSTATION_PATH = re.compile(r"[A-Za-z]:[\\/](?:Users|repo_priv)[\\/]|/home/[A-Za-z0-9_.-]+/", re.I)
+SOURCE_ARCHIVE = "benchmark/algorithm-9bc9dbf.zip"
+MAX_ARCHIVE_BYTES = 64 * 1024 * 1024
+SOURCE_SUFFIXES = {".rs", ".py", ".txt", ".md", ".html", ".json", ".toml", ".lock"}
+
+
+def text_codes(content: str, suffix: str) -> set[str]:
+    codes = set()
+    if any(pattern.search(content) for pattern in SECRET_PATTERNS):
+        codes.add("POSSIBLE_INLINE_SECRET")
+    if WORKSTATION_PATH.search(content):
+        codes.add("WORKSTATION_PATH")
+    if suffix == ".ipynb":
+        try:
+            notebook = json.loads(content)
+        except ValueError:
+            codes.add("INVALID_NOTEBOOK")
+        else:
+            if any(cell.get("outputs") or cell.get("execution_count") is not None
+                   for cell in notebook.get("cells", [])):
+                codes.add("SAVED_NOTEBOOK_OUTPUT")
+    return codes
+
+
+def source_archive_codes(root: Path, path: Path) -> set[str]:
+    """Inspect the declared frozen source without extracting or executing it."""
+    try:
+        if path.stat().st_size > MAX_ARCHIVE_BYTES:
+            return {"SOURCE_ARCHIVE_LIMIT"}
+        manifest = json.loads((root / "benchmark/publication_manifest.json").read_text(encoding="utf-8"))
+        declared = manifest["source_archive"]
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        if (declared["path"] != path.name or declared["sha256"] != digest
+                or manifest["file_hashes"][path.name] != digest):
+            return {"SOURCE_ARCHIVE_INTEGRITY"}
+        codes = set()
+        with zipfile.ZipFile(path) as archive:
+            members = archive.infolist()
+            if (not members or len(members) > 2000
+                    or sum(member.file_size for member in members) > MAX_ARCHIVE_BYTES):
+                return {"SOURCE_ARCHIVE_LIMIT"}
+            seen = set()
+            for member in members:
+                name = member.orig_filename
+                relative = PurePosixPath(name)
+                if (name in seen or not relative.parts or name != relative.as_posix()
+                        or relative.is_absolute() or "\\" in name or ":" in name
+                        or ".." in relative.parts
+                        or relative.parts[0] not in {"snapshot", "reproduction-assets"}
+                        or stat.S_ISLNK(member.external_attr >> 16)
+                        or member.flag_bits & 1
+                        or relative.suffix not in SOURCE_SUFFIXES
+                        or relative.suffix == ".lock" and relative.name != "Cargo.lock"
+                        or any(part.startswith(".") for part in relative.parts)
+                        or any(part.lower() in {"target", "node_modules", "__pycache__", "venv", "env"}
+                               for part in relative.parts)
+                        or any(part == "customizations" and relative.parts[index + 1] != "dummy_customer"
+                               for index, part in enumerate(relative.parts[:-1]))):
+                    codes.add("SOURCE_ARCHIVE_MEMBER")
+                    continue
+                seen.add(name)
+                try:
+                    content = archive.read(member).decode("utf-8-sig")
+                except UnicodeError:
+                    codes.add("NON_UTF8_TEXT")
+                else:
+                    codes.update(text_codes(content, relative.suffix))
+        return codes
+    except (OSError, ValueError, KeyError, TypeError, zipfile.BadZipFile, RuntimeError):
+        return {"SOURCE_ARCHIVE_INTEGRITY"}
 
 
 def scan(root: Path) -> list[dict[str, str]]:
@@ -40,7 +113,10 @@ def scan(root: Path) -> list[dict[str, str]]:
             continue
         codes = set()
         if path.suffix.lower() in ARTIFACT_SUFFIXES:
-            codes.add("REMOVE_OR_REVIEW_BINARY_ARTIFACT")
+            if relative.as_posix() == SOURCE_ARCHIVE:
+                codes.update(source_archive_codes(root, path))
+            else:
+                codes.add("REMOVE_OR_REVIEW_BINARY_ARTIFACT")
         if path.name == ".env" or (path.name.startswith(".env.") and path.name != ".env.example"):
             codes.add("LOCAL_ENV_FILE")
         if relative.parts[:1] == ("customizations",) and len(relative.parts) > 2:
@@ -52,19 +128,7 @@ def scan(root: Path) -> list[dict[str, str]]:
             except UnicodeError:
                 codes.add("NON_UTF8_TEXT")
             else:
-                if any(pattern.search(content) for pattern in SECRET_PATTERNS):
-                    codes.add("POSSIBLE_INLINE_SECRET")
-                if WORKSTATION_PATH.search(content):
-                    codes.add("WORKSTATION_PATH")
-                if path.suffix == ".ipynb":
-                    try:
-                        notebook = json.loads(content)
-                    except ValueError:
-                        codes.add("INVALID_NOTEBOOK")
-                    else:
-                        if any(cell.get("outputs") or cell.get("execution_count") is not None
-                               for cell in notebook.get("cells", [])):
-                            codes.add("SAVED_NOTEBOOK_OUTPUT")
+                codes.update(text_codes(content, path.suffix))
         findings.extend({"code": code, "path": relative.as_posix()} for code in sorted(codes))
     return findings
 

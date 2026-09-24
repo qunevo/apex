@@ -1,5 +1,7 @@
 # APEX
 
+[![CI](https://github.com/qunevo/apex/actions/workflows/ci.yml/badge.svg)](https://github.com/qunevo/apex/actions/workflows/ci.yml)
+
 APEX 0.6 is an experimental Rust scheduler for discrete production, built for agent tool use. It supports alternative workplans, conditional activity graphs, quantity/order expansion, existing-supply material allocation, native customization hooks and independent schedule validation. Fast Planner, evolutionary Q-policy training, UCT prefix search and direct schedule evolution share the same scheduling rules. A lean browser viewer displays saved plans.
 
 The same 32 tools are available over MCP stdio, MCP Streamable HTTP and a JSON HTTP API with OpenAPI discovery. No model API key or external solver is required by the scheduler.
@@ -13,7 +15,7 @@ target/release/apex serve
 
 On Windows use `target/release/apex.exe`, then open `http://127.0.0.1:8765`. The default viewer shows the schedule, KPIs, commitments and operation details. Planning changes run through your agent chat; `?mode=workbench` exposes development controls.
 
-For the repository's Codex setup, run `scripts/setup-mcp.ps1` after building on Windows, then reconnect MCP in a trusted project. Other clients can use the [MCP configuration template](examples/codex-mcp.toml) and [agent integration guide](docs/agent-integration.md).
+The [Bash helpers](docs/implementation.md#bash-helpers) cover build/checks, viewer startup and local MCP setup on Linux, macOS and Git Bash on Windows. For the repository's Codex setup, run `bash scripts/setup-mcp.sh` after building, then reconnect MCP in a trusted project. Other clients can use the [MCP configuration template](examples/codex-mcp.toml) and [agent integration guide](docs/agent-integration.md).
 
 Use `schedule.create` for quick planning and `schedule.improve` for improvement under one shared budget. Improvement defaults to Trainer and Plus; an agent can explicitly enable the optional direct GA. See [combined improvement](docs/architecture/combined-improvement.md) for semantics and limits.
 
@@ -31,6 +33,12 @@ Start with the [documentation index](docs/README.md). The main references are:
 Runnable synthetic inputs include [production orders](examples/production-orders.json), [shift and material constraints](examples/shift-factory.json), [material chains](examples/chain-routing.json) and [dispatch policies](examples/dispatch-campaign.json). The [customization knowledge bundle](customizations/dummy_customer/KNOWLEDGE.md) describes the extension workflow.
 
 The executable schema is `apex.v3.4`; canonical `apex.v3.1`, `apex.v3.2` and `apex.v3.3` inputs remain accepted by the same Rust runtime. Rust is the sole scheduling implementation; the [migration audit](docs/migration-audit.md) records the v2 source removal and historical comparisons. Tested coverage does not establish complete legacy parity, optimality or production readiness. Repository documentation and examples use English, and all fixtures are deliberately synthetic.
+
+## Contributing and support
+
+Read the [contribution guide](CONTRIBUTING.md) before starting a change. Use [Discussions](https://github.com/qunevo/apex/discussions) for questions and [issue forms](https://github.com/qunevo/apex/issues/new/choose) for reproducible bugs and feature requests. Keep all shared examples deliberately synthetic.
+
+The [support guide](SUPPORT.md), [Code of Conduct](CODE_OF_CONDUCT.md), [security policy](SECURITY.md) and [repository maintenance guide](docs/repository-maintenance.md) describe the community channels and review process. Report vulnerabilities privately. Upstream contribution rights require a separate agreement; posting a pull request does not accept one.
 
 ## License
 

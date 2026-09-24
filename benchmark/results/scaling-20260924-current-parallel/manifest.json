@@ -1,0 +1,2510 @@
+{
+  "run_id": "scaling-20260924-current-parallel",
+  "created_at": "2026-09-24T10:06:47.431507+00:00",
+  "specification_id": "SPEC-APEX-SCALE-001",
+  "setting_id": "fixed-1000-seeds-19-42-73",
+  "data_interface_id": "APEX-PUBLIC-SCALE-001",
+  "code_fingerprint": "ebcfd3f7e4c5c8bb2c0db41d15ba3cd4f0ea98ed3e8df0d470e91a0e94b37917",
+  "data_fingerprint": "c933892887bec722fd021afb57e7f208c400893656da9477bc64172e694ad45b",
+  "specification_fingerprint": "e1f7286f2579964e7d1745e2455b26073e1790c798fc19702830b7012671d9d6",
+  "source_hashes": {
+    "benchmark\\analyze.py": "3aac4f87a1b363aaf04eef166c932c55463a1b9e50c85611fa660b92e268ea54",
+    "benchmark\\Cargo.lock": "e9bee878ba5df1e9452937ec91e44586c10333ff00d04c60d31099e7f6d36e56",
+    "benchmark\\Cargo.toml": "2beb695017a1bde00869e78e0b4f65539abbb9891569296cff5667f3f5e4d283",
+    "benchmark\\instances.py": "902e705eeb50efce0ec3b5176b4bf307d69355d5310287fa6f7654f4f736f8a2",
+    "benchmark\\native\\main.rs": "41f7778a5ac0ea8d368e76c4d88ff5e7372869d52087a8ac3d61d724217dd537",
+    "benchmark\\README.md": "8e8fd2fef9fb10aec9cd81fc26d23f7036edc1943ca0eb44f9b5792de894ae4a",
+    "benchmark\\requirements-lock.txt": "eebacd033800112adcc5fc8bedd16020c767d09a0f0a3a26132a4b7b6ff07dbd",
+    "benchmark\\run.py": "5a75d3cda3536ff1688b03d4501f158c7dcffeb9914e095917da4eea219c729e",
+    "benchmark\\scaling-protocol.json": "e1f7286f2579964e7d1745e2455b26073e1790c798fc19702830b7012671d9d6",
+    "benchmark\\scaling.py": "6b1cff8310f2c7f69a8b8c7bfea41dafd90efc441ed097f4603e7cc54c7363fa",
+    "benchmark\\scaling_data.py": "c515f2c94bd1da6c2908da4772137bcca26f09032351a5705fb2733f97edd778",
+    "benchmark\\scaling_report.py": "b974182c1a99a738f39ec61f608b1b7f685269e197882a492227335083eeeadc",
+    "benchmark\\scheduling.py": "361f02587efaf9f1bfd34d507679e2536429544da5229da128478995c419028a",
+    "benchmark\\test_benchmark.py": "978a41d6c502fd7de0e62ab2d2d5578f8346786661c10a964280a7c866f608ea",
+    "benchmark\\test_scaling.py": "0d3ab0931ecd2c5d529359c9ef336370dcab05d83edf7e48f75a9e7e4ae5a691",
+    "benchmark\\xe_compare.py": "0d375d1bc108bf55e79ceef27f11d197370c84820dc70c5a9fde2f50b3f1aa41",
+    "Cargo.lock": "16ef2b2a533498e6fc9e2ee2d4c4ba32464f55f5a1ee28265a37f1fa124fe5dd",
+    "Cargo.toml": "837e62fde0933f1dec26e0f92d3786c9355c2208cf5b85397c8902e964d78b4a",
+    "customizations\\dummy_customer\\policy.rs": "22f87d26c37ac187a855bfee6fef22d05ee59f7b27388e0cfdeae646d028afa8",
+    "src\\rust\\activities.rs": "ecf22355462c1bbac0286daa7dc216c4642008efaa4bdf741ad82086a7a74ae1",
+    "src\\rust\\calendar.rs": "be3383497ad13c7eb0b0a910b96d084ac38b244a2b1357fd1cee83b7ffbd0139",
+    "src\\rust\\compile.rs": "ef6938b1389b7ffc4f84ff908f860d459bf8f578f9fe5b118d751ab0ac0bf19f",
+    "src\\rust\\conditionals.rs": "aa915605cb08fd82a4f2358d4dbadb066963f81d9c4984bee34ce35a0ea1b993",
+    "src\\rust\\demo.rs": "700c437b0da478a6ecf1f534f6ce48b6d345d548680c55f343de2b38d69c49ae",
+    "src\\rust\\dispatch.rs": "aa114243594f9a3d9c846bc01114dfef5635b0f596259475440c7a5240b6319b",
+    "src\\rust\\domain.rs": "766c1e2de623715400be9fab555bf6c3e1a0d9f3cf3184e6350b9887eb0efa33",
+    "src\\rust\\engine.rs": "bda8110186f1b804fd5ba05d774fb6a19b5ffd1d86286d1575af0d9fd54b193e",
+    "src\\rust\\evolution.rs": "6d002454abf92c453d0945b4f8402a8fffff7b3e4455b03a4a2eb4665f3f2a80",
+    "src\\rust\\extensions.rs": "09d1e5a579b56539dbd2934304fd8a7dc800ccefce0b0a3819804f83dc6287a0",
+    "src\\rust\\improve.rs": "c19db57387c60d68a9b7e784ecfe4da6388adbbe4d3760a340e9fd93d7bd57a4",
+    "src\\rust\\language.rs": "d9f54302fd77318e2b47af40a1923cd977f66de02a7fc34df2ada0eb5049ddd3",
+    "src\\rust\\lib.rs": "49fc023b14c948ad366790dcd7a09816c3fba16f68c3b8fff3945fabbd5fd3f7",
+    "src\\rust\\main.rs": "8c28ab7e1ad11bfd557b5b0d0330431f3997b1e725be00efec2b5046f1a0bea6",
+    "src\\rust\\material.rs": "04e63131337abef78b9711525acb4166bd19363a9723f52f6d9301d3570a6a4a",
+    "src\\rust\\metrics.rs": "fc11d4ff81e460644a3d4fb7f513e50f552e2b1a525190bbfdbb9b9c43a919a7",
+    "src\\rust\\model.rs": "7f1593e8bbdeb2b5b87804279564e5cab920a2a943fe2ded0f1a8ed7c22c5163",
+    "src\\rust\\placement.rs": "592c0bfd73c4841bed51356e4576996248e0902059e955858026a11a7ec3251d",
+    "src\\rust\\policy.rs": "1e87fd6d2c0b2da05dcd17c231128d597f1e23c88d5b952906ed8f644ed4fabe",
+    "src\\rust\\production.rs": "5e613387b8ba67c10b8fabffadd91f64ff81224fab5f3e60e10c40b68d4a03d1",
+    "src\\rust\\queues.rs": "f6a1a5599267b080a736a7179b54b5fb077041df9d883872e31855eb9b92bbf8",
+    "src\\rust\\rules.rs": "23e77538f6a751b12af0923f57099e0c334c4c7bced5b0f97e251e39c163f853",
+    "src\\rust\\search.rs": "4033b41415c15087b3b9b74feaf61f53fb49debe93aa7d107521158e1703c295",
+    "src\\rust\\service.rs": "e2f048ab83a85e7f03807a411d33e618772fac9d40e3afcc86ffb9bd57931dfb",
+    "src\\rust\\transport.rs": "677dc9cc2366fa264129e26863c53b0457150216bedce5b068b259e8861e3dc8",
+    "src\\rust\\urgency.rs": "0c29bf8b0bf71733f09218053a715137b6bc02d4a001aa653e0cee4164ab9ad3",
+    "src\\rust\\validate.rs": "d67c468f78802827bc744a71aca4806554d3ae5002f48c5bb8e5f9c44aa2eda4"
+  },
+  "binary_sha256": "ca8bdfc7833aea81c1bf3ee9f034149f457a886ff164f90d4244227a571af2f9",
+  "environment": {
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "executable": "D:\\repo\\apex\\benchmark\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 198 Stepping 2, GenuineIntel",
+    "logical_cpus": 24,
+    "packages": [
+      "about-time==4.2.1",
+      "alive-progress==3.3.0",
+      "autograd==1.9.1",
+      "cffi==2.1.1",
+      "cma==4.5.0",
+      "colorama==0.4.6",
+      "contourpy==1.3.3",
+      "cycler==0.12.1",
+      "Deprecated==1.3.1",
+      "fonttools==4.66.0",
+      "graphemeu==0.7.2",
+      "iniconfig==2.3.0",
+      "kiwisolver==1.5.1",
+      "matplotlib==3.11.2",
+      "moocore==0.3.2",
+      "numpy==2.4.6",
+      "packaging==26.3",
+      "pillow==12.3.0",
+      "platformdirs==4.11.12",
+      "pluggy==1.6.0",
+      "pycparser==3.0",
+      "Pygments==2.21.0",
+      "pymoo==0.6.2",
+      "pyparsing==3.3.3",
+      "pytest==9.1.1",
+      "python-dateutil==2.9.0.post0",
+      "scipy==1.17.1",
+      "six==1.17.0",
+      "wrapt==2.4.1"
+    ],
+    "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+    "hardware": {
+      "Name": "Intel(R) Core(TM) Ultra 9 275HX",
+      "NumberOfCores": 24,
+      "NumberOfLogicalProcessors": 24
+    }
+  },
+  "random_seeds": [
+    19,
+    42,
+    73
+  ],
+  "methods": [
+    "F",
+    "T",
+    "B",
+    "G",
+    "T-B",
+    "T-G",
+    "B-G",
+    "T-B-G",
+    "NSGA-II",
+    "SPEA2",
+    "MOEA-D",
+    "SMS-EMOA"
+  ],
+  "evaluation_budget": 1000,
+  "concurrent_runs": 8,
+  "workers_per_algorithm": 1,
+  "effective_sample": [
+    {
+      "id": "ft06",
+      "kind": "JSP",
+      "machines": 6,
+      "source": {
+        "url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/jobshop1.txt",
+        "file": "data\\raw\\jobshop1.txt",
+        "sha256": "7f36d103332f94cfdeb76358e40927a57cfa7a426ebeaabd4de666350c69f028"
+      },
+      "family": "OR-Library legacy",
+      "operations": 36,
+      "serial_upper": 197,
+      "mean_flexibility": 1.0,
+      "size_block": "6x6",
+      "cohort": "legacy",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 6
+    },
+    {
+      "id": "la01",
+      "kind": "JSP",
+      "machines": 5,
+      "source": {
+        "url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/jobshop1.txt",
+        "file": "data\\raw\\jobshop1.txt",
+        "sha256": "7f36d103332f94cfdeb76358e40927a57cfa7a426ebeaabd4de666350c69f028"
+      },
+      "family": "OR-Library legacy",
+      "operations": 50,
+      "serial_upper": 2849,
+      "mean_flexibility": 1.0,
+      "size_block": "10x5",
+      "cohort": "legacy",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 10
+    },
+    {
+      "id": "la06",
+      "kind": "JSP",
+      "machines": 5,
+      "source": {
+        "url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/jobshop1.txt",
+        "file": "data\\raw\\jobshop1.txt",
+        "sha256": "7f36d103332f94cfdeb76358e40927a57cfa7a426ebeaabd4de666350c69f028"
+      },
+      "family": "OR-Library legacy",
+      "operations": 75,
+      "serial_upper": 3992,
+      "mean_flexibility": 1.0,
+      "size_block": "15x5",
+      "cohort": "legacy",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 15
+    },
+    {
+      "id": "la16",
+      "kind": "JSP",
+      "machines": 10,
+      "source": {
+        "url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/jobshop1.txt",
+        "file": "data\\raw\\jobshop1.txt",
+        "sha256": "7f36d103332f94cfdeb76358e40927a57cfa7a426ebeaabd4de666350c69f028"
+      },
+      "family": "OR-Library legacy",
+      "operations": 100,
+      "serial_upper": 5351,
+      "mean_flexibility": 1.0,
+      "size_block": "10x10",
+      "cohort": "legacy",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 10
+    },
+    {
+      "id": "abz5",
+      "kind": "JSP",
+      "machines": 10,
+      "source": {
+        "url": "https://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/jobshop1.txt",
+        "file": "data\\raw\\jobshop1.txt",
+        "sha256": "7f36d103332f94cfdeb76358e40927a57cfa7a426ebeaabd4de666350c69f028"
+      },
+      "family": "OR-Library legacy",
+      "operations": 100,
+      "serial_upper": 7773,
+      "mean_flexibility": 1.0,
+      "size_block": "10x10",
+      "cohort": "legacy",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 10
+    },
+    {
+      "id": "mk01",
+      "kind": "FJSP",
+      "machines": 6,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/brandimarte/mk01.txt",
+        "file": "data\\raw\\mk01.txt",
+        "sha256": "449ada8093e03a84bf2255fa2a1673ccbc80cce7b82e855c5216533a330751ff"
+      },
+      "family": "Brandimarte",
+      "operations": 55,
+      "serial_upper": 254,
+      "mean_flexibility": 2.090909090909091,
+      "size_block": "10x6",
+      "cohort": "legacy",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 10
+    },
+    {
+      "id": "mk02",
+      "kind": "FJSP",
+      "machines": 6,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/brandimarte/mk02.txt",
+        "file": "data\\raw\\mk02.txt",
+        "sha256": "866c83e42be3ec3a96c6c4123e355f0b45e16d54da19a1bb21cf100cf6121bf3"
+      },
+      "family": "Brandimarte",
+      "operations": 58,
+      "serial_upper": 305,
+      "mean_flexibility": 4.103448275862069,
+      "size_block": "10x6",
+      "cohort": "legacy",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 10
+    },
+    {
+      "id": "mk03",
+      "kind": "FJSP",
+      "machines": 8,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/brandimarte/mk03.txt",
+        "file": "data\\raw\\mk03.txt",
+        "sha256": "0eb4b563ac5d635c0229769184ab8959f24cc78c725a1277a1e6a2d7bc7f4228"
+      },
+      "family": "Brandimarte",
+      "operations": 150,
+      "serial_upper": 2205,
+      "mean_flexibility": 3.006666666666667,
+      "size_block": "15x8",
+      "cohort": "legacy",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 15
+    },
+    {
+      "id": "mk04",
+      "kind": "FJSP",
+      "machines": 8,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/brandimarte/mk04.txt",
+        "file": "data\\raw\\mk04.txt",
+        "sha256": "8b44291b94e6244fd8283dce4dbf7a4dbbd2b9950aa2a9d198f660e4d1131705"
+      },
+      "family": "Brandimarte",
+      "operations": 90,
+      "serial_upper": 529,
+      "mean_flexibility": 1.9111111111111112,
+      "size_block": "15x8",
+      "cohort": "legacy",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 15
+    },
+    {
+      "id": "mk05",
+      "kind": "FJSP",
+      "machines": 4,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/brandimarte/mk05.txt",
+        "file": "data\\raw\\mk05.txt",
+        "sha256": "e2cf5573f4a9fcec4140e1f90b719787fdf2f78c9c5dc14b3b9bd7d970c7cf90"
+      },
+      "family": "Brandimarte",
+      "operations": 106,
+      "serial_upper": 769,
+      "mean_flexibility": 1.7075471698113207,
+      "size_block": "15x4",
+      "cohort": "legacy",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 15
+    },
+    {
+      "id": "mk06",
+      "kind": "FJSP",
+      "machines": 10,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/brandimarte/mk06.txt",
+        "file": "data\\raw\\mk06.txt",
+        "sha256": "3630268312e16f17209d5122b50a332d2804dde237b3c882e6a8faff958f1945"
+      },
+      "family": "Brandimarte",
+      "operations": 150,
+      "serial_upper": 1110,
+      "mean_flexibility": 3.2666666666666666,
+      "size_block": "10x10",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 10
+    },
+    {
+      "id": "mk07",
+      "kind": "FJSP",
+      "machines": 5,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/brandimarte/mk07.txt",
+        "file": "data\\raw\\mk07.txt",
+        "sha256": "88e317e0adc1ff9dc9553bae3687eb09de931973bce6d2257f722185c2fd11de"
+      },
+      "family": "Brandimarte",
+      "operations": 100,
+      "serial_upper": 1390,
+      "mean_flexibility": 2.83,
+      "size_block": "20x5",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "mk08",
+      "kind": "FJSP",
+      "machines": 10,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/brandimarte/mk08.txt",
+        "file": "data\\raw\\mk08.txt",
+        "sha256": "8672e4efda1195ae6aafd265e767d0561e5ea7a6c9dd04093d697dff07a54e0b"
+      },
+      "family": "Brandimarte",
+      "operations": 225,
+      "serial_upper": 3103,
+      "mean_flexibility": 1.431111111111111,
+      "size_block": "20x10",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "mk09",
+      "kind": "FJSP",
+      "machines": 10,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/brandimarte/mk09.txt",
+        "file": "data\\raw\\mk09.txt",
+        "sha256": "ce0de54601d0ede7004b5bbb84974652773b051b9b6d1db1b6e6a31aad0d8876"
+      },
+      "family": "Brandimarte",
+      "operations": 240,
+      "serial_upper": 3343,
+      "mean_flexibility": 2.525,
+      "size_block": "20x10",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "mk10",
+      "kind": "FJSP",
+      "machines": 15,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/brandimarte/mk10.txt",
+        "file": "data\\raw\\mk10.txt",
+        "sha256": "9602d49ab54bb8167723c364fcf88e81dfaaa602a01e823b166b3bc749092c9b"
+      },
+      "family": "Brandimarte",
+      "operations": 240,
+      "serial_upper": 3255,
+      "mean_flexibility": 2.9833333333333334,
+      "size_block": "20x15",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "mk11",
+      "kind": "FJSP",
+      "machines": 5,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/brandimarte/mk11.txt",
+        "file": "data\\raw\\mk11.txt",
+        "sha256": "775c9233cfd1437d7df4d16a24e872d6aa7d6cca8aa3c6cc75a72b275bd9326c"
+      },
+      "family": "Brandimarte",
+      "operations": 179,
+      "serial_upper": 3466,
+      "mean_flexibility": 1.5083798882681565,
+      "size_block": "30x5",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 30
+    },
+    {
+      "id": "mk12",
+      "kind": "FJSP",
+      "machines": 10,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/brandimarte/mk12.txt",
+        "file": "data\\raw\\mk12.txt",
+        "sha256": "c8166b9dfafe2abca16bc89824c8b5ec71c537cba3cf4237906ea6dff644199a"
+      },
+      "family": "Brandimarte",
+      "operations": 193,
+      "serial_upper": 3742,
+      "mean_flexibility": 1.4922279792746114,
+      "size_block": "30x10",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 30
+    },
+    {
+      "id": "mk13",
+      "kind": "FJSP",
+      "machines": 10,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/brandimarte/mk13.txt",
+        "file": "data\\raw\\mk13.txt",
+        "sha256": "5305370f07769b00ba1caa988e4ad9306ea17a9694c3c2bced94b9eb33c6d944"
+      },
+      "family": "Brandimarte",
+      "operations": 231,
+      "serial_upper": 5478,
+      "mean_flexibility": 3.367965367965368,
+      "size_block": "30x10",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 30
+    },
+    {
+      "id": "mk14",
+      "kind": "FJSP",
+      "machines": 15,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/brandimarte/mk14.txt",
+        "file": "data\\raw\\mk14.txt",
+        "sha256": "28c5acb5dbd8694b54697263c121255274201a75d0db52ed208bb5eca9822b54"
+      },
+      "family": "Brandimarte",
+      "operations": 277,
+      "serial_upper": 5824,
+      "mean_flexibility": 1.55956678700361,
+      "size_block": "30x15",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 30
+    },
+    {
+      "id": "mk15",
+      "kind": "FJSP",
+      "machines": 15,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/brandimarte/mk15.txt",
+        "file": "data\\raw\\mk15.txt",
+        "sha256": "37023ab955bf9872e04357a4dd0ae4a5556011dd9ea22c952eed738a06d911e9"
+      },
+      "family": "Brandimarte",
+      "operations": 284,
+      "serial_upper": 6375,
+      "mean_flexibility": 3.0316901408450705,
+      "size_block": "30x15",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 30
+    },
+    {
+      "id": "sm01_1",
+      "kind": "FJSP",
+      "machines": 20,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/sm01_1.txt",
+        "file": "data\\raw\\behnke_sm01_1.txt",
+        "sha256": "315da09215fc2b40bc0738de75a6a6652e4ab8f97819142a9d9721c9662a3c62"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 50,
+      "serial_upper": 1373,
+      "mean_flexibility": 6.08,
+      "size_block": "10x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 10
+    },
+    {
+      "id": "sm01_2",
+      "kind": "FJSP",
+      "machines": 20,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/sm01_2.txt",
+        "file": "data\\raw\\behnke_sm01_2.txt",
+        "sha256": "78ca6376f7ec20d1e24800a8962cc132a2dfb3b7658710f3f72e7f27b000b6b3"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 50,
+      "serial_upper": 1370,
+      "mean_flexibility": 6.72,
+      "size_block": "10x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 10
+    },
+    {
+      "id": "sm02_4",
+      "kind": "FJSP",
+      "machines": 20,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/sm02_4.txt",
+        "file": "data\\raw\\behnke_sm02_4.txt",
+        "sha256": "c67ba408d8b64ef37799dd4b99bc8e475aaa35310a765dfd24bc8502cd313afd"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 100,
+      "serial_upper": 2712,
+      "mean_flexibility": 6.44,
+      "size_block": "20x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "sm02_5",
+      "kind": "FJSP",
+      "machines": 20,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/sm02_5.txt",
+        "file": "data\\raw\\behnke_sm02_5.txt",
+        "sha256": "ba970133bbe54f36d1df4b42fddddb92c9058a15521ae902640c3091293f80c1"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 100,
+      "serial_upper": 2700,
+      "mean_flexibility": 6.12,
+      "size_block": "20x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "sm03_3",
+      "kind": "FJSP",
+      "machines": 20,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/sm03_3.txt",
+        "file": "data\\raw\\behnke_sm03_3.txt",
+        "sha256": "38267ee50607596bf2cc7eab3f4a5ae0fda39c2bb4a44b5b7e38886d93616495"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 250,
+      "serial_upper": 6825,
+      "mean_flexibility": 6.448,
+      "size_block": "50x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 50
+    },
+    {
+      "id": "sm03_4",
+      "kind": "FJSP",
+      "machines": 20,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/sm03_4.txt",
+        "file": "data\\raw\\behnke_sm03_4.txt",
+        "sha256": "bbb328f3dc8a5d1575c68ae1aab0742556526902d3806237e06034d0407f1a1a"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 250,
+      "serial_upper": 6761,
+      "mean_flexibility": 6.096,
+      "size_block": "50x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 50
+    },
+    {
+      "id": "sm04_3",
+      "kind": "FJSP",
+      "machines": 20,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/sm04_3.txt",
+        "file": "data\\raw\\behnke_sm04_3.txt",
+        "sha256": "112a11cb8b425df0b80137f7fb5f5edcd466209a4c8f285153373ccd194ee993"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 500,
+      "serial_upper": 13540,
+      "mean_flexibility": 6.328,
+      "size_block": "100x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 100
+    },
+    {
+      "id": "sm04_5",
+      "kind": "FJSP",
+      "machines": 20,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/sm04_5.txt",
+        "file": "data\\raw\\behnke_sm04_5.txt",
+        "sha256": "a1db4334a882613ec1cb9b0be94bb9a8eccf8178de334bb60215ac16b121fd88"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 500,
+      "serial_upper": 13601,
+      "mean_flexibility": 6.328,
+      "size_block": "100x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 100
+    },
+    {
+      "id": "med01_2",
+      "kind": "FJSP",
+      "machines": 40,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/med01_2.txt",
+        "file": "data\\raw\\behnke_med01_2.txt",
+        "sha256": "75c159f369a20ffedd0df62d10b7625480a8dafc5db41813e4f0016dc8051eab"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 50,
+      "serial_upper": 1399,
+      "mean_flexibility": 13.12,
+      "size_block": "10x40",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 10
+    },
+    {
+      "id": "med01_3",
+      "kind": "FJSP",
+      "machines": 40,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/med01_3.txt",
+        "file": "data\\raw\\behnke_med01_3.txt",
+        "sha256": "9fac3dd261f58223ff1a9a7a52ec8436cf6fc58a5efd9b5f4bab60e1f39d77cb"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 50,
+      "serial_upper": 1391,
+      "mean_flexibility": 13.92,
+      "size_block": "10x40",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 10
+    },
+    {
+      "id": "med02_3",
+      "kind": "FJSP",
+      "machines": 40,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/med02_3.txt",
+        "file": "data\\raw\\behnke_med02_3.txt",
+        "sha256": "d1e9a5f22aa629c310a21e86f8f58b97f4f9ff664e27624bb19d71c25e856874"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 100,
+      "serial_upper": 2806,
+      "mean_flexibility": 13.84,
+      "size_block": "20x40",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "med02_5",
+      "kind": "FJSP",
+      "machines": 40,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/med02_5.txt",
+        "file": "data\\raw\\behnke_med02_5.txt",
+        "sha256": "fc1380c09a155a74601c282958776fe9b06fc32f25dee9bde5d95a5c47c41b0c"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 100,
+      "serial_upper": 2788,
+      "mean_flexibility": 12.96,
+      "size_block": "20x40",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "med03_1",
+      "kind": "FJSP",
+      "machines": 40,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/med03_1.txt",
+        "file": "data\\raw\\behnke_med03_1.txt",
+        "sha256": "aa006ea6018b5715dc418959e22bfee1952e104320dd14848639c78620047ff2"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 250,
+      "serial_upper": 7033,
+      "mean_flexibility": 12.928,
+      "size_block": "50x40",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 50
+    },
+    {
+      "id": "med03_2",
+      "kind": "FJSP",
+      "machines": 40,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/med03_2.txt",
+        "file": "data\\raw\\behnke_med03_2.txt",
+        "sha256": "18bae45144af2337117bfd083d4e13b1e5090305b69c3c8755f04421c8a03b66"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 250,
+      "serial_upper": 6945,
+      "mean_flexibility": 12.208,
+      "size_block": "50x40",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 50
+    },
+    {
+      "id": "med04_3",
+      "kind": "FJSP",
+      "machines": 40,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/med04_3.txt",
+        "file": "data\\raw\\behnke_med04_3.txt",
+        "sha256": "db8ea57a5334650ad2ce0f8a93b7e2a7673e2b42d13c5f1b391e55cf9d70c726"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 500,
+      "serial_upper": 13933,
+      "mean_flexibility": 12.712,
+      "size_block": "100x40",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 100
+    },
+    {
+      "id": "med04_5",
+      "kind": "FJSP",
+      "machines": 40,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/med04_5.txt",
+        "file": "data\\raw\\behnke_med04_5.txt",
+        "sha256": "fd79bc265630c8023458744541436d742f971b1b6d399f2b72d6bddb3a82ff2c"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 500,
+      "serial_upper": 13885,
+      "mean_flexibility": 12.04,
+      "size_block": "100x40",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 100
+    },
+    {
+      "id": "lar01_1",
+      "kind": "FJSP",
+      "machines": 60,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/lar01_1.txt",
+        "file": "data\\raw\\behnke_lar01_1.txt",
+        "sha256": "7c6fa1f556fb9ef7d6b32b7b7be0efa3207db0ea7056409a632fbbc72560a5d5"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 50,
+      "serial_upper": 1419,
+      "mean_flexibility": 22.24,
+      "size_block": "10x60",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 10
+    },
+    {
+      "id": "lar01_3",
+      "kind": "FJSP",
+      "machines": 60,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/lar01_3.txt",
+        "file": "data\\raw\\behnke_lar01_3.txt",
+        "sha256": "90d57b28b43906113f907234398dd7f93ab8795759dbacb3f78e6d92a85a5f8a"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 50,
+      "serial_upper": 1406,
+      "mean_flexibility": 19.28,
+      "size_block": "10x60",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 10
+    },
+    {
+      "id": "lar02_2",
+      "kind": "FJSP",
+      "machines": 60,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/lar02_2.txt",
+        "file": "data\\raw\\behnke_lar02_2.txt",
+        "sha256": "ac6bf6063bc2fa42054da1f435257bc25a61c269b07f547aef3b97dcc9fb12f3"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 100,
+      "serial_upper": 2818,
+      "mean_flexibility": 18.76,
+      "size_block": "20x60",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "lar02_3",
+      "kind": "FJSP",
+      "machines": 60,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/lar02_3.txt",
+        "file": "data\\raw\\behnke_lar02_3.txt",
+        "sha256": "72676bf324b3a6e572976f636cdc649f8009940b7ab98913343d9d4b4b922031"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 100,
+      "serial_upper": 2795,
+      "mean_flexibility": 17.68,
+      "size_block": "20x60",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "lar03_3",
+      "kind": "FJSP",
+      "machines": 60,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/lar03_3.txt",
+        "file": "data\\raw\\behnke_lar03_3.txt",
+        "sha256": "4cf543378e0d18ce688348b4fcc060b9c3b8cd49561da84107faea806d2f86c2"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 250,
+      "serial_upper": 7047,
+      "mean_flexibility": 18.688,
+      "size_block": "50x60",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 50
+    },
+    {
+      "id": "lar03_4",
+      "kind": "FJSP",
+      "machines": 60,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/lar03_4.txt",
+        "file": "data\\raw\\behnke_lar03_4.txt",
+        "sha256": "70333e4414e37ce001f5641aa021ef64bcf4409d42c7c99b3c2dea722b1e08d6"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 250,
+      "serial_upper": 7031,
+      "mean_flexibility": 17.568,
+      "size_block": "50x60",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 50
+    },
+    {
+      "id": "lar04_2",
+      "kind": "FJSP",
+      "machines": 60,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/lar04_2.txt",
+        "file": "data\\raw\\behnke_lar04_2.txt",
+        "sha256": "05761c0e43e7857fb13221d17b27cc224aee724222b9f9edf12c4768b8333f0e"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 500,
+      "serial_upper": 13926,
+      "mean_flexibility": 18.696,
+      "size_block": "100x60",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 100
+    },
+    {
+      "id": "lar04_4",
+      "kind": "FJSP",
+      "machines": 60,
+      "source": {
+        "url": "https://raw.githubusercontent.com/SchedulingLab/fjsp-instances/main/behnke/lar04_4.txt",
+        "file": "data\\raw\\behnke_lar04_4.txt",
+        "sha256": "116794756d6d23e7a97cedd920313b90da4af4a2aae4dc644abd329e2862f707"
+      },
+      "family": "Behnke-Geiger",
+      "operations": 500,
+      "serial_upper": 13967,
+      "mean_flexibility": 18.224,
+      "size_block": "100x60",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 100
+    },
+    {
+      "id": "tai_jsp002",
+      "kind": "JSP",
+      "machines": 15,
+      "source_time_seed": 1314640371,
+      "source_machine_seed": 386720536,
+      "source_makespan_upper": 1244,
+      "source_makespan_lower": 953,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/jobshop.dir/tai15_15.txt",
+        "file": "data\\raw\\jobshop_tai15_15.txt",
+        "sha256": "241af7228d73977a9a1d6dc49f8b2d354348634d73e30850e4d4a2b782a71a0d"
+      },
+      "family": "Taillard",
+      "operations": 225,
+      "serial_upper": 11356,
+      "mean_flexibility": 1.0,
+      "size_block": "15x15",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 15
+    },
+    {
+      "id": "tai_jsp006",
+      "kind": "JSP",
+      "machines": 15,
+      "source_time_seed": 1357584978,
+      "source_machine_seed": 1734077082,
+      "source_makespan_upper": 1243,
+      "source_makespan_lower": 1134,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/jobshop.dir/tai15_15.txt",
+        "file": "data\\raw\\jobshop_tai15_15.txt",
+        "sha256": "241af7228d73977a9a1d6dc49f8b2d354348634d73e30850e4d4a2b782a71a0d"
+      },
+      "family": "Taillard",
+      "operations": 225,
+      "serial_upper": 11351,
+      "mean_flexibility": 1.0,
+      "size_block": "15x15",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 15
+    },
+    {
+      "id": "tai_jsp013",
+      "kind": "JSP",
+      "machines": 15,
+      "source_time_seed": 874340513,
+      "source_machine_seed": 509669280,
+      "source_makespan_upper": 1367,
+      "source_makespan_lower": 1243,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/jobshop.dir/tai20_15.txt",
+        "file": "data\\raw\\jobshop_tai20_15.txt",
+        "sha256": "584933fe2338becda3a7c0012b258ba07dfc87b556b09fc1d2284291f8ad9366"
+      },
+      "family": "Taillard",
+      "operations": 300,
+      "serial_upper": 14541,
+      "mean_flexibility": 1.0,
+      "size_block": "20x15",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "tai_jsp020",
+      "kind": "JSP",
+      "machines": 15,
+      "source_time_seed": 532794656,
+      "source_machine_seed": 998486810,
+      "source_makespan_upper": 1362,
+      "source_makespan_lower": 1213,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/jobshop.dir/tai20_15.txt",
+        "file": "data\\raw\\jobshop_tai20_15.txt",
+        "sha256": "584933fe2338becda3a7c0012b258ba07dfc87b556b09fc1d2284291f8ad9366"
+      },
+      "family": "Taillard",
+      "operations": 300,
+      "serial_upper": 15133,
+      "mean_flexibility": 1.0,
+      "size_block": "20x15",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "tai_jsp025",
+      "kind": "JSP",
+      "machines": 20,
+      "source_time_seed": 1902815253,
+      "source_machine_seed": 1879990068,
+      "source_makespan_upper": 1598,
+      "source_makespan_lower": 1256,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/jobshop.dir/tai20_20.txt",
+        "file": "data\\raw\\jobshop_tai20_20.txt",
+        "sha256": "d7cb38afd41ac82609e254065f021bd58f0a1458ef11531d08a7e602fe4e25ea"
+      },
+      "family": "Taillard",
+      "operations": 400,
+      "serial_upper": 19654,
+      "mean_flexibility": 1.0,
+      "size_block": "20x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "tai_jsp026",
+      "kind": "JSP",
+      "machines": 20,
+      "source_time_seed": 1503184031,
+      "source_machine_seed": 1850351876,
+      "source_makespan_upper": 1657,
+      "source_makespan_lower": 1245,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/jobshop.dir/tai20_20.txt",
+        "file": "data\\raw\\jobshop_tai20_20.txt",
+        "sha256": "d7cb38afd41ac82609e254065f021bd58f0a1458ef11531d08a7e602fe4e25ea"
+      },
+      "family": "Taillard",
+      "operations": 400,
+      "serial_upper": 20593,
+      "mean_flexibility": 1.0,
+      "size_block": "20x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "tai_jsp031",
+      "kind": "JSP",
+      "machines": 15,
+      "source_time_seed": 98640593,
+      "source_machine_seed": 1981283465,
+      "source_makespan_upper": 1770,
+      "source_makespan_lower": 1764,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/jobshop.dir/tai30_15.txt",
+        "file": "data\\raw\\jobshop_tai30_15.txt",
+        "sha256": "dd4c5f06be5fe0c215d695e97b52c26a0a6f08f5a9a19d9486ed9ea8682c3f9f"
+      },
+      "family": "Taillard",
+      "operations": 450,
+      "serial_upper": 22600,
+      "mean_flexibility": 1.0,
+      "size_block": "30x15",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 30
+    },
+    {
+      "id": "tai_jsp037",
+      "kind": "JSP",
+      "machines": 15,
+      "source_time_seed": 1549372605,
+      "source_machine_seed": 596993084,
+      "source_makespan_upper": 1815,
+      "source_makespan_lower": 1771,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/jobshop.dir/tai30_15.txt",
+        "file": "data\\raw\\jobshop_tai30_15.txt",
+        "sha256": "dd4c5f06be5fe0c215d695e97b52c26a0a6f08f5a9a19d9486ed9ea8682c3f9f"
+      },
+      "family": "Taillard",
+      "operations": 450,
+      "serial_upper": 23807,
+      "mean_flexibility": 1.0,
+      "size_block": "30x15",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 30
+    },
+    {
+      "id": "tai_jsp044",
+      "kind": "JSP",
+      "machines": 20,
+      "source_time_seed": 532496463,
+      "source_machine_seed": 254174057,
+      "source_makespan_upper": 2031,
+      "source_makespan_lower": 1820,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/jobshop.dir/tai30_20.txt",
+        "file": "data\\raw\\jobshop_tai30_20.txt",
+        "sha256": "fa6631f4411187bb1b43e4c444293227852860fa56f3ea6e14f48a294adbd3b9"
+      },
+      "family": "Taillard",
+      "operations": 600,
+      "serial_upper": 30486,
+      "mean_flexibility": 1.0,
+      "size_block": "30x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 30
+    },
+    {
+      "id": "tai_jsp049",
+      "kind": "JSP",
+      "machines": 20,
+      "source_time_seed": 198324822,
+      "source_machine_seed": 1937476577,
+      "source_makespan_upper": 2013,
+      "source_makespan_lower": 1758,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/jobshop.dir/tai30_20.txt",
+        "file": "data\\raw\\jobshop_tai30_20.txt",
+        "sha256": "fa6631f4411187bb1b43e4c444293227852860fa56f3ea6e14f48a294adbd3b9"
+      },
+      "family": "Taillard",
+      "operations": 600,
+      "serial_upper": 29752,
+      "mean_flexibility": 1.0,
+      "size_block": "30x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 30
+    },
+    {
+      "id": "tai_jsp052",
+      "kind": "JSP",
+      "machines": 15,
+      "source_time_seed": 660481279,
+      "source_machine_seed": 449650254,
+      "source_makespan_upper": 2756,
+      "source_makespan_lower": 2756,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/jobshop.dir/tai50_15.txt",
+        "file": "data\\raw\\jobshop_tai50_15.txt",
+        "sha256": "53d63445f0977640f5f3f5db9a093c05fdbb433bbd02d347637910794920211b"
+      },
+      "family": "Taillard",
+      "operations": 750,
+      "serial_upper": 37144,
+      "mean_flexibility": 1.0,
+      "size_block": "50x15",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 50
+    },
+    {
+      "id": "tai_jsp053",
+      "kind": "JSP",
+      "machines": 15,
+      "source_time_seed": 352229765,
+      "source_machine_seed": 949737911,
+      "source_makespan_upper": 2717,
+      "source_makespan_lower": 2717,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/jobshop.dir/tai50_15.txt",
+        "file": "data\\raw\\jobshop_tai50_15.txt",
+        "sha256": "53d63445f0977640f5f3f5db9a093c05fdbb433bbd02d347637910794920211b"
+      },
+      "family": "Taillard",
+      "operations": 750,
+      "serial_upper": 37381,
+      "mean_flexibility": 1.0,
+      "size_block": "50x15",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 50
+    },
+    {
+      "id": "tai_jsp068",
+      "kind": "JSP",
+      "machines": 20,
+      "source_time_seed": 433032965,
+      "source_machine_seed": 1589656152,
+      "source_makespan_upper": 2784,
+      "source_makespan_lower": 2764,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/jobshop.dir/tai50_20.txt",
+        "file": "data\\raw\\jobshop_tai50_20.txt",
+        "sha256": "9ca58b7562590802d58bec8494310a047afb370160ce692d4fd3a1d519ad512c"
+      },
+      "family": "Taillard",
+      "operations": 1000,
+      "serial_upper": 49903,
+      "mean_flexibility": 1.0,
+      "size_block": "50x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 50
+    },
+    {
+      "id": "tai_jsp070",
+      "kind": "JSP",
+      "machines": 20,
+      "source_time_seed": 236150141,
+      "source_machine_seed": 592292984,
+      "source_makespan_upper": 2995,
+      "source_makespan_lower": 2995,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/jobshop.dir/tai50_20.txt",
+        "file": "data\\raw\\jobshop_tai50_20.txt",
+        "sha256": "9ca58b7562590802d58bec8494310a047afb370160ce692d4fd3a1d519ad512c"
+      },
+      "family": "Taillard",
+      "operations": 1000,
+      "serial_upper": 50878,
+      "mean_flexibility": 1.0,
+      "size_block": "50x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 50
+    },
+    {
+      "id": "tai_jsp079",
+      "kind": "JSP",
+      "machines": 20,
+      "source_time_seed": 2007423389,
+      "source_machine_seed": 749368241,
+      "source_makespan_upper": 5358,
+      "source_makespan_lower": 5358,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/jobshop.dir/tai100_20.txt",
+        "file": "data\\raw\\jobshop_tai100_20.txt",
+        "sha256": "ba7bb87127fef9d1620b7325b12d387c22b822f3f2665723d6321d4068f3bd8f"
+      },
+      "family": "Taillard",
+      "operations": 2000,
+      "serial_upper": 99733,
+      "mean_flexibility": 1.0,
+      "size_block": "100x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 100
+    },
+    {
+      "id": "tai_jsp080",
+      "kind": "JSP",
+      "machines": 20,
+      "source_time_seed": 682761130,
+      "source_machine_seed": 262763021,
+      "source_makespan_upper": 5183,
+      "source_makespan_lower": 5183,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/jobshop.dir/tai100_20.txt",
+        "file": "data\\raw\\jobshop_tai100_20.txt",
+        "sha256": "ba7bb87127fef9d1620b7325b12d387c22b822f3f2665723d6321d4068f3bd8f"
+      },
+      "family": "Taillard",
+      "operations": 2000,
+      "serial_upper": 96697,
+      "mean_flexibility": 1.0,
+      "size_block": "100x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 100
+    },
+    {
+      "id": "ta001",
+      "kind": "PFSP",
+      "machines": 5,
+      "source_seed": 873654221,
+      "source_makespan_upper": 1278,
+      "source_makespan_lower": 1232,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai20_5.txt",
+        "file": "data\\raw\\flowshop_tai20_5.txt",
+        "sha256": "642324e86cd08f95d4f9d8fbb90b108cb1465924aa610471db2e008024f3a000"
+      },
+      "family": "Taillard",
+      "operations": 100,
+      "serial_upper": 5153,
+      "mean_flexibility": 1.0,
+      "size_block": "20x5",
+      "cohort": "legacy",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "ta002",
+      "kind": "PFSP",
+      "machines": 5,
+      "source_seed": 379008056,
+      "source_makespan_upper": 1359,
+      "source_makespan_lower": 1290,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai20_5.txt",
+        "file": "data\\raw\\flowshop_tai20_5.txt",
+        "sha256": "642324e86cd08f95d4f9d8fbb90b108cb1465924aa610471db2e008024f3a000"
+      },
+      "family": "Taillard",
+      "operations": 100,
+      "serial_upper": 5196,
+      "mean_flexibility": 1.0,
+      "size_block": "20x5",
+      "cohort": "legacy",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "ta003",
+      "kind": "PFSP",
+      "machines": 5,
+      "source_seed": 1866992158,
+      "source_makespan_upper": 1081,
+      "source_makespan_lower": 1073,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai20_5.txt",
+        "file": "data\\raw\\flowshop_tai20_5.txt",
+        "sha256": "642324e86cd08f95d4f9d8fbb90b108cb1465924aa610471db2e008024f3a000"
+      },
+      "family": "Taillard",
+      "operations": 100,
+      "serial_upper": 4605,
+      "mean_flexibility": 1.0,
+      "size_block": "20x5",
+      "cohort": "legacy",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "ta004",
+      "kind": "PFSP",
+      "machines": 5,
+      "source_seed": 216771124,
+      "source_makespan_upper": 1293,
+      "source_makespan_lower": 1268,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai20_5.txt",
+        "file": "data\\raw\\flowshop_tai20_5.txt",
+        "sha256": "642324e86cd08f95d4f9d8fbb90b108cb1465924aa610471db2e008024f3a000"
+      },
+      "family": "Taillard",
+      "operations": 100,
+      "serial_upper": 5636,
+      "mean_flexibility": 1.0,
+      "size_block": "20x5",
+      "cohort": "legacy",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "ta005",
+      "kind": "PFSP",
+      "machines": 5,
+      "source_seed": 495070989,
+      "source_makespan_upper": 1236,
+      "source_makespan_lower": 1198,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai20_5.txt",
+        "file": "data\\raw\\flowshop_tai20_5.txt",
+        "sha256": "642324e86cd08f95d4f9d8fbb90b108cb1465924aa610471db2e008024f3a000"
+      },
+      "family": "Taillard",
+      "operations": 100,
+      "serial_upper": 4968,
+      "mean_flexibility": 1.0,
+      "size_block": "20x5",
+      "cohort": "legacy",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "ta008",
+      "kind": "PFSP",
+      "machines": 5,
+      "source_seed": 2021925980,
+      "source_makespan_upper": 1206,
+      "source_makespan_lower": 1170,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai20_5.txt",
+        "file": "data\\raw\\flowshop_tai20_5.txt",
+        "sha256": "642324e86cd08f95d4f9d8fbb90b108cb1465924aa610471db2e008024f3a000"
+      },
+      "family": "Taillard",
+      "operations": 100,
+      "serial_upper": 5231,
+      "mean_flexibility": 1.0,
+      "size_block": "20x5",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "ta013",
+      "kind": "PFSP",
+      "machines": 10,
+      "source_seed": 873136276,
+      "source_makespan_upper": 1496,
+      "source_makespan_lower": 1407,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai20_10.txt",
+        "file": "data\\raw\\flowshop_tai20_10.txt",
+        "sha256": "e965c8619ff84c7d46eb9379669a57a3f20db1c58ac8ebc4921b3cca9eef36c9"
+      },
+      "family": "Taillard",
+      "operations": 200,
+      "serial_upper": 9876,
+      "mean_flexibility": 1.0,
+      "size_block": "20x10",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "ta018",
+      "kind": "PFSP",
+      "machines": 10,
+      "source_seed": 1273398721,
+      "source_makespan_upper": 1538,
+      "source_makespan_lower": 1363,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai20_10.txt",
+        "file": "data\\raw\\flowshop_tai20_10.txt",
+        "sha256": "e965c8619ff84c7d46eb9379669a57a3f20db1c58ac8ebc4921b3cca9eef36c9"
+      },
+      "family": "Taillard",
+      "operations": 200,
+      "serial_upper": 9902,
+      "mean_flexibility": 1.0,
+      "size_block": "20x10",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "ta021",
+      "kind": "PFSP",
+      "machines": 20,
+      "source_seed": 479340445,
+      "source_makespan_upper": 2297,
+      "source_makespan_lower": 1911,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai20_20.txt",
+        "file": "data\\raw\\flowshop_tai20_20.txt",
+        "sha256": "4a61cafc0c4cd8e97ac59b931bedadf331fb417930ae51ad9be3670c01dcca82"
+      },
+      "family": "Taillard",
+      "operations": 400,
+      "serial_upper": 20273,
+      "mean_flexibility": 1.0,
+      "size_block": "20x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "ta025",
+      "kind": "PFSP",
+      "machines": 20,
+      "source_seed": 555010963,
+      "source_makespan_upper": 2291,
+      "source_makespan_lower": 1899,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai20_20.txt",
+        "file": "data\\raw\\flowshop_tai20_20.txt",
+        "sha256": "4a61cafc0c4cd8e97ac59b931bedadf331fb417930ae51ad9be3670c01dcca82"
+      },
+      "family": "Taillard",
+      "operations": 400,
+      "serial_upper": 20467,
+      "mean_flexibility": 1.0,
+      "size_block": "20x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 20
+    },
+    {
+      "id": "ta038",
+      "kind": "PFSP",
+      "machines": 5,
+      "source_seed": 1273398721,
+      "source_makespan_upper": 2683,
+      "source_makespan_lower": 2667,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai50_5.txt",
+        "file": "data\\raw\\flowshop_tai50_5.txt",
+        "sha256": "0df75c3b0c3a2b6305f11b69ca2f01df66cf917a28050645e4c439af539c7e81"
+      },
+      "family": "Taillard",
+      "operations": 250,
+      "serial_upper": 12393,
+      "mean_flexibility": 1.0,
+      "size_block": "50x5",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 50
+    },
+    {
+      "id": "ta039",
+      "kind": "PFSP",
+      "machines": 5,
+      "source_seed": 587288402,
+      "source_makespan_upper": 2552,
+      "source_makespan_lower": 2527,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai50_5.txt",
+        "file": "data\\raw\\flowshop_tai50_5.txt",
+        "sha256": "0df75c3b0c3a2b6305f11b69ca2f01df66cf917a28050645e4c439af539c7e81"
+      },
+      "family": "Taillard",
+      "operations": 250,
+      "serial_upper": 11622,
+      "mean_flexibility": 1.0,
+      "size_block": "50x5",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 50
+    },
+    {
+      "id": "ta041",
+      "kind": "PFSP",
+      "machines": 10,
+      "source_seed": 1958948863,
+      "source_makespan_upper": 3025,
+      "source_makespan_lower": 2907,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai50_10.txt",
+        "file": "data\\raw\\flowshop_tai50_10.txt",
+        "sha256": "d93626f6757c89d32b64d07da421cc70322217c5af2a7c5e3b840904d430f4ae"
+      },
+      "family": "Taillard",
+      "operations": 500,
+      "serial_upper": 25100,
+      "mean_flexibility": 1.0,
+      "size_block": "50x10",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 50
+    },
+    {
+      "id": "ta049",
+      "kind": "PFSP",
+      "machines": 10,
+      "source_seed": 2013025619,
+      "source_makespan_upper": 2902,
+      "source_makespan_lower": 2795,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai50_10.txt",
+        "file": "data\\raw\\flowshop_tai50_10.txt",
+        "sha256": "d93626f6757c89d32b64d07da421cc70322217c5af2a7c5e3b840904d430f4ae"
+      },
+      "family": "Taillard",
+      "operations": 500,
+      "serial_upper": 24332,
+      "mean_flexibility": 1.0,
+      "size_block": "50x10",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 50
+    },
+    {
+      "id": "ta059",
+      "kind": "PFSP",
+      "machines": 20,
+      "source_seed": 715643788,
+      "source_makespan_upper": 3765,
+      "source_makespan_lower": 3457,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai50_20.txt",
+        "file": "data\\raw\\flowshop_tai50_20.txt",
+        "sha256": "cc139745dece17a2538e74ad2eaed232cc97321293f6b121883a6e3c69c8f8ba"
+      },
+      "family": "Taillard",
+      "operations": 1000,
+      "serial_upper": 49943,
+      "mean_flexibility": 1.0,
+      "size_block": "50x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 50
+    },
+    {
+      "id": "ta060",
+      "kind": "PFSP",
+      "machines": 20,
+      "source_seed": 464843328,
+      "source_makespan_upper": 3777,
+      "source_makespan_lower": 3438,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai50_20.txt",
+        "file": "data\\raw\\flowshop_tai50_20.txt",
+        "sha256": "cc139745dece17a2538e74ad2eaed232cc97321293f6b121883a6e3c69c8f8ba"
+      },
+      "family": "Taillard",
+      "operations": 1000,
+      "serial_upper": 50602,
+      "mean_flexibility": 1.0,
+      "size_block": "50x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 50
+    },
+    {
+      "id": "ta064",
+      "kind": "PFSP",
+      "machines": 5,
+      "source_seed": 416756875,
+      "source_makespan_upper": 5014,
+      "source_makespan_lower": 4963,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai100_5.txt",
+        "file": "data\\raw\\flowshop_tai100_5.txt",
+        "sha256": "11ea6b3d87639e6d2bfe7d555fa5685f7217bfd49873971695b3d2f5a0175d0f"
+      },
+      "family": "Taillard",
+      "operations": 500,
+      "serial_upper": 24028,
+      "mean_flexibility": 1.0,
+      "size_block": "100x5",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 100
+    },
+    {
+      "id": "ta069",
+      "kind": "PFSP",
+      "machines": 5,
+      "source_seed": 161033112,
+      "source_makespan_upper": 5454,
+      "source_makespan_lower": 5385,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai100_5.txt",
+        "file": "data\\raw\\flowshop_tai100_5.txt",
+        "sha256": "11ea6b3d87639e6d2bfe7d555fa5685f7217bfd49873971695b3d2f5a0175d0f"
+      },
+      "family": "Taillard",
+      "operations": 500,
+      "serial_upper": 25839,
+      "mean_flexibility": 1.0,
+      "size_block": "100x5",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 100
+    },
+    {
+      "id": "ta075",
+      "kind": "PFSP",
+      "machines": 10,
+      "source_seed": 2013025619,
+      "source_makespan_upper": 5468,
+      "source_makespan_lower": 5431,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai100_10.txt",
+        "file": "data\\raw\\flowshop_tai100_10.txt",
+        "sha256": "bb7552f69587aa525be3b38ccac4ae5be671cc627ce489d50e798b78a5d23112"
+      },
+      "family": "Taillard",
+      "operations": 1000,
+      "serial_upper": 49703,
+      "mean_flexibility": 1.0,
+      "size_block": "100x10",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 100
+    },
+    {
+      "id": "ta077",
+      "kind": "PFSP",
+      "machines": 10,
+      "source_seed": 1923497586,
+      "source_makespan_upper": 5599,
+      "source_makespan_lower": 5523,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai100_10.txt",
+        "file": "data\\raw\\flowshop_tai100_10.txt",
+        "sha256": "bb7552f69587aa525be3b38ccac4ae5be671cc627ce489d50e798b78a5d23112"
+      },
+      "family": "Taillard",
+      "operations": 1000,
+      "serial_upper": 49030,
+      "mean_flexibility": 1.0,
+      "size_block": "100x10",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 100
+    },
+    {
+      "id": "ta085",
+      "kind": "PFSP",
+      "machines": 20,
+      "source_seed": 508154254,
+      "source_makespan_upper": 6377,
+      "source_makespan_lower": 6009,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai100_20.txt",
+        "file": "data\\raw\\flowshop_tai100_20.txt",
+        "sha256": "dc39bad8860780957dc4a07dc7bf5d29c5394cf998cfc6f8e2aa312e5c0c1b5d"
+      },
+      "family": "Taillard",
+      "operations": 2000,
+      "serial_upper": 99239,
+      "mean_flexibility": 1.0,
+      "size_block": "100x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 100
+    },
+    {
+      "id": "ta088",
+      "kind": "PFSP",
+      "machines": 20,
+      "source_seed": 444956424,
+      "source_makespan_upper": 6481,
+      "source_makespan_lower": 6084,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai100_20.txt",
+        "file": "data\\raw\\flowshop_tai100_20.txt",
+        "sha256": "dc39bad8860780957dc4a07dc7bf5d29c5394cf998cfc6f8e2aa312e5c0c1b5d"
+      },
+      "family": "Taillard",
+      "operations": 2000,
+      "serial_upper": 101843,
+      "mean_flexibility": 1.0,
+      "size_block": "100x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 100
+    },
+    {
+      "id": "ta091",
+      "kind": "PFSP",
+      "machines": 10,
+      "source_seed": 471503978,
+      "source_makespan_upper": 10868,
+      "source_makespan_lower": 10816,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai200_10.txt",
+        "file": "data\\raw\\flowshop_tai200_10.txt",
+        "sha256": "df35a32804c5df6e214fa63b1b53d0a4e2660dc68a763eefd76899184e4a4442"
+      },
+      "family": "Taillard",
+      "operations": 2000,
+      "serial_upper": 100404,
+      "mean_flexibility": 1.0,
+      "size_block": "200x10",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 200
+    },
+    {
+      "id": "ta093",
+      "kind": "PFSP",
+      "machines": 10,
+      "source_seed": 135346136,
+      "source_makespan_upper": 10922,
+      "source_makespan_lower": 10886,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai200_10.txt",
+        "file": "data\\raw\\flowshop_tai200_10.txt",
+        "sha256": "df35a32804c5df6e214fa63b1b53d0a4e2660dc68a763eefd76899184e4a4442"
+      },
+      "family": "Taillard",
+      "operations": 2000,
+      "serial_upper": 101158,
+      "mean_flexibility": 1.0,
+      "size_block": "200x10",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 200
+    },
+    {
+      "id": "ta106",
+      "kind": "PFSP",
+      "machines": 20,
+      "source_seed": 2056065863,
+      "source_makespan_upper": 11282,
+      "source_makespan_lower": 11085,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai200_20.txt",
+        "file": "data\\raw\\flowshop_tai200_20.txt",
+        "sha256": "976b402e72fb952c0787ae365134af3bd28f555389bb48e543af847b2c9d47e5"
+      },
+      "family": "Taillard",
+      "operations": 4000,
+      "serial_upper": 200182,
+      "mean_flexibility": 1.0,
+      "size_block": "200x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 200
+    },
+    {
+      "id": "ta109",
+      "kind": "PFSP",
+      "machines": 20,
+      "source_seed": 1988803007,
+      "source_makespan_upper": 11343,
+      "source_makespan_lower": 10965,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai200_20.txt",
+        "file": "data\\raw\\flowshop_tai200_20.txt",
+        "sha256": "976b402e72fb952c0787ae365134af3bd28f555389bb48e543af847b2c9d47e5"
+      },
+      "family": "Taillard",
+      "operations": 4000,
+      "serial_upper": 199777,
+      "mean_flexibility": 1.0,
+      "size_block": "200x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 200
+    },
+    {
+      "id": "ta117",
+      "kind": "PFSP",
+      "machines": 20,
+      "source_seed": 1298201670,
+      "source_makespan_upper": 26461,
+      "source_makespan_lower": 26300,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai500_20.txt",
+        "file": "data\\raw\\flowshop_tai500_20.txt",
+        "sha256": "cd2a2e9059cca0372dc7bb7c77bd2de6fabd39205bcc3b917473b90db9dfc320"
+      },
+      "family": "Taillard",
+      "operations": 10000,
+      "serial_upper": 496976,
+      "mean_flexibility": 1.0,
+      "size_block": "500x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 500
+    },
+    {
+      "id": "ta118",
+      "kind": "PFSP",
+      "machines": 20,
+      "source_seed": 2041736264,
+      "source_makespan_upper": 26615,
+      "source_makespan_lower": 26429,
+      "bound_status": "Historical source values, not asserted current optima",
+      "source": {
+        "url": "https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/flowshop.dir/tai500_20.txt",
+        "file": "data\\raw\\flowshop_tai500_20.txt",
+        "sha256": "cd2a2e9059cca0372dc7bb7c77bd2de6fabd39205bcc3b917473b90db9dfc320"
+      },
+      "family": "Taillard",
+      "operations": 10000,
+      "serial_upper": 502428,
+      "mean_flexibility": 1.0,
+      "size_block": "500x20",
+      "cohort": "extension",
+      "assumptions": [
+        "Zero job releases",
+        "Nonpreemptive processing",
+        "Unit-capacity machines",
+        "No due dates"
+      ],
+      "job_count": 500
+    }
+  ],
+  "planned_runs": 3168,
+  "parent_run_ids": [
+    "pilot",
+    "xe-change/comparison"
+  ],
+  "parent_role": "Historical development context only; no old measurements imported",
+  "snapshot_hashes": {
+    "snapshot\\Cargo.lock": "16ef2b2a533498e6fc9e2ee2d4c4ba32464f55f5a1ee28265a37f1fa124fe5dd",
+    "snapshot\\Cargo.toml": "837e62fde0933f1dec26e0f92d3786c9355c2208cf5b85397c8902e964d78b4a",
+    "snapshot\\benchmark\\analyze.py": "3aac4f87a1b363aaf04eef166c932c55463a1b9e50c85611fa660b92e268ea54",
+    "snapshot\\benchmark\\Cargo.lock": "e9bee878ba5df1e9452937ec91e44586c10333ff00d04c60d31099e7f6d36e56",
+    "snapshot\\benchmark\\Cargo.toml": "2beb695017a1bde00869e78e0b4f65539abbb9891569296cff5667f3f5e4d283",
+    "snapshot\\benchmark\\instances.py": "902e705eeb50efce0ec3b5176b4bf307d69355d5310287fa6f7654f4f736f8a2",
+    "snapshot\\benchmark\\README.md": "8e8fd2fef9fb10aec9cd81fc26d23f7036edc1943ca0eb44f9b5792de894ae4a",
+    "snapshot\\benchmark\\requirements-lock.txt": "eebacd033800112adcc5fc8bedd16020c767d09a0f0a3a26132a4b7b6ff07dbd",
+    "snapshot\\benchmark\\run.py": "5a75d3cda3536ff1688b03d4501f158c7dcffeb9914e095917da4eea219c729e",
+    "snapshot\\benchmark\\scaling-protocol.json": "e1f7286f2579964e7d1745e2455b26073e1790c798fc19702830b7012671d9d6",
+    "snapshot\\benchmark\\scaling.py": "6b1cff8310f2c7f69a8b8c7bfea41dafd90efc441ed097f4603e7cc54c7363fa",
+    "snapshot\\benchmark\\scaling_data.py": "c515f2c94bd1da6c2908da4772137bcca26f09032351a5705fb2733f97edd778",
+    "snapshot\\benchmark\\scaling_report.py": "b974182c1a99a738f39ec61f608b1b7f685269e197882a492227335083eeeadc",
+    "snapshot\\benchmark\\scheduling.py": "361f02587efaf9f1bfd34d507679e2536429544da5229da128478995c419028a",
+    "snapshot\\benchmark\\test_benchmark.py": "978a41d6c502fd7de0e62ab2d2d5578f8346786661c10a964280a7c866f608ea",
+    "snapshot\\benchmark\\test_scaling.py": "0d3ab0931ecd2c5d529359c9ef336370dcab05d83edf7e48f75a9e7e4ae5a691",
+    "snapshot\\benchmark\\xe_compare.py": "0d375d1bc108bf55e79ceef27f11d197370c84820dc70c5a9fde2f50b3f1aa41",
+    "snapshot\\benchmark\\data\\raw\\behnke_lar01_1.txt": "7c6fa1f556fb9ef7d6b32b7b7be0efa3207db0ea7056409a632fbbc72560a5d5",
+    "snapshot\\benchmark\\data\\raw\\behnke_lar01_2.txt": "7ed86dae554b99f192335e92fb47e49c96aabe2348f0ac02db0ad5451b240a10",
+    "snapshot\\benchmark\\data\\raw\\behnke_lar01_3.txt": "90d57b28b43906113f907234398dd7f93ab8795759dbacb3f78e6d92a85a5f8a",
+    "snapshot\\benchmark\\data\\raw\\behnke_lar01_4.txt": "825dc702f2e7634a35552c5df2d6ac6396e38fd398bef6a6b60185093b59bdd5",
+    "snapshot\\benchmark\\data\\raw\\behnke_lar01_5.txt": "4f9b70b650d1ac5aa34963d9f3c2e408b8790740dbb0161d434856e09889f9a2",
+    "snapshot\\benchmark\\data\\raw\\behnke_lar02_1.txt": "e9c13121c6b9ed8634987330570aa6c5ab520637c693aeaf2175a4d29f158c97",
+    "snapshot\\benchmark\\data\\raw\\behnke_lar02_2.txt": "ac6bf6063bc2fa42054da1f435257bc25a61c269b07f547aef3b97dcc9fb12f3",
+    "snapshot\\benchmark\\data\\raw\\behnke_lar02_3.txt": "72676bf324b3a6e572976f636cdc649f8009940b7ab98913343d9d4b4b922031",
+    "snapshot\\benchmark\\data\\raw\\behnke_lar02_4.txt": "87c9062a5fe4b95bc08cbbe08c292f229877cf6ba4522cdbaaf8fc05287b515b",
+    "snapshot\\benchmark\\data\\raw\\behnke_lar02_5.txt": "664e5bb84665e1ce5494421a6bf43f4d08cd3a2ea4f6221facfde87c0641612b",
+    "snapshot\\benchmark\\data\\raw\\behnke_lar03_1.txt": "dc7fad3099e02dc22165738e3b6be6ac0c0aa37b5eb4502faaeb220a676ca7cd",
+    "snapshot\\benchmark\\data\\raw\\behnke_lar03_2.txt": "72b001fd0a6d97148b28c829cb95e8b972371f99986fe52c03c6bd4c9aabbe25",
+    "snapshot\\benchmark\\data\\raw\\behnke_lar03_3.txt": "4cf543378e0d18ce688348b4fcc060b9c3b8cd49561da84107faea806d2f86c2",
+    "snapshot\\benchmark\\data\\raw\\behnke_lar03_4.txt": "70333e4414e37ce001f5641aa021ef64bcf4409d42c7c99b3c2dea722b1e08d6",
+    "snapshot\\benchmark\\data\\raw\\behnke_lar03_5.txt": "f2f56ce744462ae20cde714bd447f128e885739478acbe30eef990a9f48c0acb",
+    "snapshot\\benchmark\\data\\raw\\behnke_lar04_1.txt": "9ae45f2b5041a072635f29d4e9c2ce16a0ebc6fb783e67a6213c45d4efedb6fb",
+    "snapshot\\benchmark\\data\\raw\\behnke_lar04_2.txt": "05761c0e43e7857fb13221d17b27cc224aee724222b9f9edf12c4768b8333f0e",
+    "snapshot\\benchmark\\data\\raw\\behnke_lar04_3.txt": "cab2e1076cbfc5b3be44936537923bbfada3259e48508985b00c4dcb352b45ff",
+    "snapshot\\benchmark\\data\\raw\\behnke_lar04_4.txt": "116794756d6d23e7a97cedd920313b90da4af4a2aae4dc644abd329e2862f707",
+    "snapshot\\benchmark\\data\\raw\\behnke_lar04_5.txt": "79ec78674de31b4f68654e131df51a56facf27408920bf73986cf68695c54fb2",
+    "snapshot\\benchmark\\data\\raw\\behnke_med01_1.txt": "efceb58b2286956045066e5ac8b593c078c5e95cec8cf2030c34f12273055b04",
+    "snapshot\\benchmark\\data\\raw\\behnke_med01_2.txt": "75c159f369a20ffedd0df62d10b7625480a8dafc5db41813e4f0016dc8051eab",
+    "snapshot\\benchmark\\data\\raw\\behnke_med01_3.txt": "9fac3dd261f58223ff1a9a7a52ec8436cf6fc58a5efd9b5f4bab60e1f39d77cb",
+    "snapshot\\benchmark\\data\\raw\\behnke_med01_4.txt": "5e986304c123a10c425de15c5fe4c48f803bf0acdb07b037a80968effa815ed3",
+    "snapshot\\benchmark\\data\\raw\\behnke_med01_5.txt": "900e4a6883eb219587bb41c0d59bed7b2005701457e31ff2cc60aa927dd8148a",
+    "snapshot\\benchmark\\data\\raw\\behnke_med02_1.txt": "4f558c50ec62e52ce7228e63512a774a733afe882db2e98e7307d39e975fb55f",
+    "snapshot\\benchmark\\data\\raw\\behnke_med02_2.txt": "38c04a8729fc8eb35b6f3681a519297388ea6167932198d0db8dd0f9511d1b61",
+    "snapshot\\benchmark\\data\\raw\\behnke_med02_3.txt": "d1e9a5f22aa629c310a21e86f8f58b97f4f9ff664e27624bb19d71c25e856874",
+    "snapshot\\benchmark\\data\\raw\\behnke_med02_4.txt": "c2d08bcea7dd939cf8e8ccac4300f77d607938a5f0105c19089c92b18f2d9f84",
+    "snapshot\\benchmark\\data\\raw\\behnke_med02_5.txt": "fc1380c09a155a74601c282958776fe9b06fc32f25dee9bde5d95a5c47c41b0c",
+    "snapshot\\benchmark\\data\\raw\\behnke_med03_1.txt": "aa006ea6018b5715dc418959e22bfee1952e104320dd14848639c78620047ff2",
+    "snapshot\\benchmark\\data\\raw\\behnke_med03_2.txt": "18bae45144af2337117bfd083d4e13b1e5090305b69c3c8755f04421c8a03b66",
+    "snapshot\\benchmark\\data\\raw\\behnke_med03_3.txt": "dc9e26c262af7dc07126b5f6de14e30e307cd1be8e225ac7019a5c4bcad25599",
+    "snapshot\\benchmark\\data\\raw\\behnke_med03_4.txt": "857ecd03dfa7c8e37a08591b77de5d282220d660ad71ed14bac61b659ae12630",
+    "snapshot\\benchmark\\data\\raw\\behnke_med03_5.txt": "1bf50ebb35bd43f1f5521fe307feb67bc8c08c91c2680e1f6b28c79949c1dd4d",
+    "snapshot\\benchmark\\data\\raw\\behnke_med04_1.txt": "dca21b62fa368f3e76872a3ce483bee0b7daedc40158e6b9303a317cbea08728",
+    "snapshot\\benchmark\\data\\raw\\behnke_med04_2.txt": "2f6e0320e912a82c81ac91d245e11e1b7e855d190aeefad15cc7de2671c843ea",
+    "snapshot\\benchmark\\data\\raw\\behnke_med04_3.txt": "db8ea57a5334650ad2ce0f8a93b7e2a7673e2b42d13c5f1b391e55cf9d70c726",
+    "snapshot\\benchmark\\data\\raw\\behnke_med04_4.txt": "3582bcf30fe9e14ec63ad82348e9d94188697bbab313fe0d09e5f9043736a3b1",
+    "snapshot\\benchmark\\data\\raw\\behnke_med04_5.txt": "fd79bc265630c8023458744541436d742f971b1b6d399f2b72d6bddb3a82ff2c",
+    "snapshot\\benchmark\\data\\raw\\behnke_sm01_1.txt": "315da09215fc2b40bc0738de75a6a6652e4ab8f97819142a9d9721c9662a3c62",
+    "snapshot\\benchmark\\data\\raw\\behnke_sm01_2.txt": "78ca6376f7ec20d1e24800a8962cc132a2dfb3b7658710f3f72e7f27b000b6b3",
+    "snapshot\\benchmark\\data\\raw\\behnke_sm01_3.txt": "58a4a4f1000ff0061b3e71ed0702cb287fb949abf623e5fceaeca1e858ee81eb",
+    "snapshot\\benchmark\\data\\raw\\behnke_sm01_4.txt": "1892d82d15f08ce161e3ccbcf411cfe031cee52d3d7c9842fe1d432a23c544c7",
+    "snapshot\\benchmark\\data\\raw\\behnke_sm01_5.txt": "638cf8d7c147324404865cf8f2e78f6267e0021381171eccf2ad12adc613075a",
+    "snapshot\\benchmark\\data\\raw\\behnke_sm02_1.txt": "9b26e474910e7db71db93de24391070056f8898550bfd84cc2acb63078fe460f",
+    "snapshot\\benchmark\\data\\raw\\behnke_sm02_2.txt": "3e7b8213acec6e42883aa3fd0c0478bd2e78230439a6ef0ba2139c66aec68f6f",
+    "snapshot\\benchmark\\data\\raw\\behnke_sm02_3.txt": "ad9d3761ff67b45d57fdb253def3fcf01c3ea6d01d8d59ef8faf39e189972a11",
+    "snapshot\\benchmark\\data\\raw\\behnke_sm02_4.txt": "c67ba408d8b64ef37799dd4b99bc8e475aaa35310a765dfd24bc8502cd313afd",
+    "snapshot\\benchmark\\data\\raw\\behnke_sm02_5.txt": "ba970133bbe54f36d1df4b42fddddb92c9058a15521ae902640c3091293f80c1",
+    "snapshot\\benchmark\\data\\raw\\behnke_sm03_1.txt": "caf9639ef4173e6005eb6fa99f12c94231db506b8c748095d57250e0c6cf41fa",
+    "snapshot\\benchmark\\data\\raw\\behnke_sm03_2.txt": "806aefb7c02f947e6fcbb48483f397d19961eb6618354b34f024431c2087879b",
+    "snapshot\\benchmark\\data\\raw\\behnke_sm03_3.txt": "38267ee50607596bf2cc7eab3f4a5ae0fda39c2bb4a44b5b7e38886d93616495",
+    "snapshot\\benchmark\\data\\raw\\behnke_sm03_4.txt": "bbb328f3dc8a5d1575c68ae1aab0742556526902d3806237e06034d0407f1a1a",
+    "snapshot\\benchmark\\data\\raw\\behnke_sm03_5.txt": "3c6f253d554a207fc37ceab75062536230573dd9f613203d6b0058be056c03ac",
+    "snapshot\\benchmark\\data\\raw\\behnke_sm04_1.txt": "5cf7063cf8783165171225da8f698e748e82d3c96ebf1a57030910d0670819cb",
+    "snapshot\\benchmark\\data\\raw\\behnke_sm04_2.txt": "c00db6665c32655c48a7de411f9cec655bb36591c2bdc125ff062d9c30866c69",
+    "snapshot\\benchmark\\data\\raw\\behnke_sm04_3.txt": "112a11cb8b425df0b80137f7fb5f5edcd466209a4c8f285153373ccd194ee993",
+    "snapshot\\benchmark\\data\\raw\\behnke_sm04_4.txt": "a442b1628bf873fba8797a43bfaeb6da52031d178ead75760c47a2888ec64403",
+    "snapshot\\benchmark\\data\\raw\\behnke_sm04_5.txt": "a1db4334a882613ec1cb9b0be94bb9a8eccf8178de334bb60215ac16b121fd88",
+    "snapshot\\benchmark\\data\\raw\\flowshop_tai100_10.txt": "bb7552f69587aa525be3b38ccac4ae5be671cc627ce489d50e798b78a5d23112",
+    "snapshot\\benchmark\\data\\raw\\flowshop_tai100_20.txt": "dc39bad8860780957dc4a07dc7bf5d29c5394cf998cfc6f8e2aa312e5c0c1b5d",
+    "snapshot\\benchmark\\data\\raw\\flowshop_tai100_5.txt": "11ea6b3d87639e6d2bfe7d555fa5685f7217bfd49873971695b3d2f5a0175d0f",
+    "snapshot\\benchmark\\data\\raw\\flowshop_tai200_10.txt": "df35a32804c5df6e214fa63b1b53d0a4e2660dc68a763eefd76899184e4a4442",
+    "snapshot\\benchmark\\data\\raw\\flowshop_tai200_20.txt": "976b402e72fb952c0787ae365134af3bd28f555389bb48e543af847b2c9d47e5",
+    "snapshot\\benchmark\\data\\raw\\flowshop_tai20_10.txt": "e965c8619ff84c7d46eb9379669a57a3f20db1c58ac8ebc4921b3cca9eef36c9",
+    "snapshot\\benchmark\\data\\raw\\flowshop_tai20_20.txt": "4a61cafc0c4cd8e97ac59b931bedadf331fb417930ae51ad9be3670c01dcca82",
+    "snapshot\\benchmark\\data\\raw\\flowshop_tai20_5.txt": "642324e86cd08f95d4f9d8fbb90b108cb1465924aa610471db2e008024f3a000",
+    "snapshot\\benchmark\\data\\raw\\flowshop_tai500_20.txt": "cd2a2e9059cca0372dc7bb7c77bd2de6fabd39205bcc3b917473b90db9dfc320",
+    "snapshot\\benchmark\\data\\raw\\flowshop_tai50_10.txt": "d93626f6757c89d32b64d07da421cc70322217c5af2a7c5e3b840904d430f4ae",
+    "snapshot\\benchmark\\data\\raw\\flowshop_tai50_20.txt": "cc139745dece17a2538e74ad2eaed232cc97321293f6b121883a6e3c69c8f8ba",
+    "snapshot\\benchmark\\data\\raw\\flowshop_tai50_5.txt": "0df75c3b0c3a2b6305f11b69ca2f01df66cf917a28050645e4c439af539c7e81",
+    "snapshot\\benchmark\\data\\raw\\jobshop1.txt": "7f36d103332f94cfdeb76358e40927a57cfa7a426ebeaabd4de666350c69f028",
+    "snapshot\\benchmark\\data\\raw\\jobshop_tai100_20.txt": "ba7bb87127fef9d1620b7325b12d387c22b822f3f2665723d6321d4068f3bd8f",
+    "snapshot\\benchmark\\data\\raw\\jobshop_tai15_15.txt": "241af7228d73977a9a1d6dc49f8b2d354348634d73e30850e4d4a2b782a71a0d",
+    "snapshot\\benchmark\\data\\raw\\jobshop_tai20_15.txt": "584933fe2338becda3a7c0012b258ba07dfc87b556b09fc1d2284291f8ad9366",
+    "snapshot\\benchmark\\data\\raw\\jobshop_tai20_20.txt": "d7cb38afd41ac82609e254065f021bd58f0a1458ef11531d08a7e602fe4e25ea",
+    "snapshot\\benchmark\\data\\raw\\jobshop_tai30_15.txt": "dd4c5f06be5fe0c215d695e97b52c26a0a6f08f5a9a19d9486ed9ea8682c3f9f",
+    "snapshot\\benchmark\\data\\raw\\jobshop_tai30_20.txt": "fa6631f4411187bb1b43e4c444293227852860fa56f3ea6e14f48a294adbd3b9",
+    "snapshot\\benchmark\\data\\raw\\jobshop_tai50_15.txt": "53d63445f0977640f5f3f5db9a093c05fdbb433bbd02d347637910794920211b",
+    "snapshot\\benchmark\\data\\raw\\jobshop_tai50_20.txt": "9ca58b7562590802d58bec8494310a047afb370160ce692d4fd3a1d519ad512c",
+    "snapshot\\benchmark\\data\\raw\\mk01.txt": "449ada8093e03a84bf2255fa2a1673ccbc80cce7b82e855c5216533a330751ff",
+    "snapshot\\benchmark\\data\\raw\\mk02.txt": "866c83e42be3ec3a96c6c4123e355f0b45e16d54da19a1bb21cf100cf6121bf3",
+    "snapshot\\benchmark\\data\\raw\\mk03.txt": "0eb4b563ac5d635c0229769184ab8959f24cc78c725a1277a1e6a2d7bc7f4228",
+    "snapshot\\benchmark\\data\\raw\\mk04.txt": "8b44291b94e6244fd8283dce4dbf7a4dbbd2b9950aa2a9d198f660e4d1131705",
+    "snapshot\\benchmark\\data\\raw\\mk05.txt": "e2cf5573f4a9fcec4140e1f90b719787fdf2f78c9c5dc14b3b9bd7d970c7cf90",
+    "snapshot\\benchmark\\data\\raw\\mk06.txt": "3630268312e16f17209d5122b50a332d2804dde237b3c882e6a8faff958f1945",
+    "snapshot\\benchmark\\data\\raw\\mk07.txt": "88e317e0adc1ff9dc9553bae3687eb09de931973bce6d2257f722185c2fd11de",
+    "snapshot\\benchmark\\data\\raw\\mk08.txt": "8672e4efda1195ae6aafd265e767d0561e5ea7a6c9dd04093d697dff07a54e0b",
+    "snapshot\\benchmark\\data\\raw\\mk09.txt": "ce0de54601d0ede7004b5bbb84974652773b051b9b6d1db1b6e6a31aad0d8876",
+    "snapshot\\benchmark\\data\\raw\\mk10.txt": "9602d49ab54bb8167723c364fcf88e81dfaaa602a01e823b166b3bc749092c9b",
+    "snapshot\\benchmark\\data\\raw\\mk11.txt": "775c9233cfd1437d7df4d16a24e872d6aa7d6cca8aa3c6cc75a72b275bd9326c",
+    "snapshot\\benchmark\\data\\raw\\mk12.txt": "c8166b9dfafe2abca16bc89824c8b5ec71c537cba3cf4237906ea6dff644199a",
+    "snapshot\\benchmark\\data\\raw\\mk13.txt": "5305370f07769b00ba1caa988e4ad9306ea17a9694c3c2bced94b9eb33c6d944",
+    "snapshot\\benchmark\\data\\raw\\mk14.txt": "28c5acb5dbd8694b54697263c121255274201a75d0db52ed208bb5eca9822b54",
+    "snapshot\\benchmark\\data\\raw\\mk15.txt": "37023ab955bf9872e04357a4dd0ae4a5556011dd9ea22c952eed738a06d911e9",
+    "snapshot\\benchmark\\native\\main.rs": "41f7778a5ac0ea8d368e76c4d88ff5e7372869d52087a8ac3d61d724217dd537",
+    "snapshot\\benchmark\\target\\release\\apex-benchmark.exe": "ca8bdfc7833aea81c1bf3ee9f034149f457a886ff164f90d4244227a571af2f9",
+    "snapshot\\customizations\\dummy_customer\\policy.rs": "22f87d26c37ac187a855bfee6fef22d05ee59f7b27388e0cfdeae646d028afa8",
+    "snapshot\\src\\rust\\activities.rs": "ecf22355462c1bbac0286daa7dc216c4642008efaa4bdf741ad82086a7a74ae1",
+    "snapshot\\src\\rust\\calendar.rs": "be3383497ad13c7eb0b0a910b96d084ac38b244a2b1357fd1cee83b7ffbd0139",
+    "snapshot\\src\\rust\\compile.rs": "ef6938b1389b7ffc4f84ff908f860d459bf8f578f9fe5b118d751ab0ac0bf19f",
+    "snapshot\\src\\rust\\conditionals.rs": "aa915605cb08fd82a4f2358d4dbadb066963f81d9c4984bee34ce35a0ea1b993",
+    "snapshot\\src\\rust\\demo.rs": "700c437b0da478a6ecf1f534f6ce48b6d345d548680c55f343de2b38d69c49ae",
+    "snapshot\\src\\rust\\dispatch.rs": "aa114243594f9a3d9c846bc01114dfef5635b0f596259475440c7a5240b6319b",
+    "snapshot\\src\\rust\\domain.rs": "766c1e2de623715400be9fab555bf6c3e1a0d9f3cf3184e6350b9887eb0efa33",
+    "snapshot\\src\\rust\\engine.rs": "bda8110186f1b804fd5ba05d774fb6a19b5ffd1d86286d1575af0d9fd54b193e",
+    "snapshot\\src\\rust\\evolution.rs": "6d002454abf92c453d0945b4f8402a8fffff7b3e4455b03a4a2eb4665f3f2a80",
+    "snapshot\\src\\rust\\extensions.rs": "09d1e5a579b56539dbd2934304fd8a7dc800ccefce0b0a3819804f83dc6287a0",
+    "snapshot\\src\\rust\\improve.rs": "c19db57387c60d68a9b7e784ecfe4da6388adbbe4d3760a340e9fd93d7bd57a4",
+    "snapshot\\src\\rust\\language.rs": "d9f54302fd77318e2b47af40a1923cd977f66de02a7fc34df2ada0eb5049ddd3",
+    "snapshot\\src\\rust\\lib.rs": "49fc023b14c948ad366790dcd7a09816c3fba16f68c3b8fff3945fabbd5fd3f7",
+    "snapshot\\src\\rust\\main.rs": "8c28ab7e1ad11bfd557b5b0d0330431f3997b1e725be00efec2b5046f1a0bea6",
+    "snapshot\\src\\rust\\material.rs": "04e63131337abef78b9711525acb4166bd19363a9723f52f6d9301d3570a6a4a",
+    "snapshot\\src\\rust\\metrics.rs": "fc11d4ff81e460644a3d4fb7f513e50f552e2b1a525190bbfdbb9b9c43a919a7",
+    "snapshot\\src\\rust\\model.rs": "7f1593e8bbdeb2b5b87804279564e5cab920a2a943fe2ded0f1a8ed7c22c5163",
+    "snapshot\\src\\rust\\placement.rs": "592c0bfd73c4841bed51356e4576996248e0902059e955858026a11a7ec3251d",
+    "snapshot\\src\\rust\\policy.rs": "1e87fd6d2c0b2da05dcd17c231128d597f1e23c88d5b952906ed8f644ed4fabe",
+    "snapshot\\src\\rust\\production.rs": "5e613387b8ba67c10b8fabffadd91f64ff81224fab5f3e60e10c40b68d4a03d1",
+    "snapshot\\src\\rust\\queues.rs": "f6a1a5599267b080a736a7179b54b5fb077041df9d883872e31855eb9b92bbf8",
+    "snapshot\\src\\rust\\rules.rs": "23e77538f6a751b12af0923f57099e0c334c4c7bced5b0f97e251e39c163f853",
+    "snapshot\\src\\rust\\search.rs": "4033b41415c15087b3b9b74feaf61f53fb49debe93aa7d107521158e1703c295",
+    "snapshot\\src\\rust\\service.rs": "e2f048ab83a85e7f03807a411d33e618772fac9d40e3afcc86ffb9bd57931dfb",
+    "snapshot\\src\\rust\\transport.rs": "677dc9cc2366fa264129e26863c53b0457150216bedce5b068b259e8861e3dc8",
+    "snapshot\\src\\rust\\urgency.rs": "0c29bf8b0bf71733f09218053a715137b6bc02d4a001aa653e0cee4164ab9ad3",
+    "snapshot\\src\\rust\\validate.rs": "d67c468f78802827bc744a71aca4806554d3ae5002f48c5bb8e5f9c44aa2eda4",
+    "instances.json": "c933892887bec722fd021afb57e7f208c400893656da9477bc64172e694ad45b",
+    "selection.json": "ab01c08b6ebc51821fb7d26d252d39c0da3e9924e4a440a75a0017132023b2f9",
+    "protocol.json": "e1f7286f2579964e7d1745e2455b26073e1790c798fc19702830b7012671d9d6",
+    "paper-specification.json": "01fbdd44f6aa0aa031ed967fe282f46539125973f7f89e3f35197841b2e96856"
+  },
+  "artifact_paths": [
+    "runs",
+    "results.json",
+    "report.md",
+    "integrity-check.json",
+    "selection.json",
+    "status.json"
+  ],
+  "validator_paths": [
+    "snapshot/benchmark/scaling_report.py",
+    "snapshot/benchmark/scheduling.py"
+  ]
+}

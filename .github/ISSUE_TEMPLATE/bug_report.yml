@@ -1,0 +1,50 @@
+name: Bug report
+description: Report a reproducible problem using synthetic data.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please search existing issues first. Report security vulnerabilities privately through [Security](https://github.com/qunevo/apex/security/advisories/new).
+        Do not upload customer exports, production plans, credentials, private endpoints or local runtime stores.
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      description: Include the APEX version and, when available, the Git commit.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating system, architecture and relevant Rust, Node or MCP client versions.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps and synthetic reproduction
+      description: Include the smallest synthetic input and exact commands or tool calls needed to reproduce the issue.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include relevant errors or validation results after removing sensitive information.
+    validations:
+      required: true
+  - type: checkboxes
+    id: data
+    attributes:
+      label: Publication check
+      options:
+        - label: The reproduction is deliberately synthetic and the report contains no private data or credentials.
+          required: true
