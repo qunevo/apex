@@ -139,7 +139,7 @@ target/release/apex schema --model production --out schemas/production.v3.4.json
 target/release/apex schema --model options --out schemas/options.v3.4.json
 ```
 
-Use `target/release/apex.exe` on Windows. Keep older schema files for supported input compatibility. Rebuild before MCP/browser verification; follow the [operating guide](../implementation.md) for relevant smoke commands. Generated reports and `.apex` artifacts stay local. Documentation-only edits need link, example and source-reference checks rather than scheduler benchmarks.
+Use `target/release/apex.exe` on Windows. Keep only the current generated schema snapshots in `schemas/`; older input compatibility is a Rust runtime contract and does not require historical JSON schema files. Rebuild before MCP/browser verification; follow the [operating guide](../implementation.md) for relevant smoke commands. Generated reports and `.apex` artifacts stay local. Documentation-only edits need link, example and source-reference checks rather than scheduler benchmarks.
 
 ## Current limits
 

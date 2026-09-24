@@ -19,7 +19,7 @@ This index describes the runnable Rust implementation, version **0.6.0**, with e
 
 ## Schemas and examples
 
-The generated schemas cover the [canonical problem](../schemas/apex.v3.4.json), [production templates](../schemas/production.v3.4.json) and [planning options](../schemas/options.v3.4.json). Earlier schema files remain for supported input compatibility.
+The current generated schemas cover the [canonical problem](../schemas/apex.v3.4.json), [production templates](../schemas/production.v3.4.json) and [planning options](../schemas/options.v3.4.json). Only these current snapshots are kept in the repository. The CLI and `schema.get` generate schemas from Rust types; acceptance of older canonical inputs is enforced by the runtime and does not depend on historical schema files.
 
 | Synthetic example | Focus |
 | --- | --- |
