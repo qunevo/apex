@@ -34,11 +34,14 @@ The current generated schemas cover the [canonical problem](../schemas/apex.v3.4
 
 [Current architecture](architecture/README.md) maps modules, the shared evaluation flow, service state and customization boundaries. Start there before changing implementation; its change map links responsibilities to tests.
 
+Read the [contribution guide](../CONTRIBUTING.md) for setup, review and contribution rights. [Repository maintenance](repository-maintenance.md) describes CI, dependency updates, GitHub protections and the release process. Use the [support guide](../SUPPORT.md) for questions and the [security policy](../SECURITY.md) for private vulnerability reports.
+
 ## Evidence and release
 
 - [Migration audit](migration-audit.md) consolidates v2 comparison evidence, implemented coverage and remaining boundaries.
-- [Benchmark guide](../benchmark/README.md) and [experiment plan](benchmark-experiment-plan.md) cover the separate benchmark workstream.
+- Benchmark material remains a separate local workstream and is excluded from this source distribution; see [publication preparation](publication.md).
 - [Licensing documents](legal/README.md) explain the canonical public license, pricing and eligibility.
 - [Publication preparation](publication.md) lists release checks.
+- [Wiki publication](wiki-publication.md) explains how reviewed documentation is published automatically.
 
 The [data-model reference](data-model.md) covers the current format and accepted canonical input versions. The removed v2 source and execution harnesses cannot be run from this checkout; see [migration audit](migration-audit.md).

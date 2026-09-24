@@ -74,7 +74,7 @@ There are 32 agent tools, including `schedule.evolve`. Rebuild and restart the l
 
 This profile changes only XE. Leaving `population_size` null preserves existing callers that configure the population through Trainer. These settings are configurable experiment choices, not universally optimal parameters.
 
-The 90-run MS/job-flowtime follow-up at 1,000 evaluations found lower mean hypervolume deficits with population 16 than 64 in each of JSP, FJSP and PFSP. Consequently the compatibility default remains unchanged. Population 64 is an experimental option for other budgets, not the recommended default from this pilot. Reproduction and local result paths are in [the benchmark guide](../benchmark/README.md).
+The 90-run MS/job-flowtime follow-up at 1,000 evaluations found lower mean hypervolume deficits with population 16 than 64 in each of JSP, FJSP and PFSP. Consequently the compatibility default remains unchanged. Population 64 is an experimental option for other budgets, not the recommended default from this pilot. The reproduction guide and local results belong to the separate benchmark workstream and are not included in this source distribution.
 
 ```json
 {

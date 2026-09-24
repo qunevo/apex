@@ -1,0 +1,77 @@
+name: Wiki
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Wiki validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.14'
+      - name: Test exporter and validate documentation
+        run: |
+          python -m unittest discover -s tests -p 'test_wiki.py' -v
+          python scripts/build_wiki.py
+
+  publish:
+    name: Publish wiki
+    needs: validate
+    if: >-
+      github.repository == 'qunevo/apex' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    concurrency:
+      group: apex-wiki-publication
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # A queued older run must not replace newer documentation.
+          ref: main
+          path: source
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.14'
+      - name: Validate the current main revision
+        working-directory: source
+        run: |
+          python -m unittest discover -s tests -p 'test_wiki.py' -v
+          python scripts/build_wiki.py
+      - name: Check out the initialized wiki
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: qunevo/apex.wiki
+          path: wiki
+      - name: Publish public documentation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python source/scripts/build_wiki.py --output wiki
+          git -C wiki config user.name 'github-actions[bot]'
+          git -C wiki config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git -C wiki add -- '*.md' .apex-wiki-pages.json
+          if git -C wiki diff --cached --quiet; then
+            echo 'Wiki already matches the source revision.'
+            exit 0
+          fi
+          revision="$(git -C source rev-parse HEAD)"
+          git -C wiki commit -m "docs: publish wiki from ${revision}"
+          git -C wiki push

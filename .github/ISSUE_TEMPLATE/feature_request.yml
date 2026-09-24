@@ -1,0 +1,33 @@
+name: Feature request
+description: Describe a planning need or a concrete improvement.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For usage questions or early ideas, start a [Discussion](https://github.com/qunevo/apex/discussions).
+        Keep examples synthetic. Submitting a request does not create a support or delivery commitment.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: Describe the user need and why the current behavior is insufficient.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Include a synthetic example and what would count as a successful result.
+    validations:
+      required: true
+  - type: textarea
+    id: semantics
+    attributes:
+      label: Scheduling semantics, if applicable
+      description: Is this a hard feasibility rule, an objective, a ranking preference or a domain-specific adapter? Include a counterexample if possible.
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe workarounds, existing typed rules or customization options you have considered.
