@@ -14,7 +14,9 @@ The `Protect main` ruleset targets the default branch, currently `main`. It requ
 
 The merge gate is the GitHub Actions check **Required checks**, with GitHub Actions selected as its source and branches required to be up to date before merging. This check aggregates the Rust matrix, integration tests and publication scan and fails if any prerequisite fails, is cancelled or is skipped. When restoring these settings on a fork, run the workflow successfully before selecting the required check. Do not bypass review or temporarily disable protections to land repository setup changes.
 
-CI runs on every pull request and on pushes to `main`, including documentation-only changes, so a required check is never left waiting because of a path filter. Workflows use read-only repository permissions, do not retain checkout credentials and use Actions pinned to full commit hashes. Fork workflows require approval for all external contributors. Review the proposed workflow and scripts before approving a run; execution approval is not code review.
+CI runs on every pull request and on pushes to `main`, including documentation-only changes, so a required check is never left waiting because of a path filter. Validation jobs use read-only repository permissions and do not retain checkout credentials. Actions are pinned to full commit hashes. Fork workflows require approval for all external contributors. Review the proposed workflow and scripts before approving a run; execution approval is not code review.
+
+The publication check includes the wiki export tests and local documentation-link validation. The separate [wiki publication workflow](wiki-publication.md) publishes the explicit public-page allowlist after changes reach `main`. Only its publication job receives `contents: write` and retains ephemeral checkout authentication for the wiki push; pull requests cannot run that job. The built-in Actions token is used without an AI service or a reusable personal credential.
 
 ## Automated checks
 
@@ -29,7 +31,7 @@ Dependabot checks Cargo, npm test dependencies and GitHub Actions weekly. Minor 
 ## GitHub settings to maintain
 
 - Enable private vulnerability reporting, dependency alerts, Dependabot security updates, secret scanning and push protection.
-- Keep workflow tokens read-only and prevent workflows from approving pull requests.
+- Keep default workflow tokens read-only and prevent workflows from approving pull requests. The wiki publication job declares its narrowly scoped write exception in reviewed workflow code.
 - Require full commit hashes for actions and restrict permitted external actions to GitHub-owned actions used by the workflow. Review the policy deliberately if a new third-party action is proposed.
 - Keep organization base repository permissions at Read; grant additional access only when a specific maintainer role needs it. Periodically review owners, teams, installed apps and deploy keys. Use two-factor authentication on maintainer accounts.
 - Delete merged topic branches automatically. Keep Issues and Discussions available for the documented support channels.

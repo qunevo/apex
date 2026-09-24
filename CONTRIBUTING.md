@@ -46,6 +46,6 @@ These commands check formatting, run Clippy with warnings denied, run Rust tests
 
 Describe the problem, resulting behavior, relevant tests and any limits. Link related issues and include synthetic reproduction steps when helpful. Documentation-only changes need link and factual checks; they do not need new scheduler tests.
 
-CI checks formatting, linting, Rust tests/builds on Linux, Windows and macOS, MCP/HTTP/viewer integration on Linux, and the source publication scan. Keep checks passing and resolve review conversations. External fork workflows require maintainer approval before they run; approval to run CI is separate from approval to merge.
+CI checks formatting, linting, Rust tests/builds on Linux, Windows and macOS, MCP/HTTP/viewer integration on Linux, wiki export and documentation links, and the source publication scan. Keep checks passing and resolve review conversations. External fork workflows require maintainer approval before they run; approval to run CI is separate from approval to merge.
 
 The default branch requires a pull request and an approving review from someone other than the author and most recent pusher. New reviewable commits dismiss earlier approvals. Administrators have no bypass entry. Maintainers also verify contribution rights and release scope before merging. See [repository maintenance](docs/repository-maintenance.md) for the configured checks and release process.
