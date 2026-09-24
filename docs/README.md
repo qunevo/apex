@@ -42,5 +42,6 @@ Read the [contribution guide](../CONTRIBUTING.md) for setup, review and contribu
 - Benchmark material remains a separate local workstream and is excluded from this source distribution; see [publication preparation](publication.md).
 - [Licensing documents](legal/README.md) explain the canonical public license, pricing and eligibility.
 - [Publication preparation](publication.md) lists release checks.
+- [Wiki publication](wiki-publication.md) explains how reviewed documentation is published automatically.
 
 The [data-model reference](data-model.md) covers the current format and accepted canonical input versions. The removed v2 source and execution harnesses cannot be run from this checkout; see [migration audit](migration-audit.md).
