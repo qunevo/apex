@@ -29,6 +29,7 @@ Start with the [documentation index](docs/README.md). The main references are:
 - [Material preparation](docs/material-dispatch.md), [search](docs/search-and-parity.md) and [direct evolution](docs/direct-schedule-evolution.md): current behavior and boundaries.
 - [Architecture](docs/architecture/README.md): current modules, evaluation flow, state boundaries and change map for coding agents.
 - [Migration audit](docs/migration-audit.md): v2 comparison, implemented coverage and remaining migration boundaries.
+- [Benchmark of 24 September 2026](benchmark/README.md): frozen sources, scientific instances, results and standalone reproduction instructions in one ZIP.
 
 Runnable synthetic inputs include [production orders](examples/production-orders.json), [shift and material constraints](examples/shift-factory.json), [material chains](examples/chain-routing.json) and [dispatch policies](examples/dispatch-campaign.json). The [customization knowledge bundle](customizations/dummy_customer/KNOWLEDGE.md) describes the extension workflow.
 

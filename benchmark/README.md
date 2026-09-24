@@ -1,148 +1,108 @@
-# APEX benchmark: reproduction code and current results
+# APEX benchmark — 24 September 2026
 
-This directory contains the reproduction code and current numerical-core
-results. No experiment starts automatically. Historical runs, smoke tests,
-temporary requests, environments and build caches are archived outside the
-publication tree.
+[Download the complete reproduction ZIP](apex-benchmark-2026-09-24.zip).
+This is a frozen benchmark of the algorithm dated **24 September 2026**, application commit
+[`9bc9dbf`](https://github.com/qunevo/apex/commit/9bc9dbfe9f9d169b1ea1abf1894004384c9be7d7).
+APEX development continues to improve quality, performance and modeling coverage.
+These results describe the recorded baseline and must not be attributed to a later checkout.
+The measured source and harness inside the ZIP, verified by the original manifests, are authoritative.
 
-The complete `benchmark` directory can be copied out of the repository and
-used on its own. It includes the selected instances, all original dataset files,
-the selection ledger, a ZIP of the measured algorithm, analysis code and current results.
-Python/Rust and the pinned dependencies must be installed; no dataset downloads
-or sibling APEX/paper checkout are required for the supported reproduction path.
+The ZIP contains all 3,378 original publication files byte-for-byte, plus a third-party dataset notice:
+algorithm sources, build assets, dependency locks, input data, all raw runs, schedules,
+analysis scripts, tables, figures and provenance. No sibling repository or dataset download is needed.
+Python/Rust and their pinned dependencies must be installed separately.
 
-**Algorithm baseline:** 24 September 2026, application commit
-[9bc9dbf](https://github.com/qunevo/apex/commit/9bc9dbfe9f9d169b1ea1abf1894004384c9be7d7).
-The run's hashed source snapshot is authoritative; later application code must
-not be substituted. See [baseline scope](ALGORITHM_BASELINE.md).
+Size: **87.68 MiB** (91,935,272 bytes); about 1.16 GB after extraction.
 
-## Results and figures
+Archive SHA-256: `a7299c71ac7e523715ae179d0c4078ff6e30cb0f36b3e317b1ae3d4bae27b8d1`
 
-| Artifact | Contents |
-|---|---|
-| [Instance data](data/README.md) | 88 selected instances, all 280 selection decisions and 96 original source files, included in Git |
-| [Algorithm source ZIP](algorithm-9bc9dbf.zip) | The measured source, original harness and required build assets; extracted only outside the repository |
-| [Result views](results/scaling-20260924-current-parallel/views-v1/README.md) | Raw, class and overall CSV/JSON tables and Excel; additional size, family, cohort, completion and seed views |
-| [Figure guide](FIGURES.md) | Recommended paper figures, input tables and statistical definitions |
-| [Prepared figure data](results/scaling-20260924-current-parallel/figures-v1/manifest.json) | Boxplot statistics, variance, ECDFs, paired differences, scaling, archives and convergence |
-| [Figure candidates](results/scaling-20260924-current-parallel/figures-v1/plots/) | Seven figures in vector PDF/SVG and preview PNG formats |
-| [Full raw evidence](results/scaling-20260924-current-parallel/runs/) | All 3,168 original run JSONs, including failures, traces and schedules |
-| [Selection](results/scaling-20260924-current-parallel/selection.json) | All 280 inclusion decisions, source URLs and hashes |
-| [Original manifest](results/scaling-20260924-current-parallel/manifest.json) | Settings, environment, fingerprints and original method IDs |
-| [Publication inventory](publication_manifest.json) | SHA-256 inventory, explicitly archived executable and supplemental build-resource records |
-| [Validation](publication_validation.json) | File integrity, complete run matrix and independent schedule audit |
+## Scientific scope
 
-The large raw-evidence directory contains current results, not temporary files.
-Every original run record remains byte-for-byte unchanged.
-The local `.gitattributes` disables line-ending conversion so Git checkout
-preserves all recorded SHA-256 fingerprints on Windows and other platforms.
+The experiment uses **88 public research instances**: 21 job-shop (JSP), 39 flexible
+job-shop (FJSP) and 28 permutation flow-shop (PFSP) cases. Sources are
+[OR-Library](https://people.brunel.ac.uk/~mastjjb/jeb/orlib/jobshopinfo.html),
+[Taillard's instance collection](https://mistic.iict-heig-vd.ch/taillard/problemes.dir/ordonnancement.dir/ordonnancement.html)
+and the [SchedulingLab distributions](https://github.com/SchedulingLab/fjsp-instances)
+of Brandimarte and Behnke–Geiger. The package preserves 96 original source files,
+URLs, SHA-256 fingerprints and all 280 candidate selection decisions.
+These instances assume zero job releases, nonpreemptive processing, unit-capacity
+machines and no due dates; they do not exercise APEX's full production model.
 
-## Experiment and interpretation
+Eight APEX methods/combinations are compared with pymoo 0.6.2 NSGA-II, SPEA2,
+MOEA/D and SMS-EMOA. The protocol uses seeds 19, 42 and 73, at most 1,000 candidate
+evaluations per search (one construction for FastPlanner), eight concurrent
+processes, one algorithm worker each and a 240-second process watchdog. Objectives
+are makespan and total job flowtime. There are no LLM calls.
 
-There are 88 instances: JSP 21, FJSP 39, PFSP 28. All 15 pilot cases were
-freshly rerun. The sample includes all 15 distributed Brandimarte instances
-and two SHA-256-ranked identifiers per declared Taillard and Behnke-Geiger
-size block. Historical measurements are not mixed into this experiment.
-This is descriptive stress-test evidence following development work, not
-independent confirmation or a state-of-the-art claim.
+The 3,168 recorded runs comprise **2,906 valid completions and 262 timeouts**;
+independent validation audits 10,522 exported schedules. Quality summaries use
+seed medians on the 69 instances completed by every method and seed; coverage
+reports retain all 88. Different decoders, host contention and this completion
+filter matter when interpreting comparisons. This is descriptive evidence,
+not an optimality proof, an equal-wall-time comparison or an independent
+state-of-the-art assessment. Gaps are relative to observed best values, not proven optima.
 
-Methods: **XG** FastPlanner, **XH** Trainer, **XT** tree search, **XE** GA;
-sequential combinations **XHT**, **XHE**, **XTE**, **XHTE**. Original IDs remain
-in raw files, with the public-name mapping in method_names.json. Baselines
-are pymoo 0.6.2 NSGA-II, SPEA2, MOEA/D and SMS-EMOA with recorded discrete
-adapters. External JSP/FJSP decoding uses earliest feasible machine-gap
-insertion; PFSP uses a common permutation. APEX uses its validated constructor.
-Complete implementations, including different decoder costs, are compared.
+## Extract and reproduce
 
-Searches receive at most 1,000 candidate evaluations; XG makes one construction.
-Pairs split the budget equally, the triple into thirds. Unused evaluations carry
-forward; hybrids hand over one validated incumbent. Internal and external
-population settings retain the recorded defaults, without new tuning.
-Seeds are 19, 42 and 73. Eight concurrent local processes use one algorithm
-worker each and a common 240-second process watchdog. There are no LLM calls.
-Exact operators, phase settings and counters remain in raw JSON and frozen code.
+The original environment was Windows, Python 3.11.9, rustc 1.98.1 and an Intel
+Core Ultra 9 275HX (24 logical CPUs). Exact package versions and the host record
+are included. Use a fresh external directory and a Python 3.11 environment.
+From the repository root, in Bash or Git Bash:
 
-The matrix has 2,906 valid completions and 262 timeouts. Quality summaries take
-each instance's seed median, then average equally over the 69 instances valid
-for every method and seed. Coverage retains all 88 instances. The successful
-subset alone does not establish an overall reliability-adjusted winner.
-Equal-class weighting is a supplementary post-result view.
-
-Objectives are makespan (MS) and total job flowtime (FT). Hypervolume uses
-(MS/S, FT/(n*S)), reference (1.1, 1.1), where S sums maximum eligible operation
-durations and n counts jobs. Gaps refer to the best observed instance value,
-not an optimum. Minimum MS and FT may describe different schedules.
-Internal runtime includes construction, search, observation and online
-validation; it excludes imports, input parsing, final export and post-run audit.
-The watchdog includes process overhead. Host contention remains part of the
-measurements: this is not an equal-wall-time or isolated-speed comparison.
-
-## Reproduce analysis without executing an optimiser
-
-The original environment used Python 3.11.9 and rustc 1.98.1 on Windows.
-Dependencies are pinned in requirements-lock.txt and the frozen Cargo locks.
-Create a Python environment outside this directory, install the pinned
-requirements and activate it. Run every command below from this `benchmark`
-directory, including when it is a standalone copy:
-
-```sh
+```bash
+python -m zipfile -e benchmark/apex-benchmark-2026-09-24.zip ../apex-benchmark-reproduction
+cd ../apex-benchmark-reproduction/apex-benchmark-2026-09-24
+python -m venv ../venv
+if [ -f ../venv/bin/activate ]; then
+  source ../venv/bin/activate
+else
+  source ../venv/Scripts/activate
+fi
 python -m pip install -r requirements-lock.txt
 python -B publication.py validate
 python -B reproduce.py --check
-python -B export_views.py results/scaling-20260924-current-parallel /path/to/new-views
-python -B prepare_figure_data.py results/scaling-20260924-current-parallel /path/to/new-figure-data
-python -B plot_figures.py /path/to/new-figure-data
-python -B -m pytest test_export_views.py test_figure_data.py test_publication.py -q -p no:cacheprovider
 ```
 
-The validator checks every retained frozen source/input fingerprint, all raw
-run fingerprints, the complete matrix and exported schedules/objectives.
-It does not require the original Windows executable and never invokes a solver.
-The original integrity report and completion-recovery record remain unchanged.
+These checks verify the recorded files, run matrix, objectives and schedules without
+running an optimizer. Expect 3,168 records and 10,522 audited schedules.
+To regenerate analysis into new output directories:
 
-CSV/JSON and vector figures are the portable outputs. The optional Excel
-renderer uses @oai/artifact-tool and consumes views.json; the existing workbook
-was independently checked cell-by-cell against that JSON.
-
-## Explicitly rerun the frozen experiment
-
-Preparation and execution are separate. Use a new directory outside this tree.
-Preparation builds the recorded algorithm; only execution starts experiments:
-
-```sh
-python -B reproduce.py --prepare /path/to/new-reproduction
-python -B reproduce.py --execute /path/to/new-reproduction
+```bash
+python -B export_views.py results/scaling-20260924-current-parallel ../new-views
+python -B prepare_figure_data.py results/scaling-20260924-current-parallel ../new-figure-data
+python -B plot_figures.py ../new-figure-data
 ```
 
-Preparation extracts `algorithm-9bc9dbf.zip` into the new external directory
-and copies exact inputs. The archive contains the algorithm actually measured
-at the documented baseline, not a later development version. No legacy source
-tree is kept unpacked in this repository. Two compile-time resources for unused
-service/UI modules were missing from the original source snapshot. Copies from
-the documented baseline commit are identified in `reproduction-assets/manifest.json`
-inside the ZIP.
-No frozen scheduling module is changed. The original host executable is archived;
-its original hash is retained. A rebuilt binary receives its own run manifest.
+For a **new solver experiment**, install Rust and its native linker, then explicitly run:
 
-Use `reproduce.py` for the published experiment. The top-level `run.py` and
-`instances.py` retain historical pilot helpers; they are not the entry point for
-this 88-instance campaign. The ZIP used by `reproduce.py` includes the complete
-measured Rust core and does not depend on `../src/rust`.
+```bash
+python -B reproduce.py --prepare ../new-experiment
+python -B reproduce.py --execute ../new-experiment
+```
 
-The original worker/coordinator is retained. The original campaign recovered
-from a Windows status-file replacement failure after queued runs had finished;
-see completion-recovery.json. If that condition recurs in a future run, inspect
-the complete raw matrix and use that run's frozen scaling_report.py with
---validate to regenerate only its report. Never call a partial run complete.
-No monitoring agent or recurring subscription is installed.
+Preparation rebuilds the frozen source, including its recorded supplemental build assets.
+Only `--execute` starts the 3,168-run campaign. Preserve the published evidence and compare
+new results separately; timings and timeout counts can change with the execution environment.
+Dependency installation/build may need network access. CSV/JSON and figures are portable;
+the optional Excel renderer uses an additional tool described in the included guide.
 
-## Provenance
+## Read and cite the evidence
 
-JSP sources include OR-Library Fisher-Thompson, Lawrence and Adams-Balas-Zawack,
-plus Taillard's author-hosted JSP files. PFSP uses Taillard's author-hosted data.
-FJSP uses SchedulingLab distributions of Brandimarte and Behnke-Geiger.
-Selection metadata contains URLs and hashes; original bytes are retained.
-Cite datasets and algorithms when using their results. The APEX source grant is
-the included [LICENSE](LICENSE), copied unchanged from the repository root;
-no different license is granted here to third-party data
-or dependencies.
+After extraction, start with `README.md` for the full protocol and `FIGURES.md` for
+metric definitions and figure interpretation. `data/README.md` explains selection;
+`results/scaling-20260924-current-parallel/` holds the original manifest, recovery record,
+raw runs, reports and derived views. `publication_manifest.json` inventories the original
+files; the ZIP checksum above also covers the supplemental `THIRD_PARTY_NOTICES.md`.
+
+When citing this package, record **APEX benchmark, 24 September 2026**, the full
+algorithm commit `9bc9dbfe9f9d169b1ea1abf1894004384c9be7d7`, experiment ID
+`scaling-20260924-current-parallel`, archive checksum and repository revision used.
+Also cite the underlying datasets and comparison methods, including:
+
+- Taillard (1993), *Benchmarks for basic scheduling problems*, EJOR 64(2), 278–285; see the author-hosted collection above.
+- Brandimarte (1993), [original FJSP paper](https://doi.org/10.1007/BF02023073).
+- Behnke and Geiger (2012), [instance research report](https://openhsu.ub.hsu-hh.de/entities/publication/436).
+- Blank and Deb (2020), [pymoo: Multi-Objective Optimization in Python](https://doi.org/10.1109/ACCESS.2020.2990567).
+
+The included `LICENSE` governs APEX source and execution. Third-party datasets and
+dependencies retain their own terms; the package does not relicense them.
