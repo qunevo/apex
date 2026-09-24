@@ -32,6 +32,12 @@ Runnable synthetic inputs include [production orders](examples/production-orders
 
 The executable schema is `apex.v3.4`; canonical `apex.v3.1`, `apex.v3.2` and `apex.v3.3` inputs remain accepted by the same Rust runtime. Rust is the sole scheduling implementation; the [migration audit](docs/migration-audit.md) records the v2 source removal and historical comparisons. Tested coverage does not establish complete legacy parity, optimality or production readiness. Repository documentation and examples use English, and all fixtures are deliberately synthetic.
 
+## Contributing and support
+
+Read the [contribution guide](CONTRIBUTING.md) before starting a change. Use [Discussions](https://github.com/qunevo/apex/discussions) for questions and [issue forms](https://github.com/qunevo/apex/issues/new/choose) for reproducible bugs and feature requests. Keep all shared examples deliberately synthetic.
+
+The [support guide](SUPPORT.md), [Code of Conduct](CODE_OF_CONDUCT.md), [security policy](SECURITY.md) and [repository maintenance guide](docs/repository-maintenance.md) describe the community channels and review process. Report vulnerabilities privately. Upstream contribution rights require a separate agreement; posting a pull request does not accept one.
+
 ## License
 
 APEX is distributed under the [APEX Source Available License 1.1](LICENSE). The root license contains the complete public grant, eligibility and pricing rules. It is source available, not OSI-approved open source.
