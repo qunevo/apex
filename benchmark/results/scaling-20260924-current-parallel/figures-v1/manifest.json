@@ -1,0 +1,95 @@
+{
+  "export_id": "figures-v1",
+  "source_run": "scaling-20260924-current-parallel",
+  "evidence_role": "Post-result descriptive figure preparation",
+  "source_hashes": {
+    "manifest.json": "fc9cf7b97ef927d2432df0a47942df524c8c760c3a155cb55ae6b64d3d6a1023",
+    "results.json": "a86d4e37cda896f150881388c23a34386a77f1230abfc340fb42a663274ef07d",
+    "instances.json": "c933892887bec722fd021afb57e7f208c400893656da9477bc64172e694ad45b",
+    "views-v1/views.json": "2fe30ca4e481cf493378d3e4f52d004f10fa2b6af76ebe9fed96a6d6996c38f9"
+  },
+  "code_sha256": "fab3f834c39f41c35691a9aff1dca218d09aeed3835ead7949c0605f1806b84a",
+  "method_names": {
+    "F": "XG",
+    "T": "XH",
+    "B": "XT",
+    "G": "XE",
+    "T-B": "XHT",
+    "T-G": "XHE",
+    "B-G": "XTE",
+    "T-B-G": "XHTE",
+    "NSGA-II": "NSGA-II",
+    "SPEA2": "SPEA2",
+    "MOEA-D": "MOEA/D",
+    "SMS-EMOA": "SMS-EMOA"
+  },
+  "artifacts": {
+    "boxplot_points": {
+      "rows": 3312,
+      "sha256": "f912812ef266dc5bce312c5eb61637bd2ee29bbca7e3ca7247a28fa68996f88f"
+    },
+    "boxplot_stats": {
+      "rows": 576,
+      "sha256": "67364de45a5dcbda666b278571bf4593d3b6663e00eb2d0f99fb21ed9deb3742"
+    },
+    "boxplot_outliers": {
+      "rows": 478,
+      "sha256": "25a4150e719d81adfe0fccb47ae1d08298f4ad4974332486fd03d7fe4e6f69b0"
+    },
+    "seed_statistics": {
+      "rows": 4224,
+      "sha256": "6188b58be67d2f5568e20fd6110fa5e6584b039951cd40a74bfc04111435a239"
+    },
+    "seed_variation_summary": {
+      "rows": 144,
+      "sha256": "ba943d21bc89cdfe2d733a5f83dc7b1c0c08e701e2541e41722e016225a79ed7"
+    },
+    "ecdf": {
+      "rows": 6476,
+      "sha256": "bd081a45a0100d459164f927704bf8f1db64e280d9ed3a7159d2e69e558744f5"
+    },
+    "paired_differences": {
+      "rows": 18216,
+      "sha256": "5d5220254eede21d3d80449a8af460d096760760f3ea6fd346eb53cbc5de293a"
+    },
+    "paired_comparison_summary": {
+      "rows": 1056,
+      "sha256": "004f407442236f730fbb3bcdf34020dfa479abe7ac588cab6c3b67b03b20dd17"
+    },
+    "scaling_points": {
+      "rows": 1056,
+      "sha256": "bdac6b1a4d324c6c949521c4d4c45d13f2bb7674057ea1d6e1cb94c5e1df2d19"
+    },
+    "coverage_heatmap": {
+      "rows": 96,
+      "sha256": "62bb1c8e87da5821e447df5171d6859cd93c19f16af5269121a8431dae4c10ac"
+    },
+    "quality_time": {
+      "rows": 48,
+      "sha256": "ee3607c93e8b99aff5006911a5dc6f5ce0243700bb3b405be02aa83f88c20ad4"
+    },
+    "archive_points": {
+      "rows": 10522,
+      "sha256": "b3c47ec77ad15eca40050aea832dfd9cffdb98f87c077652d63a484517b0d694"
+    },
+    "convergence_runs": {
+      "rows": 69696,
+      "sha256": "788a5c20c4fac7e6583a782c57e820e8f5a603d777fdbf6db72792ee9d6a2e37"
+    },
+    "convergence_summary": {
+      "rows": 1056,
+      "sha256": "eb2108ccf5baa87d3371a0408bd9074540f9792ef41633183f7ad2874f213fc6"
+    }
+  },
+  "quantiles": "Linear interpolation, Hyndman-Fan type 7; whiskers end at observed values within 1.5 IQR; outliers retained.",
+  "variance": "Sample variance uses n-1; null for n<2. Cross-instance variation uses one seed median per paired instance. Seed variation is separate.",
+  "inference": "No significance tests, confidence intervals, KDE/violin density estimates, or new solver runs. Three seeds are descriptive repetitions.",
+  "convergence": "Observed nondominated prefix of saved traces. Missing early feasibility stays null. Finished methods carry final values forward, including XG after one evaluation. Timeouts have no saved trace and no imputed quality. Summaries use the common available instance set across all methods and seeds at each checkpoint; its size is explicit and may change.",
+  "paired_differences": "A minus B; negative favours A for all exported metrics. Numerical tie tolerance 1e-9. All unordered method pairs are retained.",
+  "archive_scope": "Plot objective-space fronts separately per instance; scales differ between instances. Post-hoc example selection must be disclosed.",
+  "terminal_trace_checks": 2906,
+  "archive_points": 10522,
+  "raw_runs": 3168,
+  "source_unchanged": true,
+  "experiments_rerun": 0
+}
