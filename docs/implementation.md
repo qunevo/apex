@@ -21,7 +21,24 @@ target/release/apex validate .apex/production-expanded.json .apex/trained.json
 target/release/apex serve --port 8765
 ```
 
-Create `.apex` before writing CLI artifacts. On Windows use `apex.exe`; `scripts/build.ps1` also finds Rust under the user's `.cargo/bin`. Open `http://127.0.0.1:8765`. The executable embeds the frontend, so rebuild and restart after editing `web/index.html`; stop the owned process before replacing its executable on Windows.
+Create `.apex` before writing CLI artifacts. On Windows use `apex.exe`. Open `http://127.0.0.1:8765`. The executable embeds the frontend, so rebuild and restart after editing `web/index.html`; stop the owned process before replacing its executable on Windows.
+
+### Bash helpers
+
+The repository helpers use Bash on Linux/macOS or Git Bash on Windows; PowerShell is not required. They resolve the checkout from their own location, so they also work when invoked from another directory.
+
+```bash
+bash scripts/build.sh
+bash scripts/start-viewer.sh
+# Optional port (default: 8765):
+bash scripts/start-viewer.sh 8766
+# Configure this checkout for a local MCP client:
+bash scripts/setup-mcp.sh
+```
+
+[build.sh](../scripts/build.sh) runs formatting, linting, tests and the release build in order, stopping on failure. It finds Cargo on `PATH`, then under `CARGO_HOME` or `$HOME/.cargo`. [start-viewer.sh](../scripts/start-viewer.sh) selects the platform's release executable and runs the server in the foreground; use Ctrl+C to stop it.
+
+[setup-mcp.sh](../scripts/setup-mcp.sh) appends the APEX entry to the ignored `.codex/config.toml`, preserves other settings and leaves an existing APEX entry unchanged. It accepts an optional checkout path: `bash scripts/setup-mcp.sh /path/to/apex`. Under Git Bash it writes native Windows paths for the MCP host. Build for the environment that runs the client: Git Bash uses the Windows binary; WSL uses a Linux binary and Linux paths for a client running inside WSL.
 
 ## Model and UI
 

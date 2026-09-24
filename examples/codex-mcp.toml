@@ -1,5 +1,5 @@
 # Replace these absolute paths with your checkout and compiled executable.
-# On Windows, scripts/setup-mcp.ps1 creates the local project configuration.
+# bash scripts/setup-mcp.sh creates the local configuration (use Git Bash on Windows).
 [mcp_servers.apex]
 command = "/absolute/path/to/apex/target/release/apex"
 args = ["mcp", "--with-viewer", "--workspace", "/absolute/path/to/apex"]

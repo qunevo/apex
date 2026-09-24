@@ -15,7 +15,7 @@ Configure the host to launch the release executable:
 
 Use `apex.exe` on Windows. This is a command/arguments example; the surrounding configuration format belongs to the host. `--with-viewer` also starts the browser workbench on port 8765. An occupied viewer port does not terminate stdio tools. Select another `--port` if necessary.
 
-For the existing Codex project setup, `scripts/setup-mcp.ps1` writes the ignored project configuration. Restart the host's MCP connection after changing the executable. See the existing [template](../examples/codex-mcp.toml).
+For the existing Codex project setup, `bash scripts/setup-mcp.sh` writes the ignored project configuration. Run it in Bash, or Git Bash for a native Windows host, after building the release executable. It preserves other settings and leaves an existing APEX entry unchanged. Restart the host's MCP connection after changing the executable. See the [Bash helper guide](implementation.md#bash-helpers) and [configuration template](../examples/codex-mcp.toml).
 
 ## HTTP MCP and function tools
 

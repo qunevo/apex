@@ -13,7 +13,7 @@ target/release/apex serve
 
 On Windows use `target/release/apex.exe`, then open `http://127.0.0.1:8765`. The default viewer shows the schedule, KPIs, commitments and operation details. Planning changes run through your agent chat; `?mode=workbench` exposes development controls.
 
-For the repository's Codex setup, run `scripts/setup-mcp.ps1` after building on Windows, then reconnect MCP in a trusted project. Other clients can use the [MCP configuration template](examples/codex-mcp.toml) and [agent integration guide](docs/agent-integration.md).
+The [Bash helpers](docs/implementation.md#bash-helpers) cover build/checks, viewer startup and local MCP setup on Linux, macOS and Git Bash on Windows. For the repository's Codex setup, run `bash scripts/setup-mcp.sh` after building, then reconnect MCP in a trusted project. Other clients can use the [MCP configuration template](examples/codex-mcp.toml) and [agent integration guide](docs/agent-integration.md).
 
 Use `schedule.create` for quick planning and `schedule.improve` for improvement under one shared budget. Improvement defaults to Trainer and Plus; an agent can explicitly enable the optional direct GA. See [combined improvement](docs/architecture/combined-improvement.md) for semantics and limits.
 
