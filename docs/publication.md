@@ -8,7 +8,9 @@ The repository contains the Rust core, viewer, tests, synthetic examples and cus
 
 Credentials and environment files, `.apex` state, `.codex` configuration, installed dependencies, compiled output, caches, temporary files and runtime locks remain outside version control. `docs/reports/` is a local output directory for test and measurement artifacts; its only tracked file is the ignore policy that keeps the directory available in fresh checkouts.
 
-The benchmark directory, experiment plan and benchmark/report-generation scripts remain a separate workstream, excluded from the source synchronization while that work is in progress. References to them describe the complete local workspace. Revisit these exclusions explicitly before publishing the benchmark.
+The [benchmark publication](../benchmark/README.md) is explicitly included with its frozen source archive, public input datasets, completed experiment results and provenance. Its manifest records the exact published bytes. Local environments, executables, temporary runs and intermediate work remain excluded, as do the separate experiment plan and root benchmark/report helper scripts.
+
+The publication scanner accepts the declared `benchmark/algorithm-9bc9dbf.zip` only when both manifest hashes match. It inspects bounded archive contents for unsafe paths, symlinks, local artifacts, credentials and workstation paths without extracting or executing them. Other ZIP files still require review. Run the benchmark's independent publication validator for the full dataset, result and schedule audit described in its guide.
 
 ## Release checks
 

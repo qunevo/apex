@@ -99,8 +99,9 @@ jobs:
       - name: Validate wiki publication and scan the source distribution
         run: |
           python -B -m unittest discover -s tests -p 'test_wiki.py' -v
+          python -B -m unittest discover -s tests -p 'test_publication.py' -v
           python -B scripts/build_wiki.py
-          python scripts/check_publication.py
+          python -B scripts/check_publication.py
 
   required:
     name: Required checks
