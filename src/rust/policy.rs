@@ -127,12 +127,10 @@ pub fn enabled(p: &Problem, extension: Option<&dyn Customization>) -> bool {
 pub fn fingerprint(p: &Problem, extension: Option<&dyn Customization>) -> String {
     let mut model = serde_json::to_value(p).expect("validated model");
     model.as_object_mut().unwrap().remove("assumptions");
-    format!(
-        "{:x}",
-        Sha256::digest(
-            serde_json::to_vec(&(model, extension.map(|e| (e.id(), e.version())))).unwrap()
-        )
-    )
+    Sha256::digest(serde_json::to_vec(&(model, extension.map(|e| (e.id(), e.version())))).unwrap())
+        .iter()
+        .map(|byte| format!("{byte:02x}"))
+        .collect()
 }
 #[derive(JsonSchema, Clone, Debug, Default, Serialize, Deserialize)]
 pub struct Reason {
