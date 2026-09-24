@@ -1,6 +1,6 @@
 # Target architecture: an extensible production scheduler for agent tools
 
-> Historical source references: the v2 implementation was removed on 24 September 2026. Paths below identify former source files; see the [removal note](../reports/legacy-baseline.md).
+> Historical source references: the v2 implementation was removed on 24 September 2026. Paths below identify former source files; see the [migration audit](../migration-audit.md).
 
 Target architecture, 23 September 2026. The runnable Rust core, agent tools and viewer are documented separately; see [implemented behavior and limits](../implementation.md). This document also describes capabilities beyond that implementation, including incremental evaluation and future solver integration. Historical Python/Cython reviews remain reference evidence; the source and execution harnesses were removed. All examples are synthetic. See the [accepted core decision](decisions/0001-rust-core.md), [draft input model](input-model.md), [diagram gallery](diagrams.html) and [licensing policy](../../LICENSING.md).
 

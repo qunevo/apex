@@ -64,7 +64,7 @@ Time is soft, checked between batches. Model setup, native proposal work, select
 
 Trainer can mutate unprotected material modes. Plus branches on them before conditional/task decisions once routes are fixed. GA evolves execution modes directly. Each complete candidate redoes existing-supply pegging, producer/consumer dependencies and balances. Actual allocation reports record the selected material modes and are independently reconstructed. Prepared fixed snapshots keep their existing commitments. No purchase or production orders are generated and supply allocation itself is not globally optimized.
 
-Tests: [evolution](../tests/evolution.rs), [material](../tests/material.rs), [migration](../tests/migration.rs), [combined improvement](../tests/improve.rs). Measured quality, runtime and unresolved V2 boundaries are recorded in [the 0.6 report](reports/v0.6-evolution.md).
+Tests: [evolution](../tests/evolution.rs), [material](../tests/material.rs), [migration](../tests/migration.rs), [combined improvement](../tests/improve.rs). Historical v2 comparison evidence and unresolved migration boundaries are consolidated in the [migration audit](migration-audit.md).
 
 ## Tool-process upgrade
 

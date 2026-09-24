@@ -79,9 +79,9 @@ Thumbs.db
 !/Cargo.lock
 !/package-lock.json
 
-# Generated test and measurement output (Markdown evidence remains source)
+# Generated test and measurement output (migration evidence is in docs/migration-audit.md)
 /docs/reports/*
-!/docs/reports/*.md
+!/docs/reports/.gitignore
 coverage/
 htmlcov/
 .coverage*

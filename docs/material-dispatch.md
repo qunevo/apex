@@ -28,19 +28,6 @@ The policy is deterministic and conservative. It is not an optimal global peggin
 
 Running operation input is treated as consumed before the snapshot, matching current core semantics. Its output becomes available only after remaining work and required post-work. Partial output already in stock must be represented by the adapter without double-counting the future output.
 
-## What the v2 audit actually found
+## Migration boundary
 
-The audit reviewed the former `src/v2/preprocessing/materialdispatching/` sources. The [v2 source has since been removed](reports/legacy-baseline.md); the findings below remain historical evidence:
-
-| Behavior | Reference finding | Rust behavior |
-| --- | --- | --- |
-| Lot creation | `job_factory_materialdispatching.py` creates jobs from supplied orders | `production.import` conserves quantities and supports a partial final lot |
-| BOM demand | `data.py` aggregates operation materials by workplan; progressed operations excluded | Per-operation `consume` maps are retained; started inputs are assumed consumed already |
-| Source allocation | `bom_explosion.py`: stock, early receipts, existing producer jobs, late receipts | Same source preference among allocatable supply; deterministic material/topological readiness and due/priority ordering |
-| Production links | Job DAG edges, annotated with allocated quantity | Quantity-specific reservation tokens plus producer-to-consumer task edges; output available at producer `ready` |
-| Deliveries | Dispatcher supports them, but adapter leaves them empty and job factory asserts no delivery allocation | Receipt times are enforced through the core ledger and independent validation |
-| Alternative BOMs | Adapter asserts one distinct material signature across a job's workplans | Free workplans and differing-material main modes remain searchable; each actual route and material-mode selection is allocated independently |
-| Explicit predecessor jobs | Bypasses quantity checking and marks supply available | Explicit precedence does not cancel material requirements |
-| Missing supply | Unsupplied jobs may be excluded; progressed jobs exempt | A flexible preview records shortages; a selected snapshot or actual schedule must allocate all required supply. No silent dropping or invented supply |
-
-Route-aware reallocation was introduced in 0.5; 0.6 also preserves and searches differing-material main modes. See the [current model](data-model.md) and [material-mode search contract](direct-schedule-evolution.md#material-mode-special-case). This is **not a blanket material-dispatch parity claim**: synthetic multi-route tests cover the new behavior, and the [direct V2 comparison](reports/v0.5-route-material-legacy.json) matches normalized allocation source quantities for both workplans. This does not establish identical routing choices or full decoder/search equivalence.
+The [migration audit](migration-audit.md) records the comparison with the former v2 material dispatcher, intentional semantic differences and remaining acceptance work. Existing-supply allocation does not establish complete legacy preprocessing or search equivalence.

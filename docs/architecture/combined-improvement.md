@@ -1,15 +1,15 @@
 # Combined improvement and the modeling boundary
 
-Initial portfolio implemented in APEX 0.4.1; direct GA added in 0.6. See the [current direct-search contract](../direct-schedule-evolution.md) and [0.6 evidence](../reports/v0.6-evolution.md). The production input remains `apex.v3.4`; the options schema adds `improve`. This document distinguishes implemented behavior from future optimization work.
+Initial portfolio implemented in APEX 0.4.1; direct GA added in 0.6. See the [current direct-search contract](../direct-schedule-evolution.md) and [migration audit](../migration-audit.md). The production input remains `apex.v3.4`; the options schema adds `improve`. This document distinguishes implemented behavior from future optimization work.
 
 ## Planner-facing contract
 
 The planner asks for a quick plan or an improved plan. The chat agent uses `schedule.create` or `schedule.improve`; it does not ask the planner to select Trainer versus Plus. Individual `schedule.train` and `schedule.plus` tools remain available for explicit diagnostic comparisons. The normal browser remains a read-oriented viewer. The optional workbench has **Quick plan** and **Improve plan**.
 
+Supply the `scenario_id` returned by the scenario tool and optionally a saved `schedule_id` from the same revision. The following example shows the request's `options` object.
+
 ```json
 {
-  "scenario_id": "CURRENT_SCENARIO_ID",
-  "schedule_id": "OPTIONAL_CURRENT_REVISION_INCUMBENT",
   "options": {
     "iterations": 128,
     "budget_ms": 5000,
@@ -124,7 +124,7 @@ Open design decisions include generating an individual Q versus a whole priority
 
 ## Direct schedule evolution and adaptive operators
 
-**GA-01 — Baseline implemented in 0.6 (24 September 2026).** Direct priority chromosomes, mode/workplan/conditional genes, elitist population, job-order crossover, uniform and discounted-UCB operator selection, versioned native proposal hooks and an optional final shared-budget GA phase are implemented. See [semantics](../direct-schedule-evolution.md), [tests](../../tests/evolution.rs) and [measured ablations](../reports/v0.6-evolution.md).
+**GA-01 — Baseline implemented in 0.6 (24 September 2026).** Direct priority chromosomes, mode/workplan/conditional genes, elitist population, job-order crossover, uniform and discounted-UCB operator selection, versioned native proposal hooks and an optional final shared-budget GA phase are implemented. See [semantics](../direct-schedule-evolution.md), [tests](../../tests/evolution.rs) and [migration boundaries](../migration-audit.md).
 
 The legacy references were `src/v2/scheduler/deepsearch/mutation_default/mab.py` and `src/v2/scheduler/deepsearch/crossover.py`. The Rust design deliberately discounts both counts and rewards and credits one operator per candidate. It does not copy temperature annealing or claim behavioral identity with the legacy GA.
 
@@ -148,4 +148,4 @@ Recommended progression: establish V2 migration semantics, implement a small dir
 
 ## Evidence
 
-See the [combined-search report](../reports/v0.4.1-combined-improvement.md), [search semantics](../search-and-parity.md), and [declarative model contract](declarative-scheduling.md). The acceptance comparison uses identical total nominal budgets, reports overruns and compares actual schedule objectives; simply spending both standalone budgets would not establish an advantage.
+See the [search semantics](../search-and-parity.md), [declarative model contract](declarative-scheduling.md) and [combined-improvement tests](../../tests/improve.rs). Quality comparisons require identical total nominal budgets, reported overruns and actual schedule objectives; simply spending both standalone budgets would not establish an advantage.

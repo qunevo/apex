@@ -29,7 +29,7 @@ Run `apex serve --port 8765 --workspace /absolute/path/to/apex`. Endpoints:
 | `GET /openapi.json` | OpenAPI 3.1 description for function/action adapters |
 | `GET /` | Plan viewer (optional `?mode=workbench`) |
 
-For example, POST `{ "profile": "production" }` to `/api/tools/demo.create`, then POST `{ "scenario_id": "RETURNED_ID" }` to `/api/tools/schedule.create`. A result contains metrics and a `viewer_url`. HTTP tool failures return status 422 with structured diagnostics. MCP callers receive `isError` and the same diagnostic data.
+For example, POST `{ "profile": "production" }` to `/api/tools/demo.create`, then pass the returned `scenario_id` in the JSON body of a POST to `/api/tools/schedule.create`. A result contains metrics and a `viewer_url`. HTTP tool failures return status 422 with structured diagnostics. MCP callers receive `isError` and the same diagnostic data.
 
 The HTTP implementation uses the JSON response option in the [MCP transport specification](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports). Notifications receive 202; GET/DELETE on `/mcp` return 405 because this server does not use SSE or sessions. Both MCP transports are exercised with the official JavaScript SDK. These tests establish protocol interoperability, not certification of every commercial chat product.
 

@@ -146,6 +146,6 @@ sequenceDiagram
 
 ## Acceptance and limits
 
-The historical [0.4 implementation and measurement report](../reports/v0.4-declarative-scheduling.md) checked equality against a preserved 0.3 binary on equivalent models. New restrictions change the admissible decisions and can worsen a previous objective: their cost is measured separately. Neither a benchmark nor passing tests prove universal runtime/quality parity.
+The [dispatch tests](../../tests/dispatch.rs) check policy enforcement, replay and rejected/corrupted cases. The [migration audit](../migration-audit.md) records the historical v2 boundary. New restrictions change the admissible decisions and can worsen a previous objective: their cost is measured separately. Neither a benchmark nor passing tests prove universal runtime/quality parity.
 
 The original [design plan](dispatch-policy-plan.md) remains useful as a roadmap. General indexed witness queries, transactional rollback of arbitrary cross-resource suffixes, learned proxies, automatic metric compilation and external solvers are not implemented. Whole problems remain in memory; agent transport batching does not remove this runtime bound.

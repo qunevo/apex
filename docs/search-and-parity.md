@@ -16,9 +16,10 @@ Repair reconstructs schedules. Plus replays prefixes into fresh construction/dec
 
 ## Limits and parallelization
 
+Pass the scenario ID returned by an import or scenario tool alongside the following `options` object.
+
 ```json
 {
-  "scenario_id": "RETURNED_ID",
   "options": {
     "iterations": 128,
     "budget_ms": 5000,
@@ -73,7 +74,7 @@ The default candidate window is 64 ready tasks plus their eligible modes. `candi
 
 Objective weights scale the initial proxy contributions; goal priorities and metric scales are enforced in final fitness, not identically projected into this heuristic sum. The protected deadline Q starts at 4; an implicit horizon does not manufacture task-specific urgency. Apparent tardiness is a local urgency-per-work estimate damped exponentially by positive slack: `priority / work * exp(-positive_slack / (2 * mean_candidate_work))`. Q costs use its negative. Calendar availability, remaining DAG work and conditional/setup effects enter estimates; these are not the full decoder.
 
-The attribute ratio follows the weighted-completion pairwise ordering for independent available work on one machine. Precedence, calendars, multiple resources and releases break that simple guarantee. The [measurements](reports/v0.3-search-parity.md) deliberately include counterexamples. A metric name cannot automatically reveal its correct scheduling heuristic.
+The attribute ratio follows the weighted-completion pairwise ordering for independent available work on one machine. Precedence, calendars, multiple resources and releases break that simple guarantee. The [proxy diagnostic](../tests/search_report.rs) exercises cases where the local ranking disagrees with complete-schedule quality. A metric name cannot automatically reveal its correct scheduling heuristic.
 
 `queues.inspect` exposes the registry, mapping, initial policy and unmapped goals. `queue_definitions` can register a task attribute proxy; native `Customization::objectives`, `queue_definitions` and `queue_value` declare the evaluator/proxy contract. Native hooks are `Send + Sync`; their outputs must be finite and deterministic. Missing values fail explicitly. New native code still requires tests, registry linkage and a build. Arbitrary chat text is not executed as a rule.
 
@@ -89,7 +90,7 @@ Crossover chooses whole stage weight blocks from either parent, can inherit the 
 
 Nodes retain a route configuration and a task/mode decision prefix. Expansion offers alternative eligible next decisions; root branching can also explore unpinned routes and material modes. Declared conditional alternatives are searched under the [conditional-choice contract](data-model.md#searchable-conditional-resource-alternatives). UCT selects between expanded branches. Complete rollouts randomize among the top two Q candidates and are scored by actual validated objectives. Rewards propagate up the path; other branches remain available and can be revisited. `nodes`, `revisits` and rejected evaluation counts expose what happened. `revisits` counts repeated rollout leaves, not every traversal through an internal node.
 
-This is a bounded Monte Carlo style tree search. It is not exhaustive over all mode/route combinations, and the depth limit restricts explicit prefix exploration. In v2, the explorer evaluated short paths in parallel, selected one partial prefix and discarded alternatives. It did not retain a UCT tree or backtrack through previous committed prefixes. This was reviewed in the former `src/v2/scheduler/fastplanner/controller.py`; see the [historical migration report](reports/v0.3-search-parity.md).
+This is a bounded Monte Carlo style tree search. It is not exhaustive over all mode/route combinations, and the depth limit restricts explicit prefix exploration. In v2, the explorer evaluated short paths in parallel, selected one partial prefix and discarded alternatives. It did not retain a UCT tree or backtrack through previous committed prefixes. This was reviewed in the former `src/v2/scheduler/fastplanner/controller.py`; see the [migration audit](migration-audit.md).
 
 ## Fixations and evidence
 
@@ -97,18 +98,18 @@ The workbench shades baseline freeze horizons per resource, marks fixed time/res
 
 Freeze-zone records are provenance/display metadata. Executable `locks` are authoritative. The freeze tool writes both from the same pinned baseline, supports per-resource cutoffs, and preserves baseline membership after replanning. Large pages show only their visible members; absence from a displayed page is not absence from the model.
 
-The [report index](reports/README.md) separates current implementation evidence from historical v2 decoder comparisons, intentional corrections and unverified migration areas. No unrestricted full-system v2 parity claim is made.
+The [migration audit](migration-audit.md) consolidates historical v2 decoder comparisons, intentional corrections and unverified migration areas. No unrestricted full-system v2 parity claim is made.
 
 ## Resource sequence and preparation semantics
 
 Resource order locks constrain construction and primary-resource order; they are not product-release dependencies. Independent post-processing may overlap the next operation on the released primary resource. Explicit operation/material dependencies still wait for product release. A regression test covers fixed starts and consecutive sequences in Fast Planner, Trainer and Plus.
 
-The material ledger's monotone consumption frontier applies at main start. It does not postpone preparatory work solely because another operation has already consumed material at the same main-start timestamp. This preserves feasible frozen production baselines with preparation on separate resources. See the newer [agent and material report](reports/agent-material-review.md).
+The material ledger's monotone consumption frontier applies at main start. It does not postpone preparatory work solely because another operation has already consumed material at the same main-start timestamp. This preserves feasible frozen production baselines with preparation on separate resources. See the [parity tests](../tests/parity.rs) and [material contract](material-dispatch.md).
 
 ## Shared declarative dispatch
 
-The construction-time filter gap identified by the [0.3 audit](reports/dispatch-policy-audit.md) is now addressed by the bounded [planning language and native filter hook](architecture/declarative-scheduling.md). All strategies, Trainer evaluations, Plus branch enumeration, direct GA candidates and forced prefixes use the same mandatory filtering stage. Detailed semantics deliberately improve on selected legacy defects and do not claim complete customer-specific parity.
+The construction-time filter gap identified by the [migration audit](migration-audit.md) is now addressed by the bounded [planning language and native filter hook](architecture/declarative-scheduling.md). All strategies, Trainer evaluations, Plus branch enumeration, direct GA candidates and forced prefixes use the same mandatory filtering stage. Detailed semantics deliberately improve on selected legacy defects and do not claim complete customer-specific parity.
 
 With mandatory policies enabled, the complete eligible ready task/mode pool is filtered before stage selection and Q normalization; the Q candidate window cannot hide a continuation. Exact temporal facts come from calendar placement or complete prospective-prefix decoding, including previous-post effects. Physical feasibility and deterministic policy replay are checked separately. Without policies, the previous bounded-window path remains available.
 
-The [acceptance report](reports/v0.4-declarative-scheduling.md) separates equivalent-model quality/runtime comparisons from the additional cost and objective trade-offs of new restrictions. The [original implementation plan](architecture/dispatch-policy-plan.md) retains indexed queries and general transactional rollback as further work.
+Evaluate quality and runtime on equivalent models separately from the additional cost and objective trade-offs of new restrictions. The [original implementation plan](architecture/dispatch-policy-plan.md) retains indexed queries and general transactional rollback as further work.

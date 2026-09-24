@@ -26,14 +26,14 @@ Start with the [documentation index](docs/README.md). The main references are:
 - [Agent workflows](docs/agent-workflows.md) and [integration](docs/agent-integration.md): chat-led planning and tool access.
 - [Material preparation](docs/material-dispatch.md), [search](docs/search-and-parity.md) and [direct evolution](docs/direct-schedule-evolution.md): current behavior and boundaries.
 - [Architecture](docs/architecture/README.md): implemented contracts, design decisions and open proposals.
-- [Implementation reports](docs/reports/README.md): versioned evidence, including historical migration results.
+- [Migration audit](docs/migration-audit.md): v2 comparison, implemented coverage and remaining migration boundaries.
 
 Runnable synthetic inputs include [production orders](examples/production-orders.json), [shift and material constraints](examples/shift-factory.json), [material chains](examples/chain-routing.json) and [dispatch policies](examples/dispatch-campaign.json). The [customization knowledge bundle](customizations/dummy_customer/KNOWLEDGE.md) describes the extension workflow.
 
-The executable schema is `apex.v3.4`; canonical `apex.v3.1`, `apex.v3.2` and `apex.v3.3` inputs remain accepted. The earlier `3.0-draft.1` design is not executable input. Rust is the sole scheduling implementation; the [removed v2 implementation](docs/reports/legacy-baseline.md) survives only as historical evidence. Tested coverage does not establish complete legacy parity, optimality or production readiness. Repository documentation and examples use English, and all fixtures are deliberately synthetic.
+The executable schema is `apex.v3.4`; canonical `apex.v3.1`, `apex.v3.2` and `apex.v3.3` inputs remain accepted. The earlier `3.0-draft.1` design is not executable input. Rust is the sole scheduling implementation; the [migration audit](docs/migration-audit.md) records the v2 source removal and historical comparisons. Tested coverage does not establish complete legacy parity, optimality or production readiness. Repository documentation and examples use English, and all fixtures are deliberately synthetic.
 
 ## License
 
 APEX is distributed under the [APEX Source Available License 1.1](LICENSE). The root license contains the complete public grant, eligibility and pricing rules. It is source available, not OSI-approved open source.
 
-See the [licensing overview](LICENSING.md) and [pricing and eligibility](docs/legal/pricing.md). There is no per-operation, per-user, per-site or per-run metering. Commercial and contributor templates in [the legal documentation](docs/legal/README.md) remain separate drafts until completed and accepted. Third-party components retain their own licenses. [Publication preparation](docs/publication.md) records the release checks.
+See the [licensing overview](LICENSING.md) and [pricing and eligibility](docs/legal/pricing.md). There is no per-operation, per-user, per-site or per-run metering. Commercial and contributor agreements require separate acceptance; [the legal documentation](docs/legal/README.md) explains the published document roles. Third-party components retain their own licenses. [Publication preparation](docs/publication.md) records the release checks.

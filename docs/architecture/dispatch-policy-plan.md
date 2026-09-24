@@ -1,8 +1,8 @@
 # Original dispatch-policy design and remaining roadmap
 
-Status update, **24 September 2026**: the bounded first implementation is available in APEX 0.4. Read the [current language and module contract](declarative-scheduling.md) and [measured acceptance report](../reports/v0.4-declarative-scheduling.md). Shared filtering, exact probes, prefix enforcement, replay, tools and explanations are implemented. General indexed witness queries and transactional rollback remain roadmap items.
+Status update, **24 September 2026**: the bounded first implementation is available in APEX 0.4. Read the [current language and module contract](declarative-scheduling.md) and [migration audit](../migration-audit.md). Shared filtering, exact probes, prefix enforcement, replay, tools and explanations are implemented. General indexed witness queries and transactional rollback remain roadmap items.
 
-The sections and diagrams below preserve the **23 September design proposal** for comparison. Statements about the old current algorithm refer to 0.3; planned APIs are not necessarily the final API. The [legacy audit](../reports/dispatch-policy-audit.md) establishes the original migration gap.
+The sections and diagrams below preserve the **23 September design proposal** for comparison. Statements about the old current algorithm refer to 0.3; planned APIs are not necessarily the final API. The [migration audit](../migration-audit.md) summarizes the legacy findings and remaining boundaries.
 
 Open the [visual overview](dispatch-policy.html) for the four diagrams as a local, self-contained page.
 

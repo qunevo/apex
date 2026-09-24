@@ -1,6 +1,6 @@
 # APEX pricing and eligibility
 
-Pricing guide for [APEX Source Available License 1.1](../../LICENSE), 24 September 2026. The complete schedule is in LICENSE sections 13 and 14. This page explains those rules; it is not a separate license or accepted commercial Order. The LICENSE and any accepted Order control. Prices and thresholds are unchanged from the earlier drafts. See the [document guide](README.md) for the status of separate contract templates.
+Pricing guide for [APEX Source Available License 1.1](../../LICENSE), 24 September 2026. The complete schedule is in LICENSE sections 13 and 14. This page explains those rules; it is not a separate license or accepted commercial Order. The LICENSE and any accepted Order control. See the [document guide](README.md) for the roles of the public license and its summaries.
 
 ## Tiers
 

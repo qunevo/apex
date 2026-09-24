@@ -1,6 +1,6 @@
 # Scheduling core: mandatory operational semantics
 
-> Historical source references: the v2 implementation was removed on 24 September 2026. Paths below identify former source files; see the [removal note](../reports/legacy-baseline.md).
+> Historical source references: the v2 implementation was removed on 24 September 2026. Paths below identify former source files; see the [migration audit](../migration-audit.md).
 
 Design contract, 23 September 2026. These requirements extend the [draft input model](input-model.md) and [architecture](agentic-scheduler.md). The [current Rust implementation](../implementation.md) covers a tested subset; this contract remains the broader migration target. It is not a claim that either engine enforces every case below. All examples are synthetic.
 
@@ -135,7 +135,7 @@ Compiled Rust extension rules should declare their inputs and affected entities 
 
 ## 6. Required synthetic acceptance cases
 
-These are migration acceptance specifications. The [versioned implementation reports](../reports/README.md) record the exercised cases and limitations; full incremental propagation, for example, remains unimplemented. Test intended semantics independently of the legacy result; retain separate cases reproducing known legacy defects.
+These are migration acceptance specifications. The [migration audit](../migration-audit.md) records the exercised cases and limitations; full incremental propagation, for example, remains unimplemented. Test intended semantics independently of the legacy result; retain separate cases reproducing known legacy defects.
 
 | ID | Scenario | Required assertion |
 | --- | --- | --- |

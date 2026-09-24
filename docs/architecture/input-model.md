@@ -1,6 +1,6 @@
 # Draft input model for domain validation
 
-> Historical source references: the v2 implementation was removed on 24 September 2026. Paths below identify former source files; see the [removal note](../reports/legacy-baseline.md).
+> Historical source references: the v2 implementation was removed on 24 September 2026. Paths below identify former source files; see the [migration audit](../migration-audit.md).
 
 Draft 0.1, 23 September 2026. This is a proposed contract for discrete production, not an implemented schema. The [synthetic JSON](input-model-example.json) uses `3.0-draft.1` and cannot be passed to the legacy v2 importer. The v2 demo (`src/v2/customization/dummy_customer/README.md`, removed) is separate. See the [architecture](agentic-scheduler.md) for module boundaries.
 

@@ -1,6 +1,6 @@
 # APEX documentation
 
-This index describes the runnable Rust implementation, version **0.6.0**, with executable schema **`apex.v3.4`**. Canonical v3.1, v3.2 and v3.3 inputs remain accepted. Runtime capabilities and generated schemas are authoritative for the installed build; older reports describe the versions they measured.
+This index describes the runnable Rust implementation, version **0.6.0**, with executable schema **`apex.v3.4`**. Canonical v3.1, v3.2 and v3.3 inputs remain accepted. Runtime capabilities and generated schemas are authoritative for the installed build; the migration audit records the scope of historical v2 comparisons.
 
 ## Use and integrate APEX
 
@@ -33,9 +33,9 @@ The generated schemas cover the [canonical problem](../schemas/apex.v3.4.json), 
 ## Design, evidence and release
 
 - [Architecture index](architecture/README.md) distinguishes implemented contracts from broader design proposals.
-- [Report index](reports/README.md) preserves measurements and historical migration evidence. Reports do not certify full v2 parity or production readiness.
+- [Migration audit](migration-audit.md) consolidates v2 comparison evidence, implemented coverage and remaining boundaries.
 - [Benchmark guide](../benchmark/README.md) and [experiment plan](benchmark-experiment-plan.md) cover the separate benchmark workstream.
-- [Licensing documents](legal/README.md) distinguish the canonical public license from commercial drafts.
+- [Licensing documents](legal/README.md) explain the canonical public license, pricing and eligibility.
 - [Publication preparation](publication.md) lists release checks.
 
-The old v3.2, v3.3 and 0.5 model notes have been consolidated into [the current data-model reference](data-model.md). The `architecture/` draft input model uses `3.0-draft.1` and remains a design proposal, not an import format. The removed v2 source and execution harnesses cannot be run from this checkout; see [the removal record](reports/legacy-baseline.md).
+The old v3.2, v3.3 and 0.5 model notes have been consolidated into [the current data-model reference](data-model.md). The `architecture/` draft input model uses `3.0-draft.1` and remains a design proposal, not an import format. The removed v2 source and execution harnesses cannot be run from this checkout; see [migration audit](migration-audit.md).

@@ -1,6 +1,6 @@
 # Rust implementation and operating guide
 
-APEX **0.6.0**, 24 September 2026. The executable model is **`apex.v3.4`**, with canonical v3.1/v3.2/v3.3 input compatibility. The bounded [declarative planning language](architecture/declarative-scheduling.md) adds shared dispatch policies, exact placement probes and replayable explanations. The earlier `3.0-draft.1` document remains a design sketch. The Rust runtime is independent of the removed legacy Python/Cython implementation; [historical comparison evidence](reports/legacy-baseline.md) remains available.
+APEX **0.6.0**, 24 September 2026. The executable model is **`apex.v3.4`**, with canonical v3.1/v3.2/v3.3 input compatibility. The bounded [declarative planning language](architecture/declarative-scheduling.md) adds shared dispatch policies, exact placement probes and replayable explanations. The earlier `3.0-draft.1` document remains a design sketch. The Rust runtime is independent of the removed legacy Python/Cython implementation; [migration audit](migration-audit.md) remains available.
 
 The [executable model](data-model.md) covers route- and mode-aware material allocation, upstream chain urgency, conditional choices and grouped/resource/stage KPIs. [Direct schedule evolution](direct-schedule-evolution.md) adds priority chromosomes, adaptive operators and declared native conditional alternatives. The implementation includes route selection, mode-dependent conditional activity graphs, quantity/order expansion, native customization hooks, a heuristic planner/trainer, independent validation, durable scenario tools and a browser workbench. This is experimental software; tested feature coverage does not establish universal equivalence with every v2 customization or production readiness.
 
@@ -39,7 +39,7 @@ Missing processing work and invalid references produce structured diagnostics wi
 
 ## Quick planning and combined improvement
 
-Use `schedule.create` for a quick plan and `schedule.improve` for Trainer followed by Plus and an optional direct schedule GA under one shared budget. An optional current-revision incumbent is independently checked and retained. See the [combined-search contract](architecture/combined-improvement.md) and [measurements](reports/v0.4.1-combined-improvement.md).
+Use `schedule.create` for a quick plan and `schedule.improve` for Trainer followed by Plus and an optional direct schedule GA under one shared budget. An optional current-revision incumbent is independently checked and retained. See the [combined-search contract](architecture/combined-improvement.md) for budget and incumbent semantics.
 
 ## Fast Planner, trainer and repair
 
@@ -69,7 +69,7 @@ No external solver is connected: `solver.solve` returns `UNSUPPORTED_BACKEND`. A
 
 ## Verification
 
-See [the 0.6 report](reports/v0.6-evolution.md) for recorded tests, timings, qualitative outcomes and remaining migration work. The [report index](reports/README.md) separates earlier results and audits by version. Six synthetic cases previously executed the unmodified legacy pipeline and replayed decisions in Rust. Their reports remain available, but the legacy execution harnesses were removed with v2. This is selected decoder evidence; broader migration boundaries remain explicit and no speedup over v2 is asserted.
+The [migration audit](migration-audit.md) records the selected synthetic v2 comparisons, intentional corrections and remaining migration work. The Rust semantic and regression tests remain runnable; the removed v2 execution harnesses do not. Historical comparisons do not establish complete parity or a speedup over v2.
 
 After `npm ci`, run `npm run test:mcp`, `npm run test:http` and, with a server running, `npm run test:viewer`. `node tests/mcp-smoke.mjs --large` exercises 100,000-task import. On other systems install a Playwright Chromium browser or set `APEX_BROWSER`. Benchmarks must use a freshly built release executable and describe their data complexity.
 

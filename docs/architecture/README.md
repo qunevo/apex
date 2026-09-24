@@ -22,4 +22,4 @@ Use the [operating guide](../implementation.md) and [executable data model](../d
 
 The [architecture gallery](diagrams.html), [draft input-model page](input-model.html) and [dispatch-policy diagrams](dispatch-policy.html) accompany those design proposals. Read their scope alongside the current contracts above; the galleries are not runtime documentation.
 
-Historical v2 source paths identify removed files. Preserve the distinction between intended semantics, tested coverage and proposed implementation. See the [report index](../reports/README.md) for evidence.
+Historical v2 source paths identify removed files. Preserve the distinction between intended semantics, tested coverage and proposed implementation. See the [migration audit](../migration-audit.md) for evidence.

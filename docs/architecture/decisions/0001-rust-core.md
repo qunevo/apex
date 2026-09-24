@@ -1,6 +1,6 @@
 # ADR 0001: Rust core with explicit extension and data boundaries
 
-> Historical source references: the v2 implementation was removed on 24 September 2026. Paths below identify former source files; see the [removal note](../../reports/legacy-baseline.md).
+> Historical source references: the v2 implementation was removed on 24 September 2026. Paths below identify former source files; see the [migration audit](../../migration-audit.md).
 
 Status: accepted architectural direction, 23 September 2026. The [current implementation](../../implementation.md) is documented separately, with explicitly documented coverage and limitations. The decision below remains the target, not a claim that every architectural capability has been completed.
 

@@ -34,10 +34,10 @@ footer { border-top: 1px solid #d3dfdc; margin-top: 32px; padding-top: 20px; col
 <main>
 <div class="eyebrow">APEX / Architecture / 23 September 2026</div>
 <h1>Domain knowledge in every planning decision</h1>
-<p><strong>Implementation update, 24 September 2026:</strong> Shared dispatch, typed policies, exact probes and explanations are implemented. These four diagrams preserve the original design proposal. Read the <a href="declarative-scheduling.md">current implementation contract</a> and <a href="../reports/v0.4-declarative-scheduling.md">measured acceptance report</a> for implemented scope and remaining limits.</p>
+<p><strong>Implementation update, 24 September 2026:</strong> Shared dispatch, typed policies, exact probes and explanations are implemented. These four diagrams preserve the original design proposal. Read the <a href="declarative-scheduling.md">current implementation contract</a> and <a href="../migration-audit.md">migration audit</a> for implemented scope and remaining limits.</p>
 <span class="status">Design reference · bounded implementation available in 0.4</span>
 <p>One dispatch session for Fast Planner, Trainer and Plus. Define which decisions are allowed, rank the remaining choices, and validate the complete schedule. The chat captures domain intent; the viewer explains the result.</p>
-<p><a href="dispatch-policy-plan.md">Full implementation plan and acceptance gates</a> · <a href="../reports/dispatch-policy-audit.md">Legacy audit and current gap</a></p>
+<p><a href="dispatch-policy-plan.md">Full implementation plan and acceptance gates</a> · <a href="../migration-audit.md">migration audit</a></p>
 <div class="contracts">
   <section class="contract"><h2>Feasibility constraint</h2><p>“This schedule is allowed.” Enforce restrictions during construction and check the final schedule independently.</p></section>
   <section class="contract"><h2>Construction policy</h2><p>“Choose from this subset next.” Pin the rule, its scope, exceptions and fallback throughout the search.</p></section>
