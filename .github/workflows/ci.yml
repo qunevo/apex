@@ -96,8 +96,11 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.14'
-      - name: Scan the source distribution
-        run: python scripts/check_publication.py
+      - name: Validate wiki publication and scan the source distribution
+        run: |
+          python -B -m unittest discover -s tests -p 'test_wiki.py' -v
+          python -B scripts/build_wiki.py
+          python scripts/check_publication.py
 
   required:
     name: Required checks

@@ -25,6 +25,6 @@ The `Wiki` workflow validates pull requests with read-only permissions. Publicat
 
 Publication runs are serialized and read the latest `main` revision when they start. That revision is tested again before publication, so an older queued run cannot roll documentation back. There are no force pushes. Re-running an unchanged revision creates no wiki commit. A failed run can be retried from the Actions page after correcting its cause.
 
-Keep `Wiki validation` required in the repository ruleset alongside the general CI checks. Wiki edits do not use the main repository's pull-request review flow; maintainers should submit documentation changes to the main repository instead. Direct edits to generated wiki pages are replaced during publication. Review and merge requirements for `main` remain in force.
+The general CI's `Source publication` job also runs the wiki tests and link validation. Its result is included in the required `Required checks` aggregate, so invalid documentation blocks merging. Wiki edits do not use the main repository's pull-request review flow; maintainers should submit documentation changes to the main repository instead. Direct edits to generated wiki pages are replaced during publication. Review and merge requirements for `main` remain in force.
 
 The website's Documentation link points to the wiki. The maintained documentation is English; the website's navigation labels are available in German and English.
