@@ -39,7 +39,7 @@ Read the [contribution guide](../CONTRIBUTING.md) for setup, review and contribu
 ## Evidence and release
 
 - [Migration audit](migration-audit.md) consolidates v2 comparison evidence, implemented coverage and remaining boundaries.
-- Benchmark material remains a separate local workstream and is excluded from this source distribution; see [publication preparation](publication.md).
+- The [24 September 2026 benchmark](../benchmark/README.md) provides a frozen reproduction ZIP, public scientific instances and the original results. Later algorithm development is outside this baseline.
 - [Licensing documents](legal/README.md) explain the canonical public license, pricing and eligibility.
 - [Publication preparation](publication.md) lists release checks.
 - [Wiki publication](wiki-publication.md) explains how reviewed documentation is published automatically.

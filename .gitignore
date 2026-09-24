@@ -104,8 +104,12 @@ embeddings/
 *.tar
 *.tar.gz
 
+# Publish the frozen benchmark only as its reviewed ZIP and reader's guide.
+/benchmark/*
+!/benchmark/README.md
+!/benchmark/apex-benchmark-2026-09-24.zip
+
 # Historical benchmark plans and helper outputs remain excluded.
-# The benchmark directory contains reproduction code and current results.
 /docs/benchmark-experiment-plan.md
 /scripts/benchmark_*.py
 /scripts/report_*.py

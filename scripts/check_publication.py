@@ -31,6 +31,11 @@ WORKSTATION_PATH = re.compile(r"[A-Za-z]:[\\/](?:Users|repo_priv)[\\/]|/home/[A-
 SOURCE_ARCHIVE = "benchmark/algorithm-9bc9dbf.zip"
 MAX_ARCHIVE_BYTES = 64 * 1024 * 1024
 SOURCE_SUFFIXES = {".rs", ".py", ".txt", ".md", ".html", ".json", ".toml", ".lock"}
+BENCHMARK_ARCHIVE = "benchmark/apex-benchmark-2026-09-24.zip"
+# The expanded publication was audited before packaging. Any byte change needs
+# a new content review and digest; this is not a general allowance for ZIPs.
+BENCHMARK_ARCHIVE_SHA256 = "a7299c71ac7e523715ae179d0c4078ff6e30cb0f36b3e317b1ae3d4bae27b8d1"
+MAX_BENCHMARK_BYTES = 100 * 1024 * 1024
 
 
 def text_codes(content: str, suffix: str) -> set[str]:
@@ -99,6 +104,18 @@ def source_archive_codes(root: Path, path: Path) -> set[str]:
         return {"SOURCE_ARCHIVE_INTEGRITY"}
 
 
+def benchmark_archive_codes(path: Path) -> set[str]:
+    """Accept only the exact reviewed reproduction package, without extraction."""
+    try:
+        if path.stat().st_size > MAX_BENCHMARK_BYTES:
+            return {"BENCHMARK_ARCHIVE_LIMIT"}
+        with path.open("rb") as stream:
+            digest = hashlib.file_digest(stream, "sha256").hexdigest()
+        return set() if digest == BENCHMARK_ARCHIVE_SHA256 else {"BENCHMARK_ARCHIVE_INTEGRITY"}
+    except OSError:
+        return {"BENCHMARK_ARCHIVE_INTEGRITY"}
+
+
 def scan(root: Path) -> list[dict[str, str]]:
     """Return finding codes and relative paths, never matching content."""
     findings = []
@@ -113,7 +130,9 @@ def scan(root: Path) -> list[dict[str, str]]:
             continue
         codes = set()
         if path.suffix.lower() in ARTIFACT_SUFFIXES:
-            if relative.as_posix() == SOURCE_ARCHIVE:
+            if relative.as_posix() == BENCHMARK_ARCHIVE:
+                codes.update(benchmark_archive_codes(path))
+            elif relative.as_posix() == SOURCE_ARCHIVE:
                 codes.update(source_archive_codes(root, path))
             else:
                 codes.add("REMOVE_OR_REVIEW_BINARY_ARTIFACT")

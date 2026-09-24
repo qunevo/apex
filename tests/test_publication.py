@@ -1,4 +1,4 @@
-"""Publication checks for the declared, immutable benchmark source archive."""
+"""Publication checks for frozen benchmark packages and their source archives."""
 
 import hashlib
 import json
@@ -88,6 +88,44 @@ class PublicationTests(unittest.TestCase):
         self.bundle(content="x" * 32)
         with patch.object(publication, "MAX_ARCHIVE_BYTES", 16):
             self.assertEqual(self.codes(), {"SOURCE_ARCHIVE_LIMIT"})
+
+
+class BenchmarkPackageTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.archive = self.root / publication.BENCHMARK_ARCHIVE
+        self.archive.parent.mkdir()
+        with zipfile.ZipFile(self.archive, "w") as bundle:
+            bundle.writestr("apex-benchmark-2026-09-24/README.md", "Synthetic publication fixture")
+        digest = hashlib.sha256(self.archive.read_bytes()).hexdigest()
+        self.digest_patch = patch.object(publication, "BENCHMARK_ARCHIVE_SHA256", digest)
+        self.digest_patch.start()
+        self.addCleanup(self.digest_patch.stop)
+
+    def codes(self):
+        return {finding["code"] for finding in publication.scan(self.root)}
+
+    def test_reviewed_package_is_accepted_without_extracting(self):
+        self.assertEqual(self.codes(), set())
+        self.assertFalse((self.archive.parent / "apex-benchmark-2026-09-24").exists())
+        (self.root / "other.zip").write_bytes(self.archive.read_bytes())
+        self.assertEqual(self.codes(), {"REMOVE_OR_REVIEW_BINARY_ARTIFACT"})
+
+    def test_changed_payload_and_appended_data_require_review(self):
+        original = self.archive.read_bytes()
+        for payload in (original + b"extra", b"invalid ZIP"):
+            with self.subTest(payload_size=len(payload)):
+                self.archive.write_bytes(payload)
+                self.assertEqual(self.codes(), {"BENCHMARK_ARCHIVE_INTEGRITY"})
+        with zipfile.ZipFile(self.archive, "w") as bundle:
+            bundle.writestr("apex-benchmark-2026-09-24/.env", "synthetic-local-setting")
+        self.assertEqual(self.codes(), {"BENCHMARK_ARCHIVE_INTEGRITY"})
+
+    def test_package_above_distribution_limit_is_rejected(self):
+        with patch.object(publication, "MAX_BENCHMARK_BYTES", 16):
+            self.assertEqual(self.codes(), {"BENCHMARK_ARCHIVE_LIMIT"})
 
 
 if __name__ == "__main__":
