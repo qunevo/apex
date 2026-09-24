@@ -1,0 +1,394 @@
+{
+  "planning": {
+    "objectives": [
+      {
+        "id": "service",
+        "attribute": "urgency",
+        "weight": 1,
+        "priority": 0
+      }
+    ]
+  },
+  "schema_version": "apex.v3.1",
+  "id": "synthetic-combined-release-example",
+  "horizon": 86400,
+  "epoch": "2026-09-24T06:00:00Z",
+  "resources": [
+    {
+      "id": "M0",
+      "capacity": 1.0,
+      "calendar": [
+        {
+          "start": 0,
+          "end": 86400,
+          "capacity": 1.0,
+          "rate": 1.0
+        }
+      ],
+      "retention_calendar": [],
+      "initial_state": ""
+    },
+    {
+      "id": "M1",
+      "capacity": 1.0,
+      "calendar": [
+        {
+          "start": 0,
+          "end": 86400,
+          "capacity": 1.0,
+          "rate": 1.0
+        }
+      ],
+      "retention_calendar": [],
+      "initial_state": ""
+    },
+    {
+      "id": "M2",
+      "capacity": 1.0,
+      "calendar": [
+        {
+          "start": 0,
+          "end": 86400,
+          "capacity": 1.0,
+          "rate": 1.0
+        }
+      ],
+      "retention_calendar": [],
+      "initial_state": ""
+    },
+    {
+      "id": "M3",
+      "capacity": 1.0,
+      "calendar": [
+        {
+          "start": 0,
+          "end": 86400,
+          "capacity": 1.0,
+          "rate": 1.0
+        }
+      ],
+      "retention_calendar": [],
+      "initial_state": ""
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T000000",
+      "release": 39,
+      "due": 600,
+      "deadline": null,
+      "priority": 1.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 6,
+              "work_per_unit": null,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0,
+          "pre": [],
+          "post": [],
+          "consume": null,
+          "produce": null
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 8
+      },
+      "execution": null,
+      "source": "synthetic:row:1",
+      "quantity": 1.0,
+      "job": null,
+      "stage": ""
+    },
+    {
+      "id": "T000001",
+      "release": 35,
+      "due": 840,
+      "deadline": null,
+      "priority": 2.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 13,
+              "work_per_unit": null,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0,
+          "pre": [],
+          "post": [],
+          "consume": null,
+          "produce": null
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 6
+      },
+      "execution": null,
+      "source": "synthetic:row:2",
+      "quantity": 1.0,
+      "job": null,
+      "stage": ""
+    },
+    {
+      "id": "T000002",
+      "release": 57,
+      "due": 1080,
+      "deadline": null,
+      "priority": 3.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 4,
+              "work_per_unit": null,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0,
+          "pre": [],
+          "post": [],
+          "consume": null,
+          "produce": null
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 2
+      },
+      "execution": null,
+      "source": "synthetic:row:3",
+      "quantity": 1.0,
+      "job": null,
+      "stage": ""
+    },
+    {
+      "id": "T000003",
+      "release": 7,
+      "due": 1320,
+      "deadline": null,
+      "priority": 4.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 6,
+              "work_per_unit": null,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0,
+          "pre": [],
+          "post": [],
+          "consume": null,
+          "produce": null
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 2
+      },
+      "execution": null,
+      "source": "synthetic:row:4",
+      "quantity": 1.0,
+      "job": null,
+      "stage": ""
+    },
+    {
+      "id": "T000004",
+      "release": 43,
+      "due": 1560,
+      "deadline": null,
+      "priority": 5.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 19,
+              "work_per_unit": null,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0,
+          "pre": [],
+          "post": [],
+          "consume": null,
+          "produce": null
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 6
+      },
+      "execution": null,
+      "source": "synthetic:row:5",
+      "quantity": 1.0,
+      "job": null,
+      "stage": ""
+    },
+    {
+      "id": "T000005",
+      "release": 39,
+      "due": 1800,
+      "deadline": null,
+      "priority": 1.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 2,
+              "work_per_unit": null,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0,
+          "pre": [],
+          "post": [],
+          "consume": null,
+          "produce": null
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 3
+      },
+      "execution": null,
+      "source": "synthetic:row:6",
+      "quantity": 1.0,
+      "job": null,
+      "stage": ""
+    }
+  ],
+  "dependencies": [],
+  "locks": [],
+  "transitions": [],
+  "inventory": {},
+  "receipts": [],
+  "objectives": [
+    {
+      "metric": "service",
+      "weight": 1,
+      "priority": 0
+    }
+  ],
+  "rules": [],
+  "assumptions": [
+    "Deliberately synthetic six-operation example; release times are known inputs, not simulated uncertainty."
+  ],
+  "routes": [],
+  "jobs": [],
+  "orders": [],
+  "customization": null,
+  "queue_policy": {
+    "stages": {
+      "*": {
+        "attribute:service": 1
+      }
+    },
+    "candidate_limit": 0
+  },
+  "queue_definitions": [],
+  "freeze_zones": []
+}

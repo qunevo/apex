@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Options",
+  "type": "object",
+  "properties": {
+    "budget_ms": {
+      "type": "integer",
+      "format": "uint64",
+      "default": 5000,
+      "minimum": 0
+    },
+    "decision_prefix": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Decision"
+      }
+    },
+    "iterations": {
+      "type": "integer",
+      "format": "uint",
+      "default": 128,
+      "minimum": 0
+    },
+    "mode_choices": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "default": {}
+    },
+    "plus": {
+      "$ref": "#/$defs/PlusConfig",
+      "default": {
+        "branching": 4,
+        "depth": 8,
+        "exploration": 1.4,
+        "workers": 1
+      }
+    },
+    "queue_policy": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/QueuePolicy"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "route_choices": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "default": {}
+    },
+    "seed": {
+      "type": "integer",
+      "format": "uint64",
+      "default": 42,
+      "minimum": 0
+    },
+    "strategy": {
+      "type": "string",
+      "default": "due"
+    },
+    "top_k": {
+      "type": "integer",
+      "format": "uint",
+      "default": 1,
+      "minimum": 0
+    },
+    "trainer": {
+      "$ref": "#/$defs/TrainerConfig",
+      "default": {
+        "archive_limit": 32,
+        "crossover_rate": 0.25,
+        "generations": null,
+        "max_evaluations": null,
+        "mutation_rate": 0.75,
+        "population_size": 16,
+        "selection": "lexicographic",
+        "workers": 1
+      }
+    },
+    "weights": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HeuristicWeights"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "Decision": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string"
+        },
+        "task": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "task",
+        "mode"
+      ]
+    },
+    "HeuristicWeights": {
+      "type": "object",
+      "properties": {
+        "due": {
+          "type": "number",
+          "format": "double"
+        },
+        "priority": {
+          "type": "number",
+          "format": "double"
+        },
+        "release": {
+          "type": "number",
+          "format": "double"
+        },
+        "urgency": {
+          "type": "number",
+          "format": "double"
+        },
+        "work": {
+          "type": "number",
+          "format": "double"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "due",
+        "work",
+        "priority",
+        "release",
+        "urgency"
+      ]
+    },
+    "PlusConfig": {
+      "type": "object",
+      "properties": {
+        "branching": {
+          "type": "integer",
+          "format": "uint",
+          "default": 4,
+          "minimum": 0
+        },
+        "depth": {
+          "type": "integer",
+          "format": "uint",
+          "default": 8,
+          "minimum": 0
+        },
+        "exploration": {
+          "type": "number",
+          "format": "double",
+          "default": 1.4
+        },
+        "workers": {
+          "type": "integer",
+          "format": "uint",
+          "default": 1,
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "QueuePolicy": {
+      "type": "object",
+      "properties": {
+        "candidate_limit": {
+          "description": "Zero evaluates the entire ready set; a positive value bounds the candidate window.",
+          "type": "integer",
+          "format": "uint",
+          "default": 64,
+          "minimum": 0
+        },
+        "normalization": {
+          "type": "string",
+          "default": "minmax"
+        },
+        "stages": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          "default": {}
+        }
+      },
+      "additionalProperties": false
+    },
+    "TrainerConfig": {
+      "type": "object",
+      "properties": {
+        "archive_limit": {
+          "type": "integer",
+          "format": "uint",
+          "default": 32,
+          "minimum": 0
+        },
+        "crossover_rate": {
+          "type": "number",
+          "format": "double",
+          "default": 0.25
+        },
+        "generations": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint",
+          "default": null,
+          "minimum": 0
+        },
+        "max_evaluations": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint",
+          "default": null,
+          "minimum": 0
+        },
+        "mutation_rate": {
+          "type": "number",
+          "format": "double",
+          "default": 0.75
+        },
+        "population_size": {
+          "type": "integer",
+          "format": "uint",
+          "default": 16,
+          "minimum": 0
+        },
+        "selection": {
+          "type": "string",
+          "default": "lexicographic"
+        },
+        "workers": {
+          "type": "integer",
+          "format": "uint",
+          "default": 1,
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

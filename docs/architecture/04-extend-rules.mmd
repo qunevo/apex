@@ -1,0 +1,19 @@
+sequenceDiagram
+  actor User as Planner
+  participant Agent as Coding agent
+  participant Workspace as Customization workspace
+  participant Tests
+  participant Tools as Scenario service
+  User->>Agent: Describe a production rule
+  Agent->>Workspace: Draft rule ID, semantics and required fields
+  Agent->>Workspace: Add schema, implementation and validator
+  Agent->>Tests: Run positive, negative and boundary cases
+  Tests-->>Agent: Coverage and failures
+  alt Failure or ambiguous semantics
+    Agent-->>User: Explain unresolved behavior
+  else Reviewed bundle ready
+    Agent->>Workspace: Version the bundle
+    Agent->>Tools: Fork scenario with new rule version
+    Tools->>Tools: Compile, validate data, replan and validate result
+    Tools-->>User: Compare results and new diagnostics
+  end

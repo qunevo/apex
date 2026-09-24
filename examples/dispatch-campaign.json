@@ -1,0 +1,339 @@
+{
+  "schema_version": "apex.v3.4",
+  "id": "synthetic-campaign-factory",
+  "horizon": 86400,
+  "epoch": "2026-09-24T06:00:00Z",
+  "resources": [
+    {
+      "id": "M0",
+      "capacity": 1,
+      "calendar": [
+        {
+          "start": 0,
+          "end": 10800,
+          "capacity": 1,
+          "rate": 1
+        },
+        {
+          "start": 12600,
+          "end": 86400,
+          "capacity": 1,
+          "rate": 1
+        }
+      ],
+      "initial_state": "A"
+    },
+    {
+      "id": "QA",
+      "capacity": 1,
+      "calendar": [
+        {
+          "start": 0,
+          "end": 86400,
+          "capacity": 1,
+          "rate": 1
+        }
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "A-01",
+      "family": "A",
+      "stage": "finish",
+      "due": 7200,
+      "priority": 1,
+      "attributes": {
+        "urgency": 2
+      },
+      "modes": [
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 7200,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1,
+                  "retain": true
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "source": "synthetic:dispatch-demonstrator"
+    },
+    {
+      "id": "B-01",
+      "family": "B",
+      "stage": "finish",
+      "due": 12000,
+      "priority": 1,
+      "attributes": {
+        "urgency": 1
+      },
+      "modes": [
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 1800,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1,
+                  "retain": true
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "source": "synthetic:dispatch-demonstrator"
+    },
+    {
+      "id": "A-02",
+      "family": "A",
+      "stage": "finish",
+      "due": 30000,
+      "priority": 1,
+      "attributes": {
+        "urgency": 2
+      },
+      "modes": [
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 7200,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1,
+                  "retain": true
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "source": "synthetic:dispatch-demonstrator"
+    },
+    {
+      "id": "A-03",
+      "family": "A",
+      "stage": "finish",
+      "due": 40000,
+      "priority": 1,
+      "attributes": {
+        "urgency": 2
+      },
+      "modes": [
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 7200,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1,
+                  "retain": true
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "source": "synthetic:dispatch-demonstrator"
+    },
+    {
+      "id": "B-02",
+      "family": "B",
+      "stage": "finish",
+      "due": 44000,
+      "priority": 1,
+      "attributes": {
+        "urgency": 1
+      },
+      "modes": [
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 3600,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1,
+                  "retain": true
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "source": "synthetic:dispatch-demonstrator"
+    },
+    {
+      "id": "B-03",
+      "family": "B",
+      "stage": "finish",
+      "due": 50000,
+      "priority": 1,
+      "attributes": {
+        "urgency": 1
+      },
+      "modes": [
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 3600,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1,
+                  "retain": true
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "source": "synthetic:dispatch-demonstrator"
+    }
+  ],
+  "locks": [
+    {
+      "kind": "start",
+      "task": "A-01",
+      "at": 0
+    }
+  ],
+  "rules": [
+    {
+      "kind": "sequence_pattern",
+      "id": "family-change",
+      "resource": "M0",
+      "pattern": [
+        "A",
+        "B"
+      ],
+      "previous_post": [
+        {
+          "id": "clean",
+          "modes": [
+            {
+              "id": "on-M0",
+              "primary": "M0",
+              "phases": [
+                {
+                  "id": "run",
+                  "work": 600,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "M0",
+                  "requirements": [
+                    {
+                      "resource": "M0",
+                      "amount": 1,
+                      "retain": true
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "penalty": 1
+    }
+  ],
+  "objectives": [
+    {
+      "metric": "weighted_tardiness",
+      "weight": 1,
+      "priority": 0
+    },
+    {
+      "metric": "setup_penalty",
+      "weight": 1,
+      "priority": 1
+    }
+  ],
+  "planning": {
+    "version": "apex.planning.v1",
+    "constraints": [
+      {
+        "kind": "eligible_resources",
+        "id": "finishing-cell",
+        "select": {
+          "stages": [
+            "finish"
+          ]
+        },
+        "resources": [
+          "M0"
+        ]
+      },
+      {
+        "kind": "window",
+        "id": "availability",
+        "select": {
+          "tasks": [
+            "B-01"
+          ]
+        },
+        "earliest": 3600,
+        "latest": 80000
+      }
+    ],
+    "policies": [
+      {
+        "kind": "campaign",
+        "id": "six-productive-hours",
+        "resource": "M0",
+        "select": {
+          "stages": [
+            "finish"
+          ]
+        },
+        "minimum": 21600,
+        "basis": "productive_time",
+        "initial": {
+          "family": "A",
+          "credit": 0
+        },
+        "on_no_match": "allow_switch",
+        "exempt_committed": true
+      }
+    ],
+    "objectives": []
+  }
+}

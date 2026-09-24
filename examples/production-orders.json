@@ -1,0 +1,603 @@
+{
+  "problem": {
+    "schema_version": "apex.v3.2",
+    "id": "synthetic-route-factory",
+    "epoch": "2026-09-24T06:00:00Z",
+    "horizon": 14400,
+    "resources": [
+      {
+        "id": "CUT0",
+        "capacity": 1,
+        "initial_state": "light",
+        "calendar": [
+          {
+            "start": 0,
+            "end": 1800,
+            "capacity": 1,
+            "rate": 1
+          },
+          {
+            "start": 2100,
+            "end": 5400,
+            "capacity": 1,
+            "rate": 1
+          },
+          {
+            "start": 5400,
+            "end": 14400,
+            "capacity": 1,
+            "rate": 0.8
+          }
+        ],
+        "retention_calendar": []
+      },
+      {
+        "id": "CUT1",
+        "capacity": 1,
+        "initial_state": "light",
+        "calendar": [
+          {
+            "start": 0,
+            "end": 1800,
+            "capacity": 1,
+            "rate": 1
+          },
+          {
+            "start": 2100,
+            "end": 5400,
+            "capacity": 1,
+            "rate": 1
+          },
+          {
+            "start": 5400,
+            "end": 14400,
+            "capacity": 1,
+            "rate": 0.8
+          }
+        ],
+        "retention_calendar": []
+      },
+      {
+        "id": "ASSEMBLY",
+        "capacity": 1,
+        "initial_state": "light",
+        "calendar": [
+          {
+            "start": 0,
+            "end": 1800,
+            "capacity": 1,
+            "rate": 1
+          },
+          {
+            "start": 2100,
+            "end": 5400,
+            "capacity": 1,
+            "rate": 1
+          },
+          {
+            "start": 5400,
+            "end": 14400,
+            "capacity": 1,
+            "rate": 0.8
+          }
+        ],
+        "retention_calendar": []
+      },
+      {
+        "id": "OPS",
+        "capacity": 2,
+        "initial_state": "light",
+        "calendar": [
+          {
+            "start": 0,
+            "end": 1800,
+            "capacity": 2,
+            "rate": 1
+          },
+          {
+            "start": 2100,
+            "end": 5400,
+            "capacity": 2,
+            "rate": 1
+          },
+          {
+            "start": 5400,
+            "end": 14400,
+            "capacity": 2,
+            "rate": 0.8
+          }
+        ],
+        "retention_calendar": []
+      },
+      {
+        "id": "TOOL",
+        "capacity": 1,
+        "initial_state": "light",
+        "calendar": [
+          {
+            "start": 0,
+            "end": 1800,
+            "capacity": 1,
+            "rate": 1
+          },
+          {
+            "start": 2100,
+            "end": 5400,
+            "capacity": 1,
+            "rate": 1
+          },
+          {
+            "start": 5400,
+            "end": 14400,
+            "capacity": 1,
+            "rate": 0.8
+          }
+        ],
+        "retention_calendar": []
+      }
+    ],
+    "tasks": [],
+    "dependencies": [],
+    "locks": [],
+    "transitions": [],
+    "inventory": {
+      "RAW": 100
+    },
+    "receipts": [],
+    "objectives": [],
+    "rules": [],
+    "assumptions": []
+  },
+  "workplans": [
+    {
+      "id": "standard",
+      "item": "PRODUCT",
+      "tasks": [
+        {
+          "id": "cut",
+          "family": "product",
+          "quantity": 1,
+          "attributes": {
+            "urgency": 2
+          },
+          "modes": [
+            {
+              "id": "on-CUT0",
+              "primary": "CUT0",
+              "phases": [
+                {
+                  "id": "process",
+                  "work": 0,
+                  "work_per_unit": 55,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "CUT0",
+                  "requirements": [
+                    {
+                      "resource": "CUT0",
+                      "amount": 1,
+                      "retain": true
+                    },
+                    {
+                      "resource": "TOOL",
+                      "amount": 1,
+                      "retain": false
+                    }
+                  ]
+                }
+              ],
+              "pre": [
+                {
+                  "id": "prepare-tool",
+                  "modes": [
+                    {
+                      "id": "on-TOOL",
+                      "primary": "TOOL",
+                      "phases": [
+                        {
+                          "id": "process",
+                          "work": 90,
+                          "work_per_unit": 0,
+                          "interruption": "calendar_resumable",
+                          "rate_resource": "TOOL",
+                          "requirements": [
+                            {
+                              "resource": "TOOL",
+                              "amount": 1,
+                              "retain": true
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "after": [],
+                  "releases_product": false
+                },
+                {
+                  "id": "check-program",
+                  "modes": [
+                    {
+                      "id": "on-OPS",
+                      "primary": "OPS",
+                      "phases": [
+                        {
+                          "id": "process",
+                          "work": 60,
+                          "work_per_unit": 0,
+                          "interruption": "calendar_resumable",
+                          "rate_resource": "OPS",
+                          "requirements": [
+                            {
+                              "resource": "OPS",
+                              "amount": 1,
+                              "retain": true
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "after": [],
+                  "releases_product": false
+                }
+              ],
+              "post": [
+                {
+                  "id": "quality-check",
+                  "modes": [
+                    {
+                      "id": "on-OPS",
+                      "primary": "OPS",
+                      "phases": [
+                        {
+                          "id": "process",
+                          "work": 45,
+                          "work_per_unit": 0,
+                          "interruption": "calendar_resumable",
+                          "rate_resource": "OPS",
+                          "requirements": [
+                            {
+                              "resource": "OPS",
+                              "amount": 1,
+                              "retain": true
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "after": [],
+                  "releases_product": true
+                },
+                {
+                  "id": "clean",
+                  "modes": [
+                    {
+                      "id": "on-CUT0",
+                      "primary": "CUT0",
+                      "phases": [
+                        {
+                          "id": "process",
+                          "work": 60,
+                          "work_per_unit": 0,
+                          "interruption": "calendar_resumable",
+                          "rate_resource": "CUT0",
+                          "requirements": [
+                            {
+                              "resource": "CUT0",
+                              "amount": 1,
+                              "retain": true
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "after": [],
+                  "releases_product": false
+                }
+              ],
+              "cost": 20
+            }
+          ],
+          "consume": {
+            "RAW": 1
+          },
+          "produce": {
+            "$job:WIP": 1
+          }
+        },
+        {
+          "id": "assemble",
+          "quantity": 1,
+          "attributes": {
+            "urgency": 2
+          },
+          "modes": [
+            {
+              "id": "on-ASSEMBLY",
+              "primary": "ASSEMBLY",
+              "phases": [
+                {
+                  "id": "process",
+                  "work": 30,
+                  "work_per_unit": 40,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "ASSEMBLY",
+                  "requirements": [
+                    {
+                      "resource": "ASSEMBLY",
+                      "amount": 1,
+                      "retain": true
+                    },
+                    {
+                      "resource": "OPS",
+                      "amount": 1,
+                      "retain": false
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "consume": {
+            "$job:WIP": 1
+          },
+          "produce": {
+            "PRODUCT": 1
+          }
+        }
+      ],
+      "dependencies": [
+        {
+          "before": "cut",
+          "after": "assemble"
+        }
+      ]
+    },
+    {
+      "id": "express",
+      "item": "PRODUCT",
+      "tasks": [
+        {
+          "id": "cut",
+          "family": "product",
+          "quantity": 1,
+          "attributes": {
+            "urgency": 2
+          },
+          "modes": [
+            {
+              "id": "on-CUT1",
+              "primary": "CUT1",
+              "phases": [
+                {
+                  "id": "process",
+                  "work": 0,
+                  "work_per_unit": 35,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "CUT1",
+                  "requirements": [
+                    {
+                      "resource": "CUT1",
+                      "amount": 1,
+                      "retain": true
+                    },
+                    {
+                      "resource": "TOOL",
+                      "amount": 1,
+                      "retain": false
+                    }
+                  ]
+                }
+              ],
+              "pre": [
+                {
+                  "id": "prepare-tool",
+                  "modes": [
+                    {
+                      "id": "on-TOOL",
+                      "primary": "TOOL",
+                      "phases": [
+                        {
+                          "id": "process",
+                          "work": 150,
+                          "work_per_unit": 0,
+                          "interruption": "calendar_resumable",
+                          "rate_resource": "TOOL",
+                          "requirements": [
+                            {
+                              "resource": "TOOL",
+                              "amount": 1,
+                              "retain": true
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "after": [],
+                  "releases_product": false
+                },
+                {
+                  "id": "check-program",
+                  "modes": [
+                    {
+                      "id": "on-OPS",
+                      "primary": "OPS",
+                      "phases": [
+                        {
+                          "id": "process",
+                          "work": 60,
+                          "work_per_unit": 0,
+                          "interruption": "calendar_resumable",
+                          "rate_resource": "OPS",
+                          "requirements": [
+                            {
+                              "resource": "OPS",
+                              "amount": 1,
+                              "retain": true
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "after": [],
+                  "releases_product": false
+                }
+              ],
+              "post": [
+                {
+                  "id": "quality-check",
+                  "modes": [
+                    {
+                      "id": "on-OPS",
+                      "primary": "OPS",
+                      "phases": [
+                        {
+                          "id": "process",
+                          "work": 45,
+                          "work_per_unit": 0,
+                          "interruption": "calendar_resumable",
+                          "rate_resource": "OPS",
+                          "requirements": [
+                            {
+                              "resource": "OPS",
+                              "amount": 1,
+                              "retain": true
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "after": [],
+                  "releases_product": true
+                },
+                {
+                  "id": "clean",
+                  "modes": [
+                    {
+                      "id": "on-CUT1",
+                      "primary": "CUT1",
+                      "phases": [
+                        {
+                          "id": "process",
+                          "work": 60,
+                          "work_per_unit": 0,
+                          "interruption": "calendar_resumable",
+                          "rate_resource": "CUT1",
+                          "requirements": [
+                            {
+                              "resource": "CUT1",
+                              "amount": 1,
+                              "retain": true
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "after": [],
+                  "releases_product": false
+                }
+              ],
+              "cost": 80
+            }
+          ],
+          "consume": {
+            "RAW": 1
+          },
+          "produce": {
+            "$job:WIP": 1
+          }
+        },
+        {
+          "id": "assemble",
+          "quantity": 1,
+          "attributes": {
+            "urgency": 2
+          },
+          "modes": [
+            {
+              "id": "on-ASSEMBLY",
+              "primary": "ASSEMBLY",
+              "phases": [
+                {
+                  "id": "process",
+                  "work": 30,
+                  "work_per_unit": 40,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "ASSEMBLY",
+                  "requirements": [
+                    {
+                      "resource": "ASSEMBLY",
+                      "amount": 1,
+                      "retain": true
+                    },
+                    {
+                      "resource": "OPS",
+                      "amount": 1,
+                      "retain": false
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "consume": {
+            "$job:WIP": 1
+          },
+          "produce": {
+            "PRODUCT": 1
+          }
+        }
+      ],
+      "dependencies": [
+        {
+          "before": "cut",
+          "after": "assemble"
+        }
+      ]
+    }
+  ],
+  "demands": [
+    {
+      "id": "ORDER-1",
+      "item": "PRODUCT",
+      "quantity": 12,
+      "max_lot": 8,
+      "workplans": [
+        "standard",
+        "express"
+      ],
+      "due": 1000,
+      "priority": 3
+    },
+    {
+      "id": "ORDER-2",
+      "item": "PRODUCT",
+      "quantity": 8,
+      "max_lot": 8,
+      "workplans": [
+        "standard",
+        "express"
+      ],
+      "due": 1750,
+      "priority": 2
+    },
+    {
+      "id": "ORDER-3",
+      "item": "PRODUCT",
+      "quantity": 16,
+      "max_lot": 8,
+      "workplans": [
+        "standard",
+        "express"
+      ],
+      "due": 2500,
+      "priority": 1
+    }
+  ]
+}

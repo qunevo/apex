@@ -1,0 +1,2107 @@
+{
+  "schema_version": "apex.v3.1",
+  "id": "synthetic-shift-factory",
+  "epoch": "2026-09-24T06:00:00Z",
+  "horizon": 14400,
+  "resources": [
+    {
+      "id": "CUT0",
+      "capacity": 1,
+      "initial_state": "light",
+      "calendar": [
+        {
+          "start": 0,
+          "end": 1800,
+          "capacity": 1,
+          "rate": 1
+        },
+        {
+          "start": 2100,
+          "end": 5400,
+          "capacity": 1,
+          "rate": 1
+        },
+        {
+          "start": 5400,
+          "end": 14400,
+          "capacity": 1,
+          "rate": 0.8
+        }
+      ],
+      "retention_calendar": []
+    },
+    {
+      "id": "CUT1",
+      "capacity": 1,
+      "initial_state": "light",
+      "calendar": [
+        {
+          "start": 0,
+          "end": 1800,
+          "capacity": 1,
+          "rate": 1
+        },
+        {
+          "start": 2100,
+          "end": 5400,
+          "capacity": 1,
+          "rate": 1
+        },
+        {
+          "start": 5400,
+          "end": 14400,
+          "capacity": 1,
+          "rate": 0.8
+        }
+      ],
+      "retention_calendar": []
+    },
+    {
+      "id": "ASSEMBLY",
+      "capacity": 1,
+      "initial_state": "light",
+      "calendar": [
+        {
+          "start": 0,
+          "end": 1800,
+          "capacity": 1,
+          "rate": 1
+        },
+        {
+          "start": 2100,
+          "end": 5400,
+          "capacity": 1,
+          "rate": 1
+        },
+        {
+          "start": 5400,
+          "end": 14400,
+          "capacity": 1,
+          "rate": 0.8
+        }
+      ],
+      "retention_calendar": []
+    },
+    {
+      "id": "OPS",
+      "capacity": 2,
+      "initial_state": "light",
+      "calendar": [
+        {
+          "start": 0,
+          "end": 1800,
+          "capacity": 2,
+          "rate": 1
+        },
+        {
+          "start": 2100,
+          "end": 5400,
+          "capacity": 2,
+          "rate": 1
+        },
+        {
+          "start": 5400,
+          "end": 14400,
+          "capacity": 2,
+          "rate": 0.8
+        }
+      ],
+      "retention_calendar": []
+    },
+    {
+      "id": "TOOL",
+      "capacity": 1,
+      "initial_state": "light",
+      "calendar": [
+        {
+          "start": 0,
+          "end": 1800,
+          "capacity": 1,
+          "rate": 1
+        },
+        {
+          "start": 2100,
+          "end": 5400,
+          "capacity": 1,
+          "rate": 1
+        },
+        {
+          "start": 5400,
+          "end": 14400,
+          "capacity": 1,
+          "rate": 0.8
+        }
+      ],
+      "retention_calendar": []
+    }
+  ],
+  "tasks": [
+    {
+      "release": 0,
+      "due": 1800,
+      "deadline": null,
+      "priority": 1,
+      "family": "light",
+      "attributes": {
+        "urgency": 1
+      },
+      "execution": null,
+      "source": "synthetic:job:0",
+      "id": "J0-cut",
+      "modes": [
+        {
+          "id": "CUT0",
+          "primary": "CUT0",
+          "phases": [
+            {
+              "id": "load",
+              "work": 90,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT0",
+              "requirements": [
+                {
+                  "resource": "CUT0",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            },
+            {
+              "id": "cut",
+              "work": 300,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT0",
+              "requirements": [
+                {
+                  "resource": "CUT0",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "TOOL",
+                  "amount": 1,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        },
+        {
+          "id": "CUT1",
+          "primary": "CUT1",
+          "phases": [
+            {
+              "id": "load",
+              "work": 90,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT1",
+              "requirements": [
+                {
+                  "resource": "CUT1",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            },
+            {
+              "id": "cut",
+              "work": 345,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT1",
+              "requirements": [
+                {
+                  "resource": "CUT1",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "TOOL",
+                  "amount": 1,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {
+        "RAW": 1
+      },
+      "produce": {
+        "WIP-0": 1
+      }
+    },
+    {
+      "release": 0,
+      "due": 1800,
+      "deadline": null,
+      "priority": 1,
+      "family": "light",
+      "attributes": {
+        "urgency": 1
+      },
+      "execution": null,
+      "source": "synthetic:job:0",
+      "id": "J0-assemble",
+      "modes": [
+        {
+          "id": "assembly",
+          "primary": "ASSEMBLY",
+          "phases": [
+            {
+              "id": "assemble",
+              "work": 240,
+              "interruption": "calendar_resumable",
+              "rate_resource": "ASSEMBLY",
+              "requirements": [
+                {
+                  "resource": "ASSEMBLY",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        }
+      ],
+      "pre": [],
+      "post": [
+        {
+          "id": "inspection",
+          "releases_product": true,
+          "modes": [
+            {
+              "id": "inspection",
+              "primary": "ASSEMBLY",
+              "phases": [
+                {
+                  "id": "inspection",
+                  "work": 60,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "ASSEMBLY",
+                  "requirements": [
+                    {
+                      "resource": "ASSEMBLY",
+                      "amount": 1,
+                      "retain": true
+                    },
+                    {
+                      "resource": "OPS",
+                      "amount": 1,
+                      "retain": false
+                    }
+                  ]
+                }
+              ],
+              "contiguous": false,
+              "cost": 0
+            }
+          ]
+        }
+      ],
+      "consume": {
+        "WIP-0": 1
+      },
+      "produce": {
+        "FINISHED": 1
+      }
+    },
+    {
+      "release": 0,
+      "due": 2150,
+      "deadline": null,
+      "priority": 2,
+      "family": "dark",
+      "attributes": {
+        "urgency": 2
+      },
+      "execution": null,
+      "source": "synthetic:job:1",
+      "id": "J1-cut",
+      "modes": [
+        {
+          "id": "CUT0",
+          "primary": "CUT0",
+          "phases": [
+            {
+              "id": "load",
+              "work": 90,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT0",
+              "requirements": [
+                {
+                  "resource": "CUT0",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            },
+            {
+              "id": "cut",
+              "work": 330,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT0",
+              "requirements": [
+                {
+                  "resource": "CUT0",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "TOOL",
+                  "amount": 1,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        },
+        {
+          "id": "CUT1",
+          "primary": "CUT1",
+          "phases": [
+            {
+              "id": "load",
+              "work": 90,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT1",
+              "requirements": [
+                {
+                  "resource": "CUT1",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            },
+            {
+              "id": "cut",
+              "work": 375,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT1",
+              "requirements": [
+                {
+                  "resource": "CUT1",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "TOOL",
+                  "amount": 1,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {
+        "RAW": 1
+      },
+      "produce": {
+        "WIP-1": 1
+      }
+    },
+    {
+      "release": 0,
+      "due": 2150,
+      "deadline": null,
+      "priority": 2,
+      "family": "dark",
+      "attributes": {
+        "urgency": 2
+      },
+      "execution": null,
+      "source": "synthetic:job:1",
+      "id": "J1-assemble",
+      "modes": [
+        {
+          "id": "assembly",
+          "primary": "ASSEMBLY",
+          "phases": [
+            {
+              "id": "assemble",
+              "work": 240,
+              "interruption": "calendar_resumable",
+              "rate_resource": "ASSEMBLY",
+              "requirements": [
+                {
+                  "resource": "ASSEMBLY",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        }
+      ],
+      "pre": [],
+      "post": [
+        {
+          "id": "inspection",
+          "releases_product": true,
+          "modes": [
+            {
+              "id": "inspection",
+              "primary": "ASSEMBLY",
+              "phases": [
+                {
+                  "id": "inspection",
+                  "work": 60,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "ASSEMBLY",
+                  "requirements": [
+                    {
+                      "resource": "ASSEMBLY",
+                      "amount": 1,
+                      "retain": true
+                    },
+                    {
+                      "resource": "OPS",
+                      "amount": 1,
+                      "retain": false
+                    }
+                  ]
+                }
+              ],
+              "contiguous": false,
+              "cost": 0
+            }
+          ]
+        }
+      ],
+      "consume": {
+        "WIP-1": 1
+      },
+      "produce": {
+        "FINISHED": 1
+      }
+    },
+    {
+      "release": 0,
+      "due": 2500,
+      "deadline": null,
+      "priority": 3,
+      "family": "light",
+      "attributes": {
+        "urgency": 3
+      },
+      "execution": null,
+      "source": "synthetic:job:2",
+      "id": "J2-cut",
+      "modes": [
+        {
+          "id": "CUT0",
+          "primary": "CUT0",
+          "phases": [
+            {
+              "id": "load",
+              "work": 90,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT0",
+              "requirements": [
+                {
+                  "resource": "CUT0",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            },
+            {
+              "id": "cut",
+              "work": 360,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT0",
+              "requirements": [
+                {
+                  "resource": "CUT0",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "TOOL",
+                  "amount": 1,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        },
+        {
+          "id": "CUT1",
+          "primary": "CUT1",
+          "phases": [
+            {
+              "id": "load",
+              "work": 90,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT1",
+              "requirements": [
+                {
+                  "resource": "CUT1",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            },
+            {
+              "id": "cut",
+              "work": 405,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT1",
+              "requirements": [
+                {
+                  "resource": "CUT1",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "TOOL",
+                  "amount": 1,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {
+        "RAW": 1
+      },
+      "produce": {
+        "WIP-2": 1
+      }
+    },
+    {
+      "release": 0,
+      "due": 2500,
+      "deadline": null,
+      "priority": 3,
+      "family": "light",
+      "attributes": {
+        "urgency": 3
+      },
+      "execution": null,
+      "source": "synthetic:job:2",
+      "id": "J2-assemble",
+      "modes": [
+        {
+          "id": "assembly",
+          "primary": "ASSEMBLY",
+          "phases": [
+            {
+              "id": "assemble",
+              "work": 240,
+              "interruption": "calendar_resumable",
+              "rate_resource": "ASSEMBLY",
+              "requirements": [
+                {
+                  "resource": "ASSEMBLY",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        }
+      ],
+      "pre": [],
+      "post": [
+        {
+          "id": "inspection",
+          "releases_product": true,
+          "modes": [
+            {
+              "id": "inspection",
+              "primary": "ASSEMBLY",
+              "phases": [
+                {
+                  "id": "inspection",
+                  "work": 60,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "ASSEMBLY",
+                  "requirements": [
+                    {
+                      "resource": "ASSEMBLY",
+                      "amount": 1,
+                      "retain": true
+                    },
+                    {
+                      "resource": "OPS",
+                      "amount": 1,
+                      "retain": false
+                    }
+                  ]
+                }
+              ],
+              "contiguous": false,
+              "cost": 0
+            }
+          ]
+        }
+      ],
+      "consume": {
+        "WIP-2": 1
+      },
+      "produce": {
+        "FINISHED": 1
+      }
+    },
+    {
+      "release": 0,
+      "due": 2850,
+      "deadline": null,
+      "priority": 1,
+      "family": "dark",
+      "attributes": {
+        "urgency": 4
+      },
+      "execution": null,
+      "source": "synthetic:job:3",
+      "id": "J3-cut",
+      "modes": [
+        {
+          "id": "CUT0",
+          "primary": "CUT0",
+          "phases": [
+            {
+              "id": "load",
+              "work": 90,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT0",
+              "requirements": [
+                {
+                  "resource": "CUT0",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            },
+            {
+              "id": "cut",
+              "work": 390,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT0",
+              "requirements": [
+                {
+                  "resource": "CUT0",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "TOOL",
+                  "amount": 1,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        },
+        {
+          "id": "CUT1",
+          "primary": "CUT1",
+          "phases": [
+            {
+              "id": "load",
+              "work": 90,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT1",
+              "requirements": [
+                {
+                  "resource": "CUT1",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            },
+            {
+              "id": "cut",
+              "work": 435,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT1",
+              "requirements": [
+                {
+                  "resource": "CUT1",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "TOOL",
+                  "amount": 1,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {
+        "RAW": 1
+      },
+      "produce": {
+        "WIP-3": 1
+      }
+    },
+    {
+      "release": 0,
+      "due": 2850,
+      "deadline": null,
+      "priority": 1,
+      "family": "dark",
+      "attributes": {
+        "urgency": 4
+      },
+      "execution": null,
+      "source": "synthetic:job:3",
+      "id": "J3-assemble",
+      "modes": [
+        {
+          "id": "assembly",
+          "primary": "ASSEMBLY",
+          "phases": [
+            {
+              "id": "assemble",
+              "work": 240,
+              "interruption": "calendar_resumable",
+              "rate_resource": "ASSEMBLY",
+              "requirements": [
+                {
+                  "resource": "ASSEMBLY",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        }
+      ],
+      "pre": [],
+      "post": [
+        {
+          "id": "inspection",
+          "releases_product": true,
+          "modes": [
+            {
+              "id": "inspection",
+              "primary": "ASSEMBLY",
+              "phases": [
+                {
+                  "id": "inspection",
+                  "work": 60,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "ASSEMBLY",
+                  "requirements": [
+                    {
+                      "resource": "ASSEMBLY",
+                      "amount": 1,
+                      "retain": true
+                    },
+                    {
+                      "resource": "OPS",
+                      "amount": 1,
+                      "retain": false
+                    }
+                  ]
+                }
+              ],
+              "contiguous": false,
+              "cost": 0
+            }
+          ]
+        }
+      ],
+      "consume": {
+        "WIP-3": 1
+      },
+      "produce": {
+        "FINISHED": 1
+      }
+    },
+    {
+      "release": 0,
+      "due": 3200,
+      "deadline": null,
+      "priority": 2,
+      "family": "light",
+      "attributes": {
+        "urgency": 5
+      },
+      "execution": null,
+      "source": "synthetic:job:4",
+      "id": "J4-cut",
+      "modes": [
+        {
+          "id": "CUT0",
+          "primary": "CUT0",
+          "phases": [
+            {
+              "id": "load",
+              "work": 90,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT0",
+              "requirements": [
+                {
+                  "resource": "CUT0",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            },
+            {
+              "id": "cut",
+              "work": 420,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT0",
+              "requirements": [
+                {
+                  "resource": "CUT0",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "TOOL",
+                  "amount": 1,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        },
+        {
+          "id": "CUT1",
+          "primary": "CUT1",
+          "phases": [
+            {
+              "id": "load",
+              "work": 90,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT1",
+              "requirements": [
+                {
+                  "resource": "CUT1",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            },
+            {
+              "id": "cut",
+              "work": 465,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT1",
+              "requirements": [
+                {
+                  "resource": "CUT1",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "TOOL",
+                  "amount": 1,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {
+        "RAW": 1
+      },
+      "produce": {
+        "WIP-4": 1
+      }
+    },
+    {
+      "release": 0,
+      "due": 3200,
+      "deadline": null,
+      "priority": 2,
+      "family": "light",
+      "attributes": {
+        "urgency": 5
+      },
+      "execution": null,
+      "source": "synthetic:job:4",
+      "id": "J4-assemble",
+      "modes": [
+        {
+          "id": "assembly",
+          "primary": "ASSEMBLY",
+          "phases": [
+            {
+              "id": "assemble",
+              "work": 240,
+              "interruption": "calendar_resumable",
+              "rate_resource": "ASSEMBLY",
+              "requirements": [
+                {
+                  "resource": "ASSEMBLY",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        }
+      ],
+      "pre": [],
+      "post": [
+        {
+          "id": "inspection",
+          "releases_product": true,
+          "modes": [
+            {
+              "id": "inspection",
+              "primary": "ASSEMBLY",
+              "phases": [
+                {
+                  "id": "inspection",
+                  "work": 60,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "ASSEMBLY",
+                  "requirements": [
+                    {
+                      "resource": "ASSEMBLY",
+                      "amount": 1,
+                      "retain": true
+                    },
+                    {
+                      "resource": "OPS",
+                      "amount": 1,
+                      "retain": false
+                    }
+                  ]
+                }
+              ],
+              "contiguous": false,
+              "cost": 0
+            }
+          ]
+        }
+      ],
+      "consume": {
+        "WIP-4": 1
+      },
+      "produce": {
+        "FINISHED": 1
+      }
+    },
+    {
+      "release": 0,
+      "due": 3550,
+      "deadline": null,
+      "priority": 3,
+      "family": "dark",
+      "attributes": {
+        "urgency": 1
+      },
+      "execution": null,
+      "source": "synthetic:job:5",
+      "id": "J5-cut",
+      "modes": [
+        {
+          "id": "CUT0",
+          "primary": "CUT0",
+          "phases": [
+            {
+              "id": "load",
+              "work": 90,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT0",
+              "requirements": [
+                {
+                  "resource": "CUT0",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            },
+            {
+              "id": "cut",
+              "work": 450,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT0",
+              "requirements": [
+                {
+                  "resource": "CUT0",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "TOOL",
+                  "amount": 1,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        },
+        {
+          "id": "CUT1",
+          "primary": "CUT1",
+          "phases": [
+            {
+              "id": "load",
+              "work": 90,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT1",
+              "requirements": [
+                {
+                  "resource": "CUT1",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            },
+            {
+              "id": "cut",
+              "work": 495,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT1",
+              "requirements": [
+                {
+                  "resource": "CUT1",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "TOOL",
+                  "amount": 1,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {
+        "RAW": 1
+      },
+      "produce": {
+        "WIP-5": 1
+      }
+    },
+    {
+      "release": 0,
+      "due": 3550,
+      "deadline": null,
+      "priority": 3,
+      "family": "dark",
+      "attributes": {
+        "urgency": 1
+      },
+      "execution": null,
+      "source": "synthetic:job:5",
+      "id": "J5-assemble",
+      "modes": [
+        {
+          "id": "assembly",
+          "primary": "ASSEMBLY",
+          "phases": [
+            {
+              "id": "assemble",
+              "work": 240,
+              "interruption": "calendar_resumable",
+              "rate_resource": "ASSEMBLY",
+              "requirements": [
+                {
+                  "resource": "ASSEMBLY",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        }
+      ],
+      "pre": [],
+      "post": [
+        {
+          "id": "inspection",
+          "releases_product": true,
+          "modes": [
+            {
+              "id": "inspection",
+              "primary": "ASSEMBLY",
+              "phases": [
+                {
+                  "id": "inspection",
+                  "work": 60,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "ASSEMBLY",
+                  "requirements": [
+                    {
+                      "resource": "ASSEMBLY",
+                      "amount": 1,
+                      "retain": true
+                    },
+                    {
+                      "resource": "OPS",
+                      "amount": 1,
+                      "retain": false
+                    }
+                  ]
+                }
+              ],
+              "contiguous": false,
+              "cost": 0
+            }
+          ]
+        }
+      ],
+      "consume": {
+        "WIP-5": 1
+      },
+      "produce": {
+        "FINISHED": 1
+      }
+    },
+    {
+      "release": 0,
+      "due": 3900,
+      "deadline": null,
+      "priority": 1,
+      "family": "light",
+      "attributes": {
+        "urgency": 2
+      },
+      "execution": null,
+      "source": "synthetic:job:6",
+      "id": "J6-cut",
+      "modes": [
+        {
+          "id": "CUT0",
+          "primary": "CUT0",
+          "phases": [
+            {
+              "id": "load",
+              "work": 90,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT0",
+              "requirements": [
+                {
+                  "resource": "CUT0",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            },
+            {
+              "id": "cut",
+              "work": 480,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT0",
+              "requirements": [
+                {
+                  "resource": "CUT0",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "TOOL",
+                  "amount": 1,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        },
+        {
+          "id": "CUT1",
+          "primary": "CUT1",
+          "phases": [
+            {
+              "id": "load",
+              "work": 90,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT1",
+              "requirements": [
+                {
+                  "resource": "CUT1",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            },
+            {
+              "id": "cut",
+              "work": 525,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT1",
+              "requirements": [
+                {
+                  "resource": "CUT1",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "TOOL",
+                  "amount": 1,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {
+        "RAW": 1
+      },
+      "produce": {
+        "WIP-6": 1
+      }
+    },
+    {
+      "release": 0,
+      "due": 3900,
+      "deadline": null,
+      "priority": 1,
+      "family": "light",
+      "attributes": {
+        "urgency": 2
+      },
+      "execution": null,
+      "source": "synthetic:job:6",
+      "id": "J6-assemble",
+      "modes": [
+        {
+          "id": "assembly",
+          "primary": "ASSEMBLY",
+          "phases": [
+            {
+              "id": "assemble",
+              "work": 240,
+              "interruption": "calendar_resumable",
+              "rate_resource": "ASSEMBLY",
+              "requirements": [
+                {
+                  "resource": "ASSEMBLY",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        }
+      ],
+      "pre": [],
+      "post": [
+        {
+          "id": "inspection",
+          "releases_product": true,
+          "modes": [
+            {
+              "id": "inspection",
+              "primary": "ASSEMBLY",
+              "phases": [
+                {
+                  "id": "inspection",
+                  "work": 60,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "ASSEMBLY",
+                  "requirements": [
+                    {
+                      "resource": "ASSEMBLY",
+                      "amount": 1,
+                      "retain": true
+                    },
+                    {
+                      "resource": "OPS",
+                      "amount": 1,
+                      "retain": false
+                    }
+                  ]
+                }
+              ],
+              "contiguous": false,
+              "cost": 0
+            }
+          ]
+        }
+      ],
+      "consume": {
+        "WIP-6": 1
+      },
+      "produce": {
+        "FINISHED": 1
+      }
+    },
+    {
+      "release": 0,
+      "due": 4250,
+      "deadline": null,
+      "priority": 2,
+      "family": "dark",
+      "attributes": {
+        "urgency": 3
+      },
+      "execution": null,
+      "source": "synthetic:job:7",
+      "id": "J7-cut",
+      "modes": [
+        {
+          "id": "CUT0",
+          "primary": "CUT0",
+          "phases": [
+            {
+              "id": "load",
+              "work": 90,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT0",
+              "requirements": [
+                {
+                  "resource": "CUT0",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            },
+            {
+              "id": "cut",
+              "work": 510,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT0",
+              "requirements": [
+                {
+                  "resource": "CUT0",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "TOOL",
+                  "amount": 1,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        },
+        {
+          "id": "CUT1",
+          "primary": "CUT1",
+          "phases": [
+            {
+              "id": "load",
+              "work": 90,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT1",
+              "requirements": [
+                {
+                  "resource": "CUT1",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            },
+            {
+              "id": "cut",
+              "work": 555,
+              "interruption": "calendar_resumable",
+              "rate_resource": "CUT1",
+              "requirements": [
+                {
+                  "resource": "CUT1",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "TOOL",
+                  "amount": 1,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {
+        "RAW": 1
+      },
+      "produce": {
+        "WIP-7": 1
+      }
+    },
+    {
+      "release": 0,
+      "due": 4250,
+      "deadline": null,
+      "priority": 2,
+      "family": "dark",
+      "attributes": {
+        "urgency": 3
+      },
+      "execution": null,
+      "source": "synthetic:job:7",
+      "id": "J7-assemble",
+      "modes": [
+        {
+          "id": "assembly",
+          "primary": "ASSEMBLY",
+          "phases": [
+            {
+              "id": "assemble",
+              "work": 240,
+              "interruption": "calendar_resumable",
+              "rate_resource": "ASSEMBLY",
+              "requirements": [
+                {
+                  "resource": "ASSEMBLY",
+                  "amount": 1,
+                  "retain": true
+                },
+                {
+                  "resource": "OPS",
+                  "amount": 1,
+                  "retain": false
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0
+        }
+      ],
+      "pre": [],
+      "post": [
+        {
+          "id": "inspection",
+          "releases_product": true,
+          "modes": [
+            {
+              "id": "inspection",
+              "primary": "ASSEMBLY",
+              "phases": [
+                {
+                  "id": "inspection",
+                  "work": 60,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "ASSEMBLY",
+                  "requirements": [
+                    {
+                      "resource": "ASSEMBLY",
+                      "amount": 1,
+                      "retain": true
+                    },
+                    {
+                      "resource": "OPS",
+                      "amount": 1,
+                      "retain": false
+                    }
+                  ]
+                }
+              ],
+              "contiguous": false,
+              "cost": 0
+            }
+          ]
+        }
+      ],
+      "consume": {
+        "WIP-7": 1
+      },
+      "produce": {
+        "FINISHED": 1
+      }
+    }
+  ],
+  "dependencies": [
+    {
+      "before": "J0-cut",
+      "after": "J0-assemble",
+      "min_lag": 0
+    },
+    {
+      "before": "J1-cut",
+      "after": "J1-assemble",
+      "min_lag": 0
+    },
+    {
+      "before": "J2-cut",
+      "after": "J2-assemble",
+      "min_lag": 0
+    },
+    {
+      "before": "J3-cut",
+      "after": "J3-assemble",
+      "min_lag": 0
+    },
+    {
+      "before": "J4-cut",
+      "after": "J4-assemble",
+      "min_lag": 0
+    },
+    {
+      "before": "J5-cut",
+      "after": "J5-assemble",
+      "min_lag": 0
+    },
+    {
+      "before": "J6-cut",
+      "after": "J6-assemble",
+      "min_lag": 0
+    },
+    {
+      "before": "J7-cut",
+      "after": "J7-assemble",
+      "min_lag": 0
+    }
+  ],
+  "locks": [],
+  "transitions": [
+    {
+      "id": "CUT0-light-light",
+      "resource": "CUT0",
+      "from": "light",
+      "to": "light",
+      "previous_post": [],
+      "next_pre": []
+    },
+    {
+      "id": "CUT0-light-dark",
+      "resource": "CUT0",
+      "from": "light",
+      "to": "dark",
+      "previous_post": [],
+      "next_pre": [
+        {
+          "id": "setup",
+          "releases_product": false,
+          "modes": [
+            {
+              "id": "setup",
+              "primary": "CUT0",
+              "phases": [
+                {
+                  "id": "setup",
+                  "work": 60,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "CUT0",
+                  "requirements": [
+                    {
+                      "resource": "CUT0",
+                      "amount": 1,
+                      "retain": true
+                    },
+                    {
+                      "resource": "OPS",
+                      "amount": 1,
+                      "retain": false
+                    }
+                  ]
+                }
+              ],
+              "contiguous": false,
+              "cost": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CUT0-light-__end__",
+      "resource": "CUT0",
+      "from": "light",
+      "to": "__end__",
+      "previous_post": [
+        {
+          "id": "clean",
+          "releases_product": false,
+          "modes": [
+            {
+              "id": "clean",
+              "primary": "CUT0",
+              "phases": [
+                {
+                  "id": "clean",
+                  "work": 90,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "CUT0",
+                  "requirements": [
+                    {
+                      "resource": "CUT0",
+                      "amount": 1,
+                      "retain": true
+                    },
+                    {
+                      "resource": "OPS",
+                      "amount": 1,
+                      "retain": false
+                    }
+                  ]
+                }
+              ],
+              "contiguous": false,
+              "cost": 0
+            }
+          ]
+        }
+      ],
+      "next_pre": []
+    },
+    {
+      "id": "CUT0-dark-light",
+      "resource": "CUT0",
+      "from": "dark",
+      "to": "light",
+      "previous_post": [],
+      "next_pre": [
+        {
+          "id": "setup",
+          "releases_product": false,
+          "modes": [
+            {
+              "id": "setup",
+              "primary": "CUT0",
+              "phases": [
+                {
+                  "id": "setup",
+                  "work": 60,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "CUT0",
+                  "requirements": [
+                    {
+                      "resource": "CUT0",
+                      "amount": 1,
+                      "retain": true
+                    },
+                    {
+                      "resource": "OPS",
+                      "amount": 1,
+                      "retain": false
+                    }
+                  ]
+                }
+              ],
+              "contiguous": false,
+              "cost": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CUT0-dark-dark",
+      "resource": "CUT0",
+      "from": "dark",
+      "to": "dark",
+      "previous_post": [],
+      "next_pre": []
+    },
+    {
+      "id": "CUT0-dark-__end__",
+      "resource": "CUT0",
+      "from": "dark",
+      "to": "__end__",
+      "previous_post": [
+        {
+          "id": "clean",
+          "releases_product": false,
+          "modes": [
+            {
+              "id": "clean",
+              "primary": "CUT0",
+              "phases": [
+                {
+                  "id": "clean",
+                  "work": 90,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "CUT0",
+                  "requirements": [
+                    {
+                      "resource": "CUT0",
+                      "amount": 1,
+                      "retain": true
+                    },
+                    {
+                      "resource": "OPS",
+                      "amount": 1,
+                      "retain": false
+                    }
+                  ]
+                }
+              ],
+              "contiguous": false,
+              "cost": 0
+            }
+          ]
+        }
+      ],
+      "next_pre": []
+    },
+    {
+      "id": "CUT1-light-light",
+      "resource": "CUT1",
+      "from": "light",
+      "to": "light",
+      "previous_post": [],
+      "next_pre": []
+    },
+    {
+      "id": "CUT1-light-dark",
+      "resource": "CUT1",
+      "from": "light",
+      "to": "dark",
+      "previous_post": [],
+      "next_pre": [
+        {
+          "id": "setup",
+          "releases_product": false,
+          "modes": [
+            {
+              "id": "setup",
+              "primary": "CUT1",
+              "phases": [
+                {
+                  "id": "setup",
+                  "work": 60,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "CUT1",
+                  "requirements": [
+                    {
+                      "resource": "CUT1",
+                      "amount": 1,
+                      "retain": true
+                    },
+                    {
+                      "resource": "OPS",
+                      "amount": 1,
+                      "retain": false
+                    }
+                  ]
+                }
+              ],
+              "contiguous": false,
+              "cost": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CUT1-light-__end__",
+      "resource": "CUT1",
+      "from": "light",
+      "to": "__end__",
+      "previous_post": [
+        {
+          "id": "clean",
+          "releases_product": false,
+          "modes": [
+            {
+              "id": "clean",
+              "primary": "CUT1",
+              "phases": [
+                {
+                  "id": "clean",
+                  "work": 90,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "CUT1",
+                  "requirements": [
+                    {
+                      "resource": "CUT1",
+                      "amount": 1,
+                      "retain": true
+                    },
+                    {
+                      "resource": "OPS",
+                      "amount": 1,
+                      "retain": false
+                    }
+                  ]
+                }
+              ],
+              "contiguous": false,
+              "cost": 0
+            }
+          ]
+        }
+      ],
+      "next_pre": []
+    },
+    {
+      "id": "CUT1-dark-light",
+      "resource": "CUT1",
+      "from": "dark",
+      "to": "light",
+      "previous_post": [],
+      "next_pre": [
+        {
+          "id": "setup",
+          "releases_product": false,
+          "modes": [
+            {
+              "id": "setup",
+              "primary": "CUT1",
+              "phases": [
+                {
+                  "id": "setup",
+                  "work": 60,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "CUT1",
+                  "requirements": [
+                    {
+                      "resource": "CUT1",
+                      "amount": 1,
+                      "retain": true
+                    },
+                    {
+                      "resource": "OPS",
+                      "amount": 1,
+                      "retain": false
+                    }
+                  ]
+                }
+              ],
+              "contiguous": false,
+              "cost": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CUT1-dark-dark",
+      "resource": "CUT1",
+      "from": "dark",
+      "to": "dark",
+      "previous_post": [],
+      "next_pre": []
+    },
+    {
+      "id": "CUT1-dark-__end__",
+      "resource": "CUT1",
+      "from": "dark",
+      "to": "__end__",
+      "previous_post": [
+        {
+          "id": "clean",
+          "releases_product": false,
+          "modes": [
+            {
+              "id": "clean",
+              "primary": "CUT1",
+              "phases": [
+                {
+                  "id": "clean",
+                  "work": 90,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "CUT1",
+                  "requirements": [
+                    {
+                      "resource": "CUT1",
+                      "amount": 1,
+                      "retain": true
+                    },
+                    {
+                      "resource": "OPS",
+                      "amount": 1,
+                      "retain": false
+                    }
+                  ]
+                }
+              ],
+              "contiguous": false,
+              "cost": 0
+            }
+          ]
+        }
+      ],
+      "next_pre": []
+    }
+  ],
+  "inventory": {
+    "RAW": 8
+  },
+  "receipts": [],
+  "objectives": [
+    {
+      "metric": "weighted_tardiness",
+      "weight": 1,
+      "priority": 0
+    },
+    {
+      "metric": "transition_work",
+      "weight": 1,
+      "priority": 1
+    }
+  ],
+  "rules": [],
+  "assumptions": []
+}

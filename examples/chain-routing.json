@@ -1,0 +1,464 @@
+{
+  "planning": {
+    "version": "apex.planning.v1",
+    "constraints": [],
+    "policies": [],
+    "objectives": []
+  },
+  "schema_version": "apex.v3.4",
+  "id": "synthetic-route-material-chain",
+  "horizon": 1000,
+  "epoch": "2026-09-24T06:00:00Z",
+  "resources": [
+    {
+      "id": "M0",
+      "capacity": 1.0,
+      "calendar": [
+        {
+          "start": 0,
+          "end": 1000,
+          "capacity": 1,
+          "rate": 1
+        }
+      ],
+      "retention_calendar": [],
+      "initial_state": ""
+    },
+    {
+      "id": "M1",
+      "capacity": 1.0,
+      "calendar": [
+        {
+          "start": 0,
+          "end": 1000,
+          "capacity": 1,
+          "rate": 1
+        }
+      ],
+      "retention_calendar": [],
+      "initial_state": ""
+    },
+    {
+      "id": "M2",
+      "capacity": 1.0,
+      "calendar": [
+        {
+          "start": 0,
+          "end": 1000,
+          "capacity": 1,
+          "rate": 1
+        }
+      ],
+      "retention_calendar": [],
+      "initial_state": ""
+    },
+    {
+      "id": "M3",
+      "capacity": 1.0,
+      "calendar": [
+        {
+          "start": 0,
+          "end": 1000,
+          "capacity": 1,
+          "rate": 1
+        }
+      ],
+      "retention_calendar": [],
+      "initial_state": ""
+    }
+  ],
+  "tasks": [
+    {
+      "id": "PRODUCE-SLOW",
+      "release": 0,
+      "due": 800,
+      "deadline": null,
+      "priority": 1,
+      "family": "",
+      "modes": [
+        {
+          "id": "standard",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 50,
+              "work_per_unit": null,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0,
+          "pre": [],
+          "post": [],
+          "consume": null,
+          "produce": null
+        }
+      ],
+      "pre": [
+        {
+          "id": "setup",
+          "modes": [
+            {
+              "id": "shared-technician",
+              "primary": "M1",
+              "phases": [
+                {
+                  "id": "run",
+                  "work": 10,
+                  "work_per_unit": null,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "M1",
+                  "requirements": [
+                    {
+                      "resource": "M1",
+                      "amount": 1.0,
+                      "retain": true
+                    }
+                  ]
+                }
+              ],
+              "contiguous": false,
+              "cost": 0.0,
+              "pre": [],
+              "post": [],
+              "consume": null,
+              "produce": null
+            },
+            {
+              "id": "independent-technician",
+              "primary": "M2",
+              "phases": [
+                {
+                  "id": "run",
+                  "work": 12,
+                  "work_per_unit": null,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "M2",
+                  "requirements": [
+                    {
+                      "resource": "M2",
+                      "amount": 1.0,
+                      "retain": true
+                    }
+                  ]
+                }
+              ],
+              "contiguous": false,
+              "cost": 0.0,
+              "pre": [],
+              "post": [],
+              "consume": null,
+              "produce": null
+            }
+          ]
+        }
+      ],
+      "post": [],
+      "consume": {
+        "raw": 2
+      },
+      "produce": {
+        "part": 2
+      },
+      "attributes": {
+        "urgency": 1.0
+      },
+      "execution": null,
+      "source": "synthetic:row:1",
+      "quantity": 1.0,
+      "job": "components",
+      "stage": "1"
+    },
+    {
+      "id": "PRODUCE-FAST",
+      "release": 0,
+      "due": 800,
+      "deadline": null,
+      "priority": 1,
+      "family": "",
+      "modes": [
+        {
+          "id": "standard",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 10,
+              "work_per_unit": null,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0,
+          "pre": [],
+          "post": [],
+          "consume": null,
+          "produce": null
+        }
+      ],
+      "pre": [
+        {
+          "id": "setup",
+          "modes": [
+            {
+              "id": "shared-technician",
+              "primary": "M1",
+              "phases": [
+                {
+                  "id": "run",
+                  "work": 10,
+                  "work_per_unit": null,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "M1",
+                  "requirements": [
+                    {
+                      "resource": "M1",
+                      "amount": 1.0,
+                      "retain": true
+                    }
+                  ]
+                }
+              ],
+              "contiguous": false,
+              "cost": 0.0,
+              "pre": [],
+              "post": [],
+              "consume": null,
+              "produce": null
+            },
+            {
+              "id": "independent-technician",
+              "primary": "M2",
+              "phases": [
+                {
+                  "id": "run",
+                  "work": 12,
+                  "work_per_unit": null,
+                  "interruption": "calendar_resumable",
+                  "rate_resource": "M2",
+                  "requirements": [
+                    {
+                      "resource": "M2",
+                      "amount": 1.0,
+                      "retain": true
+                    }
+                  ]
+                }
+              ],
+              "contiguous": false,
+              "cost": 0.0,
+              "pre": [],
+              "post": [],
+              "consume": null,
+              "produce": null
+            }
+          ]
+        }
+      ],
+      "post": [],
+      "consume": {
+        "raw": 2
+      },
+      "produce": {
+        "part": 2
+      },
+      "attributes": {
+        "urgency": 2.0
+      },
+      "execution": null,
+      "source": "synthetic:row:2",
+      "quantity": 1.0,
+      "job": "components",
+      "stage": "1"
+    },
+    {
+      "id": "ASSEMBLE",
+      "release": 0,
+      "due": 90,
+      "deadline": null,
+      "priority": 1,
+      "family": "",
+      "modes": [
+        {
+          "id": "standard",
+          "primary": "M1",
+          "phases": [
+            {
+              "id": "run",
+              "work": 30,
+              "work_per_unit": null,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M1",
+              "requirements": [
+                {
+                  "resource": "M1",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0,
+          "pre": [],
+          "post": [],
+          "consume": null,
+          "produce": null
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {
+        "part": 1
+      },
+      "produce": {},
+      "attributes": {
+        "urgency": 3.0
+      },
+      "execution": null,
+      "source": "synthetic:row:3",
+      "quantity": 1.0,
+      "job": "finished",
+      "stage": "2"
+    },
+    {
+      "id": "PACK",
+      "release": 0,
+      "due": 90,
+      "deadline": null,
+      "priority": 1,
+      "family": "",
+      "modes": [
+        {
+          "id": "standard",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 10,
+              "work_per_unit": null,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0,
+          "pre": [],
+          "post": [],
+          "consume": null,
+          "produce": null
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {
+        "part": 1
+      },
+      "produce": {},
+      "attributes": {
+        "urgency": 4.0
+      },
+      "execution": null,
+      "source": "synthetic:row:4",
+      "quantity": 1.0,
+      "job": "finished",
+      "stage": "3"
+    }
+  ],
+  "dependencies": [],
+  "locks": [],
+  "transitions": [],
+  "inventory": {
+    "raw": 2
+  },
+  "receipts": [],
+  "objectives": [
+    {
+      "metric": "order_weighted_tardiness",
+      "priority": 0,
+      "weight": 1
+    },
+    {
+      "metric": "makespan",
+      "priority": 1,
+      "weight": 1
+    }
+  ],
+  "rules": [],
+  "assumptions": [
+    "Entirely synthetic feature demonstration; work in seconds and material in pieces."
+  ],
+  "routes": [
+    {
+      "id": "component-workplan",
+      "alternatives": [
+        {
+          "id": "slow",
+          "tasks": [
+            "PRODUCE-SLOW"
+          ]
+        },
+        {
+          "id": "fast",
+          "tasks": [
+            "PRODUCE-FAST"
+          ]
+        }
+      ]
+    }
+  ],
+  "jobs": [
+    {
+      "id": "components",
+      "item": "part",
+      "quantity": 2,
+      "due": 800,
+      "priority": 1
+    },
+    {
+      "id": "finished",
+      "item": "product",
+      "quantity": 1,
+      "due": 90,
+      "priority": 4
+    }
+  ],
+  "orders": [
+    {
+      "id": "SYNTHETIC-ORDER",
+      "jobs": [
+        "finished"
+      ],
+      "due": 75,
+      "priority": 9
+    }
+  ],
+  "customization": null,
+  "queue_policy": null,
+  "queue_definitions": [],
+  "freeze_zones": []
+}

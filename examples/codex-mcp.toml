@@ -1,0 +1,8 @@
+# Replace these absolute paths with your checkout and compiled executable.
+# On Windows, scripts/setup-mcp.ps1 creates the local project configuration.
+[mcp_servers.apex]
+command = "/absolute/path/to/apex/target/release/apex"
+args = ["mcp", "--with-viewer", "--workspace", "/absolute/path/to/apex"]
+cwd = "/absolute/path/to/apex"
+startup_timeout_sec = 20
+tool_timeout_sec = 120

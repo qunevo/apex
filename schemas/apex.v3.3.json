@@ -1,0 +1,1298 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Problem",
+  "type": "object",
+  "properties": {
+    "assumptions": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "string"
+      }
+    },
+    "customization": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CustomizationRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "dependencies": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Dependency"
+      }
+    },
+    "epoch": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "default": null
+    },
+    "freeze_zones": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/FreezeZone"
+      }
+    },
+    "horizon": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "id": {
+      "type": "string"
+    },
+    "inventory": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number",
+        "format": "double"
+      },
+      "default": {}
+    },
+    "jobs": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Job"
+      }
+    },
+    "locks": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Lock"
+      }
+    },
+    "objectives": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Objective"
+      }
+    },
+    "orders": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Order"
+      }
+    },
+    "queue_definitions": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/QueueDefinition"
+      }
+    },
+    "queue_policy": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/QueuePolicy"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "receipts": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Receipt"
+      }
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Resource"
+      }
+    },
+    "routes": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/RouteChoice"
+      }
+    },
+    "rules": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Rule"
+      }
+    },
+    "schema_version": {
+      "type": "string",
+      "default": "apex.v3.3"
+    },
+    "tasks": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Task"
+      }
+    },
+    "transitions": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Transition"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "horizon",
+    "resources"
+  ],
+  "$defs": {
+    "Activity": {
+      "type": "object",
+      "properties": {
+        "end": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "id": {
+          "type": "string"
+        },
+        "mode": {
+          "type": "string"
+        },
+        "reservations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reservation"
+          }
+        },
+        "role": {
+          "type": "string"
+        },
+        "segments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Segment"
+          }
+        },
+        "start": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "task": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "task",
+        "role",
+        "mode",
+        "start",
+        "end",
+        "segments",
+        "reservations"
+      ]
+    },
+    "ActivityDependency": {
+      "type": "object",
+      "properties": {
+        "before": {
+          "type": "string"
+        },
+        "max_lag": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "int64",
+          "default": null
+        },
+        "min_lag": {
+          "type": "integer",
+          "format": "int64",
+          "default": 0
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "before"
+      ]
+    },
+    "Conditional": {
+      "type": "object",
+      "properties": {
+        "after": {
+          "description": "None retains legacy serial order. Some([]) starts an independent branch.",
+          "type": [
+            "array",
+            "null"
+          ],
+          "default": null,
+          "items": {
+            "$ref": "#/$defs/ActivityDependency"
+          }
+        },
+        "id": {
+          "type": "string"
+        },
+        "modes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Mode"
+          }
+        },
+        "owner_resource": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "releases_product": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "modes"
+      ]
+    },
+    "CustomizationRef": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version"
+      ]
+    },
+    "Dependency": {
+      "type": "object",
+      "properties": {
+        "after": {
+          "type": "string"
+        },
+        "before": {
+          "type": "string"
+        },
+        "max_lag": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "int64",
+          "default": null
+        },
+        "min_lag": {
+          "type": "integer",
+          "format": "int64",
+          "default": 0
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "before",
+        "after"
+      ]
+    },
+    "Execution": {
+      "type": "object",
+      "properties": {
+        "actual": {
+          "description": "Actual main activity segments and reservations; retained as immutable facts.",
+          "$ref": "#/$defs/Activity"
+        },
+        "as_of": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "mode": {
+          "type": "string"
+        },
+        "remaining_work": {
+          "description": "One entry per phase. Explicit zero marks completed phases/preparation.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "restart": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Conditional"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "as_of",
+        "actual",
+        "remaining_work"
+      ]
+    },
+    "FreezeZone": {
+      "type": "object",
+      "properties": {
+        "baseline_schedule": {
+          "type": "string"
+        },
+        "dimensions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "resource": {
+          "type": "string"
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "until": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "resource",
+        "until",
+        "dimensions",
+        "tasks",
+        "baseline_schedule"
+      ]
+    },
+    "Interrupt": {
+      "type": "string",
+      "enum": [
+        "non_interruptible",
+        "calendar_resumable"
+      ]
+    },
+    "Job": {
+      "type": "object",
+      "properties": {
+        "deadline": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "int64",
+          "default": null
+        },
+        "due": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "int64",
+          "default": null
+        },
+        "id": {
+          "type": "string"
+        },
+        "item": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "number",
+          "format": "double",
+          "default": 1.0
+        },
+        "quantity": {
+          "type": "number",
+          "format": "double"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "item",
+        "quantity"
+      ]
+    },
+    "Lock": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "mode"
+            },
+            "mode": {
+              "type": "string"
+            },
+            "task": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "task",
+            "mode"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "resource"
+            },
+            "resource": {
+              "type": "string"
+            },
+            "task": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "task",
+            "resource"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "at": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "kind": {
+              "type": "string",
+              "const": "start"
+            },
+            "task": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "task",
+            "at"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "consecutive": {
+              "type": "boolean",
+              "default": false
+            },
+            "kind": {
+              "type": "string",
+              "const": "order"
+            },
+            "resource": {
+              "type": "string"
+            },
+            "tasks": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "resource",
+            "tasks"
+          ]
+        }
+      ]
+    },
+    "Mode": {
+      "type": "object",
+      "properties": {
+        "consume": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": {
+            "type": "number",
+            "format": "double"
+          },
+          "default": null
+        },
+        "contiguous": {
+          "type": "boolean",
+          "default": false
+        },
+        "cost": {
+          "type": "number",
+          "format": "double",
+          "default": 0.0
+        },
+        "id": {
+          "type": "string"
+        },
+        "phases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Phase"
+          }
+        },
+        "post": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Conditional"
+          }
+        },
+        "pre": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Conditional"
+          }
+        },
+        "primary": {
+          "type": "string"
+        },
+        "produce": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": {
+            "type": "number",
+            "format": "double"
+          },
+          "default": null
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "primary",
+        "phases"
+      ]
+    },
+    "Objective": {
+      "type": "object",
+      "properties": {
+        "maximize": {
+          "type": "boolean",
+          "default": false
+        },
+        "metric": {
+          "type": "string"
+        },
+        "priority": {
+          "type": "integer",
+          "format": "uint32",
+          "default": 0,
+          "minimum": 0
+        },
+        "scale": {
+          "type": "number",
+          "format": "double",
+          "default": 1.0
+        },
+        "weight": {
+          "type": "number",
+          "format": "double",
+          "default": 1.0
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "metric"
+      ]
+    },
+    "Order": {
+      "type": "object",
+      "properties": {
+        "deadline": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "int64",
+          "default": null
+        },
+        "due": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "int64",
+          "default": null
+        },
+        "id": {
+          "type": "string"
+        },
+        "jobs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "priority": {
+          "type": "number",
+          "format": "double",
+          "default": 1.0
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "jobs"
+      ]
+    },
+    "Phase": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "interruption": {
+          "$ref": "#/$defs/Interrupt",
+          "default": "non_interruptible"
+        },
+        "rate_resource": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Requirement"
+          }
+        },
+        "work": {
+          "description": "None remains a readiness error, never zero work.",
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double"
+        },
+        "work_per_unit": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "format": "double",
+          "default": null
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "requirements"
+      ]
+    },
+    "QueueDefinition": {
+      "type": "object",
+      "properties": {
+        "attribute": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "metric": {
+          "type": "string"
+        },
+        "prefer_high": {
+          "type": "boolean",
+          "default": false
+        },
+        "weight": {
+          "type": "number",
+          "format": "double",
+          "default": 1.0
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "metric",
+        "attribute"
+      ]
+    },
+    "QueuePolicy": {
+      "type": "object",
+      "properties": {
+        "candidate_limit": {
+          "description": "Zero evaluates the entire ready set; a positive value bounds the candidate window.",
+          "type": "integer",
+          "format": "uint",
+          "default": 64,
+          "minimum": 0
+        },
+        "normalization": {
+          "type": "string",
+          "default": "minmax"
+        },
+        "stages": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          "default": {}
+        }
+      },
+      "additionalProperties": false
+    },
+    "Receipt": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "number",
+          "format": "double"
+        },
+        "at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "item": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "item",
+        "at",
+        "amount"
+      ]
+    },
+    "Requirement": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "number",
+          "format": "double",
+          "default": 1.0
+        },
+        "resource": {
+          "type": "string"
+        },
+        "retain": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "resource"
+      ]
+    },
+    "Reservation": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "number",
+          "format": "double"
+        },
+        "end": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "resource": {
+          "type": "string"
+        },
+        "start": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "resource",
+        "start",
+        "end",
+        "amount"
+      ]
+    },
+    "Resource": {
+      "type": "object",
+      "properties": {
+        "calendar": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Window"
+          }
+        },
+        "capacity": {
+          "type": "number",
+          "format": "double",
+          "default": 1.0
+        },
+        "id": {
+          "type": "string"
+        },
+        "initial_state": {
+          "type": "string",
+          "default": ""
+        },
+        "retention_calendar": {
+          "description": "Empty means retention is allowed throughout the horizon at physical capacity.",
+          "type": "array",
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Window"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "calendar"
+      ]
+    },
+    "RouteAlternative": {
+      "type": "object",
+      "properties": {
+        "dependencies": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Dependency"
+          }
+        },
+        "id": {
+          "type": "string"
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "tasks"
+      ]
+    },
+    "RouteChoice": {
+      "type": "object",
+      "properties": {
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RouteAlternative"
+          }
+        },
+        "id": {
+          "type": "string"
+        },
+        "selected": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "alternatives"
+      ]
+    },
+    "Rule": {
+      "oneOf": [
+        {
+          "description": "Match a suffix of families on a primary-resource sequence, including current work.",
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "kind": {
+              "type": "string",
+              "const": "sequence_pattern"
+            },
+            "next_pre": {
+              "type": "array",
+              "default": [],
+              "items": {
+                "$ref": "#/$defs/Conditional"
+              }
+            },
+            "pattern": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "penalty": {
+              "type": "number",
+              "format": "double",
+              "default": 0.0
+            },
+            "previous_post": {
+              "type": "array",
+              "default": [],
+              "items": {
+                "$ref": "#/$defs/Conditional"
+              }
+            },
+            "resource": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "id",
+            "resource",
+            "pattern"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "kind": {
+              "type": "string",
+              "const": "setup_charge"
+            },
+            "task": {
+              "type": "string"
+            },
+            "value": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "id",
+            "task",
+            "value"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "earliest": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "id": {
+              "type": "string"
+            },
+            "kind": {
+              "type": "string",
+              "const": "task_window"
+            },
+            "latest": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "task": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "id",
+            "task",
+            "earliest",
+            "latest"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "attribute": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "kind": {
+              "type": "string",
+              "const": "attribute_objective"
+            },
+            "priority": {
+              "type": "integer",
+              "format": "uint32",
+              "default": 0,
+              "minimum": 0
+            },
+            "weight": {
+              "type": "number",
+              "format": "double",
+              "default": 1.0
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "id",
+            "attribute"
+          ]
+        }
+      ]
+    },
+    "Segment": {
+      "type": "object",
+      "properties": {
+        "end": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "start": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "work": {
+          "type": "number",
+          "format": "double"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "phase",
+        "start",
+        "end",
+        "work"
+      ]
+    },
+    "Task": {
+      "type": "object",
+      "properties": {
+        "attributes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "format": "double"
+          },
+          "default": {}
+        },
+        "consume": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "format": "double"
+          },
+          "default": {}
+        },
+        "deadline": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "int64",
+          "default": null
+        },
+        "due": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "int64",
+          "default": null
+        },
+        "execution": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Execution"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "family": {
+          "type": "string",
+          "default": ""
+        },
+        "id": {
+          "type": "string"
+        },
+        "job": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "modes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Mode"
+          }
+        },
+        "post": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Conditional"
+          }
+        },
+        "pre": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Conditional"
+          }
+        },
+        "priority": {
+          "type": "number",
+          "format": "double",
+          "default": 1.0
+        },
+        "produce": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "format": "double"
+          },
+          "default": {}
+        },
+        "quantity": {
+          "type": "number",
+          "format": "double",
+          "default": 1.0
+        },
+        "release": {
+          "type": "integer",
+          "format": "int64",
+          "default": 0
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "stage": {
+          "type": "string",
+          "default": "default"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "modes"
+      ]
+    },
+    "Transition": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "next_pre": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Conditional"
+          }
+        },
+        "penalty": {
+          "type": "number",
+          "format": "double",
+          "default": 0.0
+        },
+        "previous_post": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Conditional"
+          }
+        },
+        "resource": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "resource",
+        "from",
+        "to"
+      ]
+    },
+    "Window": {
+      "type": "object",
+      "properties": {
+        "capacity": {
+          "type": "number",
+          "format": "double",
+          "default": 1.0
+        },
+        "end": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "rate": {
+          "type": "number",
+          "format": "double",
+          "default": 1.0
+        },
+        "start": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "start",
+        "end"
+      ]
+    }
+  }
+}

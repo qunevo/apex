@@ -1,0 +1,1549 @@
+{
+  "schema_version": "apex.v3.1",
+  "id": "synthetic-factory",
+  "horizon": 86400,
+  "epoch": "2026-09-24T06:00:00Z",
+  "resources": [
+    {
+      "id": "M0",
+      "capacity": 1.0,
+      "calendar": [
+        {
+          "start": 0,
+          "end": 86400,
+          "capacity": 1.0,
+          "rate": 1.0
+        }
+      ],
+      "retention_calendar": [],
+      "initial_state": ""
+    },
+    {
+      "id": "M1",
+      "capacity": 1.0,
+      "calendar": [
+        {
+          "start": 0,
+          "end": 86400,
+          "capacity": 1.0,
+          "rate": 1.0
+        }
+      ],
+      "retention_calendar": [],
+      "initial_state": ""
+    },
+    {
+      "id": "M2",
+      "capacity": 1.0,
+      "calendar": [
+        {
+          "start": 0,
+          "end": 86400,
+          "capacity": 1.0,
+          "rate": 1.0
+        }
+      ],
+      "retention_calendar": [],
+      "initial_state": ""
+    },
+    {
+      "id": "M3",
+      "capacity": 1.0,
+      "calendar": [
+        {
+          "start": 0,
+          "end": 86400,
+          "capacity": 1.0,
+          "rate": 1.0
+        }
+      ],
+      "retention_calendar": [],
+      "initial_state": ""
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T000000",
+      "release": 0,
+      "due": 600,
+      "deadline": null,
+      "priority": 1.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 60.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M1",
+          "primary": "M1",
+          "phases": [
+            {
+              "id": "run",
+              "work": 90.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M1",
+              "requirements": [
+                {
+                  "resource": "M1",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 1.0
+      },
+      "execution": null,
+      "source": "synthetic:row:1"
+    },
+    {
+      "id": "T000001",
+      "release": 0,
+      "due": 840,
+      "deadline": null,
+      "priority": 2.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M1",
+          "primary": "M1",
+          "phases": [
+            {
+              "id": "run",
+              "work": 90.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M1",
+              "requirements": [
+                {
+                  "resource": "M1",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M2",
+          "primary": "M2",
+          "phases": [
+            {
+              "id": "run",
+              "work": 130.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M2",
+              "requirements": [
+                {
+                  "resource": "M2",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 2.0
+      },
+      "execution": null,
+      "source": "synthetic:row:2"
+    },
+    {
+      "id": "T000002",
+      "release": 0,
+      "due": 1080,
+      "deadline": null,
+      "priority": 3.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M2",
+          "primary": "M2",
+          "phases": [
+            {
+              "id": "run",
+              "work": 120.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M2",
+              "requirements": [
+                {
+                  "resource": "M2",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M3",
+          "primary": "M3",
+          "phases": [
+            {
+              "id": "run",
+              "work": 170.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M3",
+              "requirements": [
+                {
+                  "resource": "M3",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 3.0
+      },
+      "execution": null,
+      "source": "synthetic:row:3"
+    },
+    {
+      "id": "T000003",
+      "release": 0,
+      "due": 1320,
+      "deadline": null,
+      "priority": 4.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M3",
+          "primary": "M3",
+          "phases": [
+            {
+              "id": "run",
+              "work": 150.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M3",
+              "requirements": [
+                {
+                  "resource": "M3",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 210.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 4.0
+      },
+      "execution": null,
+      "source": "synthetic:row:4"
+    },
+    {
+      "id": "T000004",
+      "release": 0,
+      "due": 1560,
+      "deadline": null,
+      "priority": 5.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 180.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M1",
+          "primary": "M1",
+          "phases": [
+            {
+              "id": "run",
+              "work": 250.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M1",
+              "requirements": [
+                {
+                  "resource": "M1",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 5.0
+      },
+      "execution": null,
+      "source": "synthetic:row:5"
+    },
+    {
+      "id": "T000005",
+      "release": 0,
+      "due": 1800,
+      "deadline": null,
+      "priority": 1.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M1",
+          "primary": "M1",
+          "phases": [
+            {
+              "id": "run",
+              "work": 210.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M1",
+              "requirements": [
+                {
+                  "resource": "M1",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M2",
+          "primary": "M2",
+          "phases": [
+            {
+              "id": "run",
+              "work": 290.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M2",
+              "requirements": [
+                {
+                  "resource": "M2",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 6.0
+      },
+      "execution": null,
+      "source": "synthetic:row:6"
+    },
+    {
+      "id": "T000006",
+      "release": 0,
+      "due": 2040,
+      "deadline": null,
+      "priority": 2.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M2",
+          "primary": "M2",
+          "phases": [
+            {
+              "id": "run",
+              "work": 240.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M2",
+              "requirements": [
+                {
+                  "resource": "M2",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M3",
+          "primary": "M3",
+          "phases": [
+            {
+              "id": "run",
+              "work": 330.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M3",
+              "requirements": [
+                {
+                  "resource": "M3",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 7.0
+      },
+      "execution": null,
+      "source": "synthetic:row:7"
+    },
+    {
+      "id": "T000007",
+      "release": 0,
+      "due": 2280,
+      "deadline": null,
+      "priority": 3.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M3",
+          "primary": "M3",
+          "phases": [
+            {
+              "id": "run",
+              "work": 270.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M3",
+              "requirements": [
+                {
+                  "resource": "M3",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 370.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 1.0
+      },
+      "execution": null,
+      "source": "synthetic:row:8"
+    },
+    {
+      "id": "T000008",
+      "release": 0,
+      "due": 2520,
+      "deadline": null,
+      "priority": 4.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 300.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M1",
+          "primary": "M1",
+          "phases": [
+            {
+              "id": "run",
+              "work": 410.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M1",
+              "requirements": [
+                {
+                  "resource": "M1",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 2.0
+      },
+      "execution": null,
+      "source": "synthetic:row:9"
+    },
+    {
+      "id": "T000009",
+      "release": 0,
+      "due": 2760,
+      "deadline": null,
+      "priority": 5.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M1",
+          "primary": "M1",
+          "phases": [
+            {
+              "id": "run",
+              "work": 330.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M1",
+              "requirements": [
+                {
+                  "resource": "M1",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M2",
+          "primary": "M2",
+          "phases": [
+            {
+              "id": "run",
+              "work": 450.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M2",
+              "requirements": [
+                {
+                  "resource": "M2",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 3.0
+      },
+      "execution": null,
+      "source": "synthetic:row:10"
+    },
+    {
+      "id": "T000010",
+      "release": 0,
+      "due": 3000,
+      "deadline": null,
+      "priority": 1.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M2",
+          "primary": "M2",
+          "phases": [
+            {
+              "id": "run",
+              "work": 360.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M2",
+              "requirements": [
+                {
+                  "resource": "M2",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M3",
+          "primary": "M3",
+          "phases": [
+            {
+              "id": "run",
+              "work": 490.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M3",
+              "requirements": [
+                {
+                  "resource": "M3",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 4.0
+      },
+      "execution": null,
+      "source": "synthetic:row:11"
+    },
+    {
+      "id": "T000011",
+      "release": 0,
+      "due": 3240,
+      "deadline": null,
+      "priority": 2.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M3",
+          "primary": "M3",
+          "phases": [
+            {
+              "id": "run",
+              "work": 390.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M3",
+              "requirements": [
+                {
+                  "resource": "M3",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 530.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 5.0
+      },
+      "execution": null,
+      "source": "synthetic:row:12"
+    },
+    {
+      "id": "T000012",
+      "release": 0,
+      "due": 3480,
+      "deadline": null,
+      "priority": 3.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 420.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M1",
+          "primary": "M1",
+          "phases": [
+            {
+              "id": "run",
+              "work": 570.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M1",
+              "requirements": [
+                {
+                  "resource": "M1",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 6.0
+      },
+      "execution": null,
+      "source": "synthetic:row:13"
+    },
+    {
+      "id": "T000013",
+      "release": 0,
+      "due": 3720,
+      "deadline": null,
+      "priority": 4.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M1",
+          "primary": "M1",
+          "phases": [
+            {
+              "id": "run",
+              "work": 450.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M1",
+              "requirements": [
+                {
+                  "resource": "M1",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M2",
+          "primary": "M2",
+          "phases": [
+            {
+              "id": "run",
+              "work": 610.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M2",
+              "requirements": [
+                {
+                  "resource": "M2",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 7.0
+      },
+      "execution": null,
+      "source": "synthetic:row:14"
+    },
+    {
+      "id": "T000014",
+      "release": 0,
+      "due": 3960,
+      "deadline": null,
+      "priority": 5.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M2",
+          "primary": "M2",
+          "phases": [
+            {
+              "id": "run",
+              "work": 480.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M2",
+              "requirements": [
+                {
+                  "resource": "M2",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M3",
+          "primary": "M3",
+          "phases": [
+            {
+              "id": "run",
+              "work": 650.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M3",
+              "requirements": [
+                {
+                  "resource": "M3",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 1.0
+      },
+      "execution": null,
+      "source": "synthetic:row:15"
+    },
+    {
+      "id": "T000015",
+      "release": 0,
+      "due": 4200,
+      "deadline": null,
+      "priority": 1.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M3",
+          "primary": "M3",
+          "phases": [
+            {
+              "id": "run",
+              "work": 510.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M3",
+              "requirements": [
+                {
+                  "resource": "M3",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 690.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 2.0
+      },
+      "execution": null,
+      "source": "synthetic:row:16"
+    },
+    {
+      "id": "T000016",
+      "release": 0,
+      "due": 4440,
+      "deadline": null,
+      "priority": 2.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 540.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M1",
+          "primary": "M1",
+          "phases": [
+            {
+              "id": "run",
+              "work": 730.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M1",
+              "requirements": [
+                {
+                  "resource": "M1",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 3.0
+      },
+      "execution": null,
+      "source": "synthetic:row:17"
+    },
+    {
+      "id": "T000017",
+      "release": 0,
+      "due": 4680,
+      "deadline": null,
+      "priority": 3.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M1",
+          "primary": "M1",
+          "phases": [
+            {
+              "id": "run",
+              "work": 60.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M1",
+              "requirements": [
+                {
+                  "resource": "M1",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M2",
+          "primary": "M2",
+          "phases": [
+            {
+              "id": "run",
+              "work": 90.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M2",
+              "requirements": [
+                {
+                  "resource": "M2",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 4.0
+      },
+      "execution": null,
+      "source": "synthetic:row:18"
+    },
+    {
+      "id": "T000018",
+      "release": 0,
+      "due": 4920,
+      "deadline": null,
+      "priority": 4.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M2",
+          "primary": "M2",
+          "phases": [
+            {
+              "id": "run",
+              "work": 90.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M2",
+              "requirements": [
+                {
+                  "resource": "M2",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M3",
+          "primary": "M3",
+          "phases": [
+            {
+              "id": "run",
+              "work": 130.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M3",
+              "requirements": [
+                {
+                  "resource": "M3",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 5.0
+      },
+      "execution": null,
+      "source": "synthetic:row:19"
+    },
+    {
+      "id": "T000019",
+      "release": 0,
+      "due": 5160,
+      "deadline": null,
+      "priority": 5.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M3",
+          "primary": "M3",
+          "phases": [
+            {
+              "id": "run",
+              "work": 120.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M3",
+              "requirements": [
+                {
+                  "resource": "M3",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 170.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 6.0
+      },
+      "execution": null,
+      "source": "synthetic:row:20"
+    },
+    {
+      "id": "T000020",
+      "release": 0,
+      "due": 5400,
+      "deadline": null,
+      "priority": 1.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 150.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M1",
+          "primary": "M1",
+          "phases": [
+            {
+              "id": "run",
+              "work": 210.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M1",
+              "requirements": [
+                {
+                  "resource": "M1",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 7.0
+      },
+      "execution": null,
+      "source": "synthetic:row:21"
+    },
+    {
+      "id": "T000021",
+      "release": 0,
+      "due": 5640,
+      "deadline": null,
+      "priority": 2.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M1",
+          "primary": "M1",
+          "phases": [
+            {
+              "id": "run",
+              "work": 180.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M1",
+              "requirements": [
+                {
+                  "resource": "M1",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M2",
+          "primary": "M2",
+          "phases": [
+            {
+              "id": "run",
+              "work": 250.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M2",
+              "requirements": [
+                {
+                  "resource": "M2",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 1.0
+      },
+      "execution": null,
+      "source": "synthetic:row:22"
+    },
+    {
+      "id": "T000022",
+      "release": 0,
+      "due": 5880,
+      "deadline": null,
+      "priority": 3.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M2",
+          "primary": "M2",
+          "phases": [
+            {
+              "id": "run",
+              "work": 210.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M2",
+              "requirements": [
+                {
+                  "resource": "M2",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M3",
+          "primary": "M3",
+          "phases": [
+            {
+              "id": "run",
+              "work": 290.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M3",
+              "requirements": [
+                {
+                  "resource": "M3",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 2.0
+      },
+      "execution": null,
+      "source": "synthetic:row:23"
+    },
+    {
+      "id": "T000023",
+      "release": 0,
+      "due": 600,
+      "deadline": null,
+      "priority": 4.0,
+      "family": "",
+      "modes": [
+        {
+          "id": "on-M3",
+          "primary": "M3",
+          "phases": [
+            {
+              "id": "run",
+              "work": 240.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M3",
+              "requirements": [
+                {
+                  "resource": "M3",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        },
+        {
+          "id": "on-M0",
+          "primary": "M0",
+          "phases": [
+            {
+              "id": "run",
+              "work": 330.0,
+              "interruption": "calendar_resumable",
+              "rate_resource": "M0",
+              "requirements": [
+                {
+                  "resource": "M0",
+                  "amount": 1.0,
+                  "retain": true
+                }
+              ]
+            }
+          ],
+          "contiguous": false,
+          "cost": 0.0
+        }
+      ],
+      "pre": [],
+      "post": [],
+      "consume": {},
+      "produce": {},
+      "attributes": {
+        "urgency": 3.0
+      },
+      "execution": null,
+      "source": "synthetic:row:24"
+    }
+  ],
+  "dependencies": [],
+  "locks": [],
+  "transitions": [],
+  "inventory": {},
+  "receipts": [],
+  "objectives": [
+    {
+      "metric": "weighted_tardiness",
+      "weight": 1.0,
+      "priority": 0
+    },
+    {
+      "metric": "makespan",
+      "weight": 1.0,
+      "priority": 1
+    }
+  ],
+  "rules": [],
+  "assumptions": []
+}

@@ -1,0 +1,30 @@
+[package]
+name = "apex-scheduler"
+version = "0.6.0"
+edition = "2024"
+publish = false
+description = "Agent-facing discrete production scheduler"
+license-file = "LICENSE"
+
+[lib]
+name = "apex"
+path = "src/rust/lib.rs"
+
+[[bin]]
+name = "apex"
+path = "src/rust/main.rs"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["float_roundtrip"] }
+sha2 = "0.10"
+fs2 = "0.4"
+tiny_http = "0.12"
+schemars = "1"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+
+[lints.rust]
+unsafe_code = "forbid"

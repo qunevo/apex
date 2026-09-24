@@ -1,0 +1,22 @@
+sequenceDiagram
+  actor User as Planner
+  participant Agent
+  participant Tools as Scenario service
+  participant Engine
+  participant Validator
+  participant Viewer
+  User->>Agent: Block M2 tomorrow from 10 to 12
+  Agent->>Tools: Read date, timezone and baseline revision
+  Agent->>Tools: Fork scenario and patch availability
+  Tools->>Tools: Recheck readiness and locks
+  Tools->>Engine: Repair within budget
+  Engine->>Validator: Candidate assignments
+  Validator-->>Tools: Validation and diagnostics
+  Tools->>Viewer: Compare baseline and scenario
+  Tools-->>Agent: Delays, utilization and changed assignments
+  Agent-->>User: Explain effects and alternatives
+  opt Planner selects the scenario
+    User->>Agent: Apply this scenario
+    Agent->>Tools: Commit with expected baseline revision
+    Tools-->>Agent: New baseline or revision conflict
+  end
