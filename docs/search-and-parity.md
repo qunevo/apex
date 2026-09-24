@@ -112,4 +112,4 @@ The construction-time filter gap identified by the [migration audit](migration-a
 
 With mandatory policies enabled, the complete eligible ready task/mode pool is filtered before stage selection and Q normalization; the Q candidate window cannot hide a continuation. Exact temporal facts come from calendar placement or complete prospective-prefix decoding, including previous-post effects. Physical feasibility and deterministic policy replay are checked separately. Without policies, the previous bounded-window path remains available.
 
-Evaluate quality and runtime on equivalent models separately from the additional cost and objective trade-offs of new restrictions. The [original implementation plan](architecture/dispatch-policy-plan.md) retains indexed queries and general transactional rollback as further work.
+Evaluate quality and runtime on equivalent models separately from the additional cost and objective trade-offs of new restrictions. The [architecture limits](architecture/README.md#current-limits) describe the current placement and reconstruction boundary.

@@ -5,7 +5,7 @@ description: Implement and test APEX scheduling constraints, objectives, heurist
 
 # APEX extension
 
-Make the requested domain behavior a tested repository change. Read `AGENTS.md`, `docs/implementation.md`, `docs/search-and-parity.md` and the applicable customization knowledge file. Keep customer-specific code under customization and only synthetic examples in distribution. A skill is workflow guidance, not a runtime plugin.
+Make the requested domain behavior a tested repository change. Read `AGENTS.md`, the [current architecture and change map](../../../docs/architecture/README.md), `docs/implementation.md`, `docs/search-and-parity.md` and the applicable customization knowledge file. Keep customer-specific code under customization and only synthetic examples in distribution. A skill is workflow guidance, not a runtime plugin.
 
 ## Define and implement one behavioral contract
 
@@ -17,7 +17,7 @@ Make the requested domain behavior a tested repository change. Read `AGENTS.md`,
 - Add semantic, negative and corrupted-output tests. Include relevant interactions with calendars, material supply, running work, fixed decisions, modes/routes and conditional operations. Run the checks required by `AGENTS.md`; rebuild before tool/browser verification.
 - Update schemas, bounded tool diagnostics, capability descriptions and domain documentation. Add only the UI explanation needed to inspect the new decision; keep routine scenario editing in the chat.
 
-For mandatory selection rules, use the shared `dispatch.rs` / `policy.rs` path and the [language contract](../../../docs/architecture/declarative-scheduling.md). Never add a Fast-Planner-only bypass. Native filters receive the complete eligible pool; exact placement facts require a tested prefix-decoration contract. Cover forced prefixes, singleton pools, candidates beyond the Q window, both search engines and corrupted replay witnesses. Compare unchanged/equivalent inputs with `scripts/benchmark_dispatch.py`; measure additional policy work separately from migration overhead.
+For mandatory selection rules, use the shared `dispatch.rs` / `policy.rs` path and the [language contract](../../../docs/architecture/declarative-scheduling.md). Never add a Fast-Planner-only bypass. Native filters receive the complete eligible pool; exact placement facts require a tested prefix-decoration contract. Cover forced prefixes, singleton pools, candidates beyond the Q window, Trainer/Plus/direct GA and corrupted replay witnesses. Compare unchanged/equivalent inputs with `scripts/benchmark_dispatch.py`; measure additional policy work separately from migration overhead.
 
 For genetic operators and sequence-generated conditional alternatives, follow [the direct-search contract](../../../docs/direct-schedule-evolution.md). Native operators propose chromosomes; shared evaluation remains authoritative. Version operator identities, preserve deterministic seeded execution and test malformed proposals, fixed commitments, replay, operator attribution and equal-budget quality. Declare stable conditional activity/mode IDs before searching alternatives emitted by a sequence hook.
 

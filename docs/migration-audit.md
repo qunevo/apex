@@ -6,7 +6,7 @@ This audit consolidates the migration findings for the former v2 SaaS scheduler 
 
 The reviewed v2 standard pipeline used Python orchestration and Cython fast decoding. Fast Planner constructed dispatch sequences, Trainer tuned queue parameters, and refinement/deep search reused fast decoding. An OR-Tools/CP-SAT path existed but was not selected by the reviewed standard pipeline; its result transfer was incomplete.
 
-On 24 September 2026, the v2 source, deployment files, Python bootstrap and legacy execution/comparison harnesses were removed. Rust in `src/rust` is the sole scheduling implementation. Former `src/v2/...` paths in architecture documents identify removed source, not runnable dependencies.
+On 24 September 2026, the v2 source, deployment files, Python bootstrap and legacy execution/comparison harnesses were removed. Rust in `src/rust` is the sole scheduling implementation. Historical `src/v2/...` references identify removed source, not runnable dependencies. The [current architecture](architecture/README.md) maps the executable modules.
 
 This audit replaces the individual release and migration reports in the current source tree. Their original narratives remain in Git history at the source baseline above. Raw measurements, source-hash manifests and screenshots were local evidence and were not included in that source-only commit. The legacy side of the historical comparisons cannot be rerun from this checkout.
 

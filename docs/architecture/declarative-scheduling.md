@@ -1,6 +1,6 @@
 # Declarative scheduling
 
-Current contract for APEX 0.6; introduced in 0.4 on 24 September 2026. The executable input version is `apex.v3.4`; canonical v3.1–v3.3 inputs remain accepted. `planning.version` is `apex.planning.v1`. This is a bounded typed vocabulary, not an expression interpreter or general mathematical solver.
+Current contract for APEX 0.6. The executable input version is `apex.v3.4`; canonical v3.1–v3.3 inputs remain accepted. `planning.version` is `apex.planning.v1`. This is a bounded typed vocabulary, not an expression interpreter or general mathematical solver. The [architecture map](README.md) explains the modules and shared evaluation flow.
 
 ## Three contracts
 
@@ -96,7 +96,7 @@ These are **construction policies** evaluated against the prospective selected p
 
 All other cases reuse the existing decoder on `prefix + candidate`. This deliberately recomputes predecessor post-activities and any dependent resource/material effects. Terminal cleanup is deferred until final decoding; it cannot satisfy an unfinished campaign minimum. At most 100,000 full-prefix probes are allowed per construction/replay; exhaustion is a budget diagnostic, not proof of infeasibility. The ready pool itself is not truncated to satisfy this budget.
 
-The `Customization` trait adds four hooks:
+The `Customization` trait exposes four dispatch-filter hooks:
 
 ```rust
 fn has_dispatch_policy(&self) -> bool;
@@ -106,7 +106,7 @@ fn filter_candidates(&self, context: &policy::Context<'_>)
     -> Result<Vec<policy::Rejection>, Diagnostic>;
 ```
 
-The context contains the problem, selected order/modes, complete eligible pool and optional exact placement facts. A filter may reject supplied task/mode pairs with reasons; it cannot inject tasks or overwrite physical constraints. Invalid or duplicate rejections fail explicitly. Native hooks are deterministic, versioned, statically linked and `Send + Sync`. Both search engines invoke them in each worker. `search::plus_customized` also supports a supplied Rust implementation.
+The context contains the problem, selected order/modes, complete eligible pool and optional exact placement facts. A filter may reject supplied task/mode pairs with reasons; it cannot inject tasks or overwrite physical constraints. Invalid or duplicate rejections fail explicitly. Native hooks are deterministic, versioned, statically linked and `Send + Sync`. Trainer, Plus and direct GA invoke them through shared evaluation in each worker. `search::plus_customized` also supports a supplied Rust implementation.
 
 Exact dispatch with a native sequence hook requires `supports_prefix_decoration = true`. This is a developer contract that must be tested: decorations must be meaningful on every prefix and cannot require unknown future tasks. Arbitrary complete-sequence logic remains usable without exact dynamic policies; unsupported combinations fail. There is no runtime evaluation of Markdown, Rust snippets or arbitrary formulas.
 
@@ -148,4 +148,4 @@ sequenceDiagram
 
 The [dispatch tests](../../tests/dispatch.rs) check policy enforcement, replay and rejected/corrupted cases. The [migration audit](../migration-audit.md) records the historical v2 boundary. New restrictions change the admissible decisions and can worsen a previous objective: their cost is measured separately. Neither a benchmark nor passing tests prove universal runtime/quality parity.
 
-The original [design plan](dispatch-policy-plan.md) remains useful as a roadmap. General indexed witness queries, transactional rollback of arbitrary cross-resource suffixes, learned proxies, automatic metric compilation and external solvers are not implemented. Whole problems remain in memory; agent transport batching does not remove this runtime bound.
+General indexed witness queries, transactional rollback of arbitrary cross-resource suffixes, learned proxies, automatic metric compilation and external solvers are not implemented. Whole problems remain in memory; agent transport batching does not remove this runtime bound. See the [architecture limits](README.md#current-limits).

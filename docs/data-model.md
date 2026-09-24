@@ -2,7 +2,7 @@
 
 This is the current model reference for APEX **0.6.0**. The contract is generated from Rust types in [model.rs](../src/rust/model.rs) and [production.rs](../src/rust/production.rs): [canonical problem schema](../schemas/apex.v3.4.json), [production schema](../schemas/production.v3.4.json) and [planning-options schema](../schemas/options.v3.4.json).
 
-Canonical `apex.v3.1`, `apex.v3.2` and `apex.v3.3` inputs remain accepted. The earlier `3.0-draft.1` design is not executable input. Input compatibility does not make old result artifacts version-neutral validation certificates; regenerate results when comparing changed metrics or search behavior. This reference consolidates the former v3.2, v3.3 and 0.5 model notes. The [migration audit](migration-audit.md) preserves the historical v2 comparison and its limits.
+Canonical `apex.v3.1`, `apex.v3.2` and `apex.v3.3` inputs remain accepted. The removed `3.0-draft.1` design is not executable input. Input compatibility does not make old result artifacts version-neutral validation certificates; regenerate results when comparing changed metrics or search behavior. The [migration audit](migration-audit.md) preserves the historical v2 comparison and its limits.
 
 ## Relationships and mapping
 

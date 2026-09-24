@@ -30,12 +30,15 @@ The generated schemas cover the [canonical problem](../schemas/apex.v3.4.json), 
 | [Dispatch campaign](../examples/dispatch-campaign.json) | Mandatory construction policies |
 | [Release times](../examples/improve-release-times.json) | Combined-improvement scenario |
 
-## Design, evidence and release
+## Work on the repository
 
-- [Architecture index](architecture/README.md) distinguishes implemented contracts from broader design proposals.
+[Current architecture](architecture/README.md) maps modules, the shared evaluation flow, service state and customization boundaries. Start there before changing implementation; its change map links responsibilities to tests.
+
+## Evidence and release
+
 - [Migration audit](migration-audit.md) consolidates v2 comparison evidence, implemented coverage and remaining boundaries.
 - [Benchmark guide](../benchmark/README.md) and [experiment plan](benchmark-experiment-plan.md) cover the separate benchmark workstream.
 - [Licensing documents](legal/README.md) explain the canonical public license, pricing and eligibility.
 - [Publication preparation](publication.md) lists release checks.
 
-The old v3.2, v3.3 and 0.5 model notes have been consolidated into [the current data-model reference](data-model.md). The `architecture/` draft input model uses `3.0-draft.1` and remains a design proposal, not an import format. The removed v2 source and execution harnesses cannot be run from this checkout; see [migration audit](migration-audit.md).
+The [data-model reference](data-model.md) covers the current format and accepted canonical input versions. The removed v2 source and execution harnesses cannot be run from this checkout; see [migration audit](migration-audit.md).

@@ -25,12 +25,12 @@ Start with the [documentation index](docs/README.md). The main references are:
 - [Executable data model](docs/data-model.md): fields, units, relationships, commitments and KPIs.
 - [Agent workflows](docs/agent-workflows.md) and [integration](docs/agent-integration.md): chat-led planning and tool access.
 - [Material preparation](docs/material-dispatch.md), [search](docs/search-and-parity.md) and [direct evolution](docs/direct-schedule-evolution.md): current behavior and boundaries.
-- [Architecture](docs/architecture/README.md): implemented contracts, design decisions and open proposals.
+- [Architecture](docs/architecture/README.md): current modules, evaluation flow, state boundaries and change map for coding agents.
 - [Migration audit](docs/migration-audit.md): v2 comparison, implemented coverage and remaining migration boundaries.
 
 Runnable synthetic inputs include [production orders](examples/production-orders.json), [shift and material constraints](examples/shift-factory.json), [material chains](examples/chain-routing.json) and [dispatch policies](examples/dispatch-campaign.json). The [customization knowledge bundle](customizations/dummy_customer/KNOWLEDGE.md) describes the extension workflow.
 
-The executable schema is `apex.v3.4`; canonical `apex.v3.1`, `apex.v3.2` and `apex.v3.3` inputs remain accepted. The earlier `3.0-draft.1` design is not executable input. Rust is the sole scheduling implementation; the [migration audit](docs/migration-audit.md) records the v2 source removal and historical comparisons. Tested coverage does not establish complete legacy parity, optimality or production readiness. Repository documentation and examples use English, and all fixtures are deliberately synthetic.
+The executable schema is `apex.v3.4`; canonical `apex.v3.1`, `apex.v3.2` and `apex.v3.3` inputs remain accepted by the same Rust runtime. Rust is the sole scheduling implementation; the [migration audit](docs/migration-audit.md) records the v2 source removal and historical comparisons. Tested coverage does not establish complete legacy parity, optimality or production readiness. Repository documentation and examples use English, and all fixtures are deliberately synthetic.
 
 ## License
 
