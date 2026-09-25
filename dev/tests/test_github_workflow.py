@@ -30,7 +30,7 @@ class ClientTests(unittest.TestCase):
         with patch("github_client.urlopen", return_value=response) as send:
             api.request("")
             self.assertEqual(send.call_args.args[0].full_url, "https://api.github.com/repos/example/synthetic")
-            api.request("", {"delete_branch_on_merge": False}, method="PATCH")
+            api.request("", {"delete_branch_on_merge": True}, method="PATCH")
             self.assertEqual(send.call_args.args[0].full_url, "https://api.github.com/repos/example/synthetic")
             self.assertEqual(send.call_args.args[0].method, "PATCH")
             api.request("pulls/1")
@@ -101,7 +101,9 @@ class SetupTests(unittest.TestCase):
 
     def test_dry_run_never_mutates_github(self):
         api = self.api()
-        self.assertTrue(setup(api)["create_dev"])
+        result = setup(api)
+        self.assertTrue(result["create_dev"])
+        self.assertTrue(result["enable_automatic_branch_deletion"])
         self.assertTrue(all(len(call.args) == 1 and "method" not in call.kwargs
                             for call in api.request.call_args_list))
 
@@ -118,8 +120,23 @@ class SetupTests(unittest.TestCase):
         mutations = [call for call in api.request.call_args_list if "method" in call.kwargs]
         self.assertEqual([call.kwargs["method"] for call in mutations], ["POST", "POST", "PATCH", "PUT", "PUT"])
         self.assertEqual(mutations[0].args, ("git/refs", {"ref": "refs/heads/dev", "sha": SHA}))
-        self.assertEqual(mutations[2].args, ("", {"delete_branch_on_merge": False}))
+        self.assertEqual(mutations[1].args[1]["enforcement"], "active")
+        self.assertEqual(mutations[1].args[1]["bypass_actors"], [])
+        self.assertIn({"type": "deletion"}, mutations[1].args[1]["rules"])
+        self.assertEqual(mutations[2].args, ("", {"delete_branch_on_merge": True}))
         self.assertEqual([call.args[0] for call in mutations[3:]], ["vulnerability-alerts", "automated-security-fixes"])
+
+    def test_missing_deletion_protection_prevents_cleanup_setting_and_all_mutations(self):
+        for apply in (False, True):
+            api = self.api()
+            responses = api.request.side_effect
+            api.request.side_effect = lambda path, *args, **kwargs: (
+                [rule for rule in responses(path) if rule["type"] != "deletion"]
+                if path == "rules/branches/main" else responses(path, *args, **kwargs)
+            )
+            with self.subTest(apply=apply), self.assertRaisesRegex(ValueError, "history protection"):
+                setup(api, apply=apply)
+            self.assertTrue(all("method" not in call.kwargs for call in api.request.call_args_list))
 
 
 class MergeTests(unittest.TestCase):
