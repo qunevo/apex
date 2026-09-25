@@ -2,24 +2,47 @@ name: CI
 
 on:
   pull_request:
+    branches: [dev, main]
   push:
-    branches: [main]
+    branches: [dev, main]
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/main' && github.sha || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 defaults:
   run:
     shell: bash
 
 jobs:
+  changes:
+    name: Change scope
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      runtime: ${{ steps.scope.outputs.runtime }}
+      base: ${{ steps.scope.outputs.base }}
+      target: ${{ steps.scope.outputs.target }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Classify changed paths
+        id: scope
+        run: python -B dev/scripts/ci_plan.py
+
   rust:
     name: Rust (${{ matrix.os }})
+    needs: changes
+    if: needs.changes.outputs.runtime == 'true'
+    defaults:
+      run:
+        working-directory: app
     runs-on: ${{ matrix.os }}
     timeout-minutes: 25
     strategy:
@@ -31,42 +54,50 @@ jobs:
         with:
           persist-credentials: false
       - name: Install stable Rust
+        id: toolchain
         run: |
           rustup toolchain install stable --profile minimal --component rustfmt --component clippy --no-self-update
           rustup default stable
-      - name: Format, lint, test and release build
+          echo "key=$(rustc --version | sha256sum | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+      - name: Restore Cargo dependencies and build cache
+        id: cargo-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            app/target
+          key: cargo-${{ runner.os }}-${{ runner.arch }}-${{ steps.toolchain.outputs.key }}-${{ hashFiles('app/Cargo.lock') }}-${{ github.sha }}
+          restore-keys: |
+            cargo-${{ runner.os }}-${{ runner.arch }}-${{ steps.toolchain.outputs.key }}-${{ hashFiles('app/Cargo.lock') }}-
+      - name: Check formatting
+        if: runner.os == 'Linux'
+        run: cargo fmt --check
+      - name: Lint, test and build
         run: |
-          cargo fmt --check
           cargo clippy --locked --all-targets -- -D warnings
           cargo test --locked
           cargo build --locked --release
-
-  integration:
-    name: MCP, HTTP and viewer
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Install stable Rust
-        run: |
-          rustup toolchain install stable --profile minimal --no-self-update
-          rustup default stable
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - name: Install Node for Linux integration
+        if: runner.os == 'Linux'
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: '24'
-      - name: Build the tested executable
-        run: cargo build --locked --release
-      - name: Install test dependencies
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Install integration dependencies
+        if: runner.os == 'Linux'
         run: |
           npm ci --ignore-scripts
           npx playwright install --with-deps chromium
       - name: MCP and HTTP integration
+        if: runner.os == 'Linux'
         run: |
           npm run test:mcp
           npm run test:http
-      - name: Viewer integration
+      - name: Viewer integration using the same release executable
+        if: runner.os == 'Linux'
         run: |
           target/release/apex serve --port 8765 > "$RUNNER_TEMP/apex-viewer.log" 2>&1 &
           viewer_pid=$!
@@ -84,38 +115,86 @@ jobs:
           curl --fail --silent http://127.0.0.1:8765/ > /dev/null
           npm run test:viewer
           node tests/viewer-plan-smoke.mjs
+      - name: Save trusted Cargo cache
+        if: github.event_name == 'push' && steps.cargo-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            app/target
+          key: ${{ steps.cargo-cache.outputs.cache-primary-key }}
 
   publication:
     name: Source publication
+    needs: changes
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.14'
-      - name: Validate wiki publication and scan the source distribution
+      - name: Contributor tests, documentation and skill consistency
         run: |
-          python -B -m unittest discover -s tests -p 'test_wiki.py' -v
-          python -B -m unittest discover -s tests -p 'test_publication.py' -v
-          python -B scripts/build_wiki.py
-          python -B scripts/check_publication.py
+          python -B -m unittest discover -s dev/tests -p 'test_*.py' -v
+          python -B dev/scripts/sync_skills.py --check
+          python -B dev/scripts/check_docs.py
+          python -B dev/scripts/build_wiki.py
+          python -B dev/scripts/check_publication.py
+      - name: Check the product version and release boundary
+        env:
+          BASE_REVISION: ${{ needs.changes.outputs.base }}
+          TARGET_BRANCH: ${{ needs.changes.outputs.target }}
+        run: python -B dev/scripts/release.py check --base "$BASE_REVISION" --target "$TARGET_BRANCH"
+
+  standalone:
+    name: Standalone application
+    needs: changes
+    if: needs.changes.outputs.runtime == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install stable Rust
+        run: |
+          rustup toolchain install stable --profile minimal --no-self-update
+          rustup default stable
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.14'
+      - name: Build and run using only the application source
+        run: python -B dev/scripts/check_standalone.py
 
   required:
     name: Required checks
     if: ${{ always() }}
-    needs: [rust, integration, publication]
+    needs: [changes, rust, publication, standalone]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Require every job to pass
+      - name: Require all applicable checks
         env:
+          SCOPE_RESULT: ${{ needs.changes.result }}
+          RUNTIME_REQUIRED: ${{ needs.changes.outputs.runtime }}
           RUST_RESULT: ${{ needs.rust.result }}
-          INTEGRATION_RESULT: ${{ needs.integration.result }}
           PUBLICATION_RESULT: ${{ needs.publication.result }}
+          STANDALONE_RESULT: ${{ needs.standalone.result }}
         run: |
-          test "$RUST_RESULT" = success
-          test "$INTEGRATION_RESULT" = success
+          test "$SCOPE_RESULT" = success
           test "$PUBLICATION_RESULT" = success
+          if test "$RUNTIME_REQUIRED" = true; then
+            test "$RUST_RESULT" = success
+            test "$STANDALONE_RESULT" = success
+          elif test "$RUNTIME_REQUIRED" = false; then
+            test "$RUST_RESULT" = skipped
+            test "$STANDALONE_RESULT" = skipped
+          else
+            exit 1
+          fi

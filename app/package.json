@@ -1,0 +1,14 @@
+{
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "playwright": "^1.63.0"
+  },
+  "name": "apex-workbench-tests",
+  "private": true,
+  "license": "SEE LICENSE IN LICENSE",
+  "scripts": {
+    "test:mcp": "node tests/mcp-smoke.mjs",
+    "test:http": "node tests/http-mcp.mjs",
+    "test:viewer": "node tests/viewer-smoke.mjs"
+  }
+}

@@ -1,75 +1,74 @@
-name: Wiki
+name: Publish
 
 on:
-  pull_request:
-  push:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
     branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
+  actions: read
+
+concurrency:
+  group: apex-main-publication
+  queue: max
+  cancel-in-progress: false
 
 jobs:
-  validate:
-    name: Wiki validation
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-        with:
-          python-version: '3.14'
-      - name: Test exporter and validate documentation
-        run: |
-          python -m unittest discover -s tests -p 'test_wiki.py' -v
-          python scripts/build_wiki.py
-
   publish:
-    name: Publish wiki
-    needs: validate
+    name: Publish source release and wiki
     if: >-
       github.repository == 'qunevo/apex' &&
-      github.ref == 'refs/heads/main' &&
-      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+      ((github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main'))
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     permissions:
       contents: write
-    concurrency:
-      group: apex-wiki-publication
-      cancel-in-progress: false
+      actions: read
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Check out the tested revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          # A queued older run must not replace newer documentation.
-          ref: main
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 0
           path: source
           persist-credentials: false
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.14'
-      - name: Validate the current main revision
-        working-directory: source
-        run: |
-          python -m unittest discover -s tests -p 'test_wiki.py' -v
-          python scripts/build_wiki.py
+      - name: Verify successful main CI before publishing
+        id: verified
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python -B source/dev/scripts/publish_release.py --verify-only
+      - name: Publish an immutable release when the product version changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python -B source/dev/scripts/publish_release.py
       - name: Check out the initialized wiki
+        if: steps.verified.outputs.current_main == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: qunevo/apex.wiki
           path: wiki
-      - name: Publish public documentation
+      - name: Publish documentation from the same tested revision
+        if: steps.verified.outputs.current_main == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          python source/scripts/build_wiki.py --output wiki
+          python -B source/dev/scripts/publish_release.py --verify-only --require-current
+          python -B source/dev/scripts/build_wiki.py --output wiki
           git -C wiki config user.name 'github-actions[bot]'
           git -C wiki config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git -C wiki add -- '*.md' .apex-wiki-pages.json
           if git -C wiki diff --cached --quiet; then
-            echo 'Wiki already matches the source revision.'
+            echo 'Wiki already matches the tested revision.'
             exit 0
           fi
           revision="$(git -C source rev-parse HEAD)"
