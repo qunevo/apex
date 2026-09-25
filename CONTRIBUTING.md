@@ -1,6 +1,6 @@
 # Contributing to APEX
 
-Bug reports, documentation improvements and focused proposals are welcome. Start with the [README](readme.md), [architecture map](docs/architecture/README.md) and [repository conventions](AGENTS.md). Community participation follows our [Code of Conduct](CODE_OF_CONDUCT.md).
+Bug reports, documentation improvements and focused proposals are welcome. Start with the [README](readme.md), [architecture map](app/docs/architecture/README.md) and [repository conventions](AGENTS.md). Community participation follows our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## License and contribution rights
 
@@ -18,11 +18,12 @@ Include a minimal, deliberately synthetic example, the APEX version or commit, t
 
 ## Development setup
 
-Install stable Rust and the native linker for your platform. Windows builds need Visual Studio C++ Build Tools. The integration tests also use Node.js 24 and Python 3. See the [operating guide](docs/implementation.md) for setup and runtime details.
+Install stable Rust and the native linker for your platform. Windows builds need Visual Studio C++ Build Tools. The integration tests also use Node.js 24 and Python 3.11 or newer. See the [operating guide](app/docs/implementation.md) for setup and runtime details.
 
-Fork the repository, create a topic branch and keep each pull request focused. Maintainers can use a branch in this repository. From the checkout root:
+Fork the repository, create a topic branch and keep each pull request focused. Maintainers can use a branch in this repository. Start at the checkout root and enter the application directory:
 
 ```bash
+cd app
 cargo fmt --check
 cargo clippy --locked --all-targets -- -D warnings
 cargo test --locked
@@ -34,6 +35,8 @@ npm run test:http
 
 These commands check formatting, run Clippy with warnings denied, run Rust tests and build the release executable using the lockfile. Rebuild before testing MCP, HTTP or viewer behavior. For viewer changes, install Chromium with `npx playwright install chromium`, start the rebuilt server with `target/release/apex serve` (`target/release/apex.exe serve` on Windows), and run `npm run test:viewer` and the relevant viewer tests from the architecture map.
 
+For repository tooling and independent distribution checks, return to the checkout root and follow the [repository layout](dev/docs/repository-layout.md).
+
 ## Change requirements
 
 - Use English for code, documentation, examples and repository messages.
@@ -44,8 +47,10 @@ These commands check formatting, run Clippy with warnings denied, run Rust tests
 
 ## Pull requests and review
 
+Target ordinary feature and dependency PRs at `dev`. Product promotion to `main` uses a prepared release PR; security fixes can use the main hotfix path. Contributor-only maintenance can reach main without a product bump. The [developer workflow](dev/docs/developer-workflow.md) describes agent skills, plan approval, release preparation and synchronization.
+
 Describe the problem, resulting behavior, relevant tests and any limits. Link related issues and include synthetic reproduction steps when helpful. Documentation-only changes need link and factual checks; they do not need new scheduler tests.
 
 CI checks formatting, linting, Rust tests/builds on Linux, Windows and macOS, MCP/HTTP/viewer integration on Linux, wiki export and documentation links, and the source publication scan. Keep checks passing and resolve review conversations. External fork workflows require maintainer approval before they run; approval to run CI is separate from approval to merge.
 
-The default branch requires a pull request, passing required checks on an up-to-date branch and resolved review conversations. An independent approving review is optional; maintainers may merge their own pull requests. An agent acting with a maintainer's credentials may carry out an explicitly authorized merge after verifying these conditions, but does not count as an independent reviewer. Administrators have no bypass entry. Maintainers also verify contribution rights and release scope before merging. See [repository maintenance](docs/repository-maintenance.md) for the configured checks and release process.
+The default branch requires a pull request, passing required checks on an up-to-date branch and resolved review conversations. An independent approving review is optional; maintainers may merge their own pull requests. An agent acting with a maintainer's credentials may carry out an explicitly authorized merge after verifying these conditions, but does not count as an independent reviewer. Administrators have no bypass entry. Maintainers also verify contribution rights and release scope before merging. See [repository maintenance](dev/docs/repository-maintenance.md) for the configured checks and release process.
