@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/qunevo/apex/actions/workflows/ci.yml/badge.svg)](https://github.com/qunevo/apex/actions/workflows/ci.yml)
 
-APEX 0.6 is an experimental Rust scheduler for discrete production, built for agent tool use. It supports alternative workplans, conditional activity graphs, quantity/order expansion, existing-supply material allocation, native customization hooks and independent schedule validation. XG construction, XH hypersearch, XT tree search and XE schedule evolution share the same scheduling rules. A lean browser viewer displays saved plans.
+APEX is an experimental Rust scheduler for discrete production, built for agent tool use. It supports alternative workplans, conditional activity graphs, quantity/order expansion, existing-supply material allocation, native customization hooks and independent schedule validation. XG construction, XH hypersearch, XT tree search and XE schedule evolution share the same scheduling rules. A lean browser viewer displays saved plans.
 
 The same 32 tools are available over MCP stdio, MCP Streamable HTTP and a JSON HTTP API with OpenAPI discovery. No model API key or external solver is required by the scheduler.
 
