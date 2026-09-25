@@ -27,4 +27,16 @@ Fetch `origin`, then create `codex/<topic>` from `origin/dev` in an isolated wor
 
 Keep edits within the approved scope. Keep customer workflows in `app/skills`, contributor workflows in `dev/skills` and generated discovery entries in `.agents/skills`. Split modules only for an understood responsibility boundary; use `apex-refactor` for a broader audit.
 
-Run the checks required by `AGENTS.md`, including a fresh release build before integration checks and the standalone check when distribution boundaries change. Update affected contracts and evidence with the implementation. Summarize behavior, actual checks and remaining limitations. Development approval alone does not publish or merge; use `apex-merge-dev` when the user requests integration.
+Run the checks required by `AGENTS.md`, including a fresh release build before integration checks and the standalone check when distribution boundaries change. Update affected contracts and evidence with the implementation.
+
+## Finish the authorized workflow
+
+Carry the user's existing authorization through to completion without asking for the same permission again:
+
+- For implementation only, summarize the changes and checks and retain the unmerged feature branch. Development approval alone does not authorize merging or publishing.
+- When integration into `dev` is requested, continue with [apex-merge-dev](../apex-merge-dev/SKILL.md) through verified merging and temporary-branch cleanup. Do not stop at a local commit or an open PR.
+- When promotion to `main` is requested, finish feature integration first, then use [apex-release](../apex-release/SKILL.md) for the selected release scope, publication verification, synchronization back to `dev` and release-branch cleanup. A request only to prepare a release retains that stopping point.
+
+Treat [branch lifecycle](../../docs/developer-workflow.md#branch-lifecycle) as the completion contract: verify the task's merged temporary branches are gone remotely and locally, preserve `main`, `dev`, active work and worktree files, and report any deferred cleanup with its reason. After release synchronization, verify ancestry and equal tracked content, retaining and explaining any newer development changes. A merged PR alone is not completion.
+
+Report the actual checks, integration/publication state, branch cleanup and remaining limitations that apply to the authorized scope. Start later work on a fresh branch from current `origin/dev`; do not reuse a completed branch.
