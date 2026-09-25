@@ -33,14 +33,15 @@ def setup(api, apply=False):
         if any(actual.get(key) != value for key, value in payload.items()):
             raise ValueError("Existing Protect dev differs; review it instead of overwriting its rules")
     result = {"apply": apply, "create_dev": dev is None, "source_sha": main["object"]["sha"],
-              "protect_dev": payload, "disable_automatic_branch_deletion": True,
+              "protect_dev": payload, "enable_automatic_branch_deletion": True,
               "enable_dependency_alerts_and_security_updates": True}
     if apply:
         if not dev:
             api.request("git/refs", {"ref": "refs/heads/dev", "sha": main["object"]["sha"]}, method="POST")
         if not existing:
             api.request("rulesets", payload, method="POST")
-        api.request("", {"delete_branch_on_merge": False}, method="PATCH")
+        # Protect both long-lived branches before enabling PR head cleanup.
+        api.request("", {"delete_branch_on_merge": True}, method="PATCH")
         api.request("vulnerability-alerts", method="PUT")
         api.request("automated-security-fixes", method="PUT")
     return result
