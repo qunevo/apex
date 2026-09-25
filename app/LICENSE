@@ -1,0 +1,736 @@
+APEX Source Available License
+Version 1.1, 24 September 2026
+
+This license governs the APEX Software distributed with this file. It permits
+source access and specified free uses, and requires a separately agreed
+commercial license for other uses. It is a source-available license, not an
+OSI-approved open-source license. All rights not granted by this license or
+applicable law are reserved. Existing separately agreed rights remain governed
+by their agreements.
+
+1. Parties, acceptance and definitions
+
+Licensor means the copyright holder, or the person or entity authorized by
+that holder, that makes the Software available under this license. Each
+Licensor grants only rights it has authority to grant. References to Qunevo
+identify the APEX project publisher and do not substitute a trading name for
+the legal contracting party in a commercial Order.
+
+Licensee, you or your means the person or organization exercising the rights
+granted by this license. Someone acting for an organization must have
+authority to bind it. Production entitlements cover the named legal entity or
+institution, not its personnel separately or its separately incorporated
+affiliates. A branch is part of its legal entity. Individuals may exercise the
+source collaboration rights in sections 2 and 5; this does not give them an
+independent production or evaluation entitlement for an organization.
+
+Software means the APEX source code, executable code and accompanying
+materials made available by the Licensor with this license, except material
+identified as separately licensed. Third-party components and materials retain
+their own licenses; this license does not relicense them. Modified Software
+means a copy or derivative containing protected portions of the Software.
+
+Production Use means using the Software or its outputs to run, guide or
+support actual business or institutional operations, including live pilots.
+Internal Use means use solely for the licensed entity's own operations.
+Manufacturing or selling its own goods remains Internal Use. Scheduling for
+another legal entity, including an affiliate, is outside that scope unless
+expressly covered by a Custom agreement.
+
+Pricing Schedule means sections 13 and 14 of this license, which define
+revenue, Group, Control, assessment dates, currency conversion, Custom
+triggers and standard fees. It is part of this license. An accepted Order may
+incorporate a separately agreed commercial schedule for that Order. Order
+means a license order accepted by both parties identifying the licensed
+entity, scope, payment basis, price, term or purchased version, and
+incorporated document versions.
+
+The Licensor offers the permissions below on these terms. Exercising an
+offered permission after receiving these terms constitutes acceptance to the
+extent effective under applicable law. Acts independently permitted by law do
+not require acceptance. A paid entitlement requires a separate accepted Order;
+downloading, evaluating, exceeding a revenue threshold or continuing
+unauthorized use does not itself create an Order or an automatic charge.
+
+2. Source access and modification
+
+Subject to this license, the Licensor grants a worldwide, non-exclusive,
+royalty-free right to obtain, inspect, copy and modify the publicly released
+source, prepare patches, and maintain private source forks. These source
+rights are available regardless of revenue. Compiling source is permitted, but
+execution of the Software, including execution through tests, scripts, an API
+or a modified build, requires an entitlement under section 3. Source access
+and modification alone do not start the evaluation period.
+
+For the duration and scope of an execution entitlement, you may install and
+build the Software, maintain necessary copies and backups, execute it, and
+make and use internal modifications and private forks. Internal modifications
+do not have to be published or contributed. These rights cover all of the
+licensed entity's own sites with no user, installation, site, operation,
+planning-volume or run limit or related fee.
+
+Modified Software remains subject to the restrictions applicable to the
+included APEX code. Renaming, compiling, wrapping, embedding or modifying it
+does not remove execution requirements or change revenue assessment. You
+retain ownership of your original modifications; this license does not assign
+them to the Licensor.
+
+You must retain copyright, license and third-party notices. No trademark
+rights or permission to imply endorsement are granted. Descriptive
+identification of APEX and the required notices are permitted without
+suggesting affiliation.
+
+3. Execution entitlements
+
+3.1 Free internal production use
+
+A single legal entity may execute the Software for Internal Use, including
+Production Use, without a license fee when its applicable annual revenue is no
+more than EUR 2,000,000 and no Custom deployment trigger applies. The Pricing
+Schedule's consolidated Group revenue and annual reassessment rules apply.
+Exactly EUR 2,000,000 qualifies.
+
+The entitlement begins with the first qualifying production use and continues
+in successive twelve-month assessment periods while the entity qualifies.
+Record eligibility at commencement and each annual assessment. Ordinary
+revenue changes during a correctly established period do not change the
+entitlement mid-period. If the entity no longer qualifies at the next
+assessment, further execution requires another applicable entitlement. No paid
+conversion occurs automatically.
+
+3.2 Free research and teaching
+
+Schools, universities and non-profit research institutions, and scientists,
+students, researchers and other people acting on their behalf, may execute the
+Software for non-commercial academic research, classroom teaching, coursework
+and associated demonstrations. This entitlement has no revenue threshold and
+no evaluation time limit while the activity qualifies.
+
+It does not cover commercial R&D, commissioned operational planning, a paid
+scheduling service, or the institution's own operational administration or
+production. Commercially funded work qualifies only when it remains
+non-commercial academic research and does not deliver operational scheduling
+or a service to the sponsor. This section defines the research and teaching
+exemption in full.
+
+3.3 Free evaluation
+
+Every legal entity or institution may execute the Software solely for
+non-operational evaluation for 90 consecutive calendar days, beginning with
+its first execution for evaluation. This includes organizations whose intended
+production use would require Custom. The entity must retain its evaluation
+start date.
+
+Evaluation includes sandbox trials, retrospective comparisons and isolated
+shadow tests whose outputs are not acted on. It must not control or influence
+live operations, replace a production system or provide a scheduling service
+to third parties. A pilot affecting actual operations requires a production
+entitlement from the start.
+
+New installations, versions, accounts, evaluators or forks do not restart the
+entity's evaluation period. At the end, further execution requires an
+independently applicable Free entitlement or an accepted paid Order.
+Evaluation creates no automatic charge. Source collaboration and retention
+after evaluation are governed by sections 2, 5 and 8; they do not extend
+execution rights.
+
+3.4 Paid internal use
+
+A paid internal-use Order grants one of the following entitlements for the
+named entity and agreed scope:
+
+- Subscription: twelve months, paid annually in advance, including execution
+  and access to versions published by the Licensor during the entitlement
+  period. The Order records start and end dates. Renewal requires another
+  agreement under section 7.
+- Perpetual: indefinite Internal Use of the specific purchased version and its
+  internal modifications and private forks, for the individually agreed
+  one-time fee. The Order identifies the version by release identifier and an
+  immutable commit or artifact digest. Future Licensor versions and upgrades
+  are separate.
+
+The Pricing Schedule supplies the selected subscription fees and perpetual
+starting price. The Order fixes the actual price and payment arrangements.
+Individually agreed payment arrangements determine when a paid entitlement
+begins; downloading a version is not evidence of purchase.
+
+No later revenue true-up for perpetual use. Once purchased, later revenue
+growth, including crossing EUR 10,000,000 or EUR 50,000,000, does not cause
+reassessment charges, additional license fees, a compulsory tier change or a
+new Custom agreement for the agreed use of that version. There is no annual
+renewal or recurring license fee. Additional legal entities and new types of
+use outside the purchased scope require a separate agreement. The transfer and
+ownership provisions in section 10 preserve this protection.
+
+3.5 Custom use
+
+An express Custom agreement is required before ordinary production use at
+applicable revenue of EUR 50,000,000 or more, or before group-wide or other
+multi-entity operational use, SaaS, OEM or White Label use, regardless of
+revenue. These terms have the meanings in the Pricing Schedule. An agreement
+must identify the covered entities and grant the relevant service, hosting,
+embedding, distribution or branding rights expressly; paying for an ordinary
+internal-use tier does not grant them.
+
+Qualifying research and teaching and non-operational evaluation remain
+available under sections 3.2 and 3.3. Existing perpetual use remains protected
+by section 3.4. The limited source collaboration permission in section 5 is
+not itself a Custom trigger; it grants no production service or
+product-distribution rights.
+
+4. Personnel, contractors and infrastructure hosting
+
+Personnel and contractors may access and operate the Software solely on the
+Licensee's behalf within its entitlement. The Licensee must ensure their
+compliance and remains responsible to the extent provided by applicable law.
+They receive no right to use that entitlement for their own operations or
+other customers. Copies supplied for this work must carry the required license
+and attribution notices.
+
+Internal self-hosting may use infrastructure supplied by a provider acting
+solely for the Licensee. Administration, implementation and infrastructure
+hosting for that deployment do not grant the provider a right to market or
+offer APEX functionality as its own scheduling service. A service delivering
+scheduling to other entities requires the relevant Custom rights.
+
+5. Public source forks, patches and contributions
+
+You may redistribute the Licensor's publicly released source and your
+authorized source modifications, without a charge for access, in a public
+source repository or as source patches for inspection and collaboration. You
+must:
+
+1. Include this complete license, including its Pricing Schedule, and required
+   notices with the source, keeping the applicable version identifiable and
+   available to recipients.
+2. Mark your changes and identify the upstream release or revision, without
+   presenting your fork as an official Qunevo release.
+3. State clearly that execution requires an entitlement under section 3 and
+   that each recipient must establish its own eligibility. A public fork
+   grants no additional free execution rights.
+4. Have authority to publish all included modifications and material. Do not
+   publish confidential information, personal data, credentials or material
+   whose terms conflict with this permission.
+5. Grant recipients rights in your included modifications sufficient to
+   exercise this same source collaboration permission and their applicable
+   execution entitlement. You may not relicense the included APEX code under
+   more permissive terms.
+
+Recipients obtain rights in the original APEX code directly from the Licensor
+under this license; you do not sublicense that code or sell commercial APEX
+entitlements. This permission covers source collaboration only. It does not
+authorize redistribution of executable releases, container images or
+installers, sale or embedding as a third-party product, White Label
+distribution, or offering an executable hosted service. Those activities
+require an express Custom grant, except for copies supplied under section 4 or
+rights that cannot lawfully be restricted. Ordinary source-repository
+infrastructure is not itself an executable scheduling service.
+
+Publishing a fork does not transfer ownership of your changes or automatically
+give the Licensor unrestricted commercial sublicensing rights in them.
+Upstream incorporation requires a separately accepted contributor agreement
+covering the necessary source and commercial licensing rights. Internal
+changes need no such agreement. The Licensor is not obliged to accept
+contributions. Posting an issue, patch or pull request does not itself
+constitute acceptance of a separate contributor agreement.
+
+6. Scope, third-party rights and outputs
+
+Rights not expressly granted are reserved, subject to applicable law. There is
+no right to resell entitlements or to permit another entity to use your
+production entitlement. No contractual restriction limits rights that cannot
+lawfully be excluded, including applicable rights concerning backups,
+observation, testing, interoperability or exhaustion. Third-party licenses
+govern their own components independently.
+
+To the extent the Licensor controls patent claims necessarily infringed by the
+unmodified Software, it grants a non-exclusive, royalty-free patent license
+for acts permitted by this license, for the duration of those permissions.
+This does not cover claims infringed only by your additions or by combinations
+not supplied as part of the Software, or grant rights under third-party
+patents.
+
+You retain your rights in input data and scheduling outputs. The Licensor
+claims no ownership of those materials through this license. Ordinary
+scheduling outputs do not become licensed Software merely because APEX
+produced them; any reproduced Software code retains its own terms. Generating
+outputs and using them must fall within the relevant entitlement, and section
+8 governs outputs already lawfully generated when an entitlement ends.
+
+7. Duration and renewal
+
+Source collaboration permissions continue while this license is complied with,
+subject to section 9. Execution continues only for the relevant entitlement
+under section 3. The Licensor has no ordinary right to revoke a compliant
+perpetual entitlement or a compliant entitlement during its agreed term.
+
+A subscription expires at its stated end date without a cancellation notice.
+There is no automatic renewal. A further twelve-month term requires an
+accepted renewal Order recording the then-applicable tier, price and document
+versions. Continued possession or unauthorized execution creates no automatic
+renewal. A proposed renewal price does not amend the current term.
+
+Ordinary cancellation during the fixed subscription term is not provided for.
+Rights to terminate for cause, withdraw or reduce payment remain available
+under applicable law. Defect remedies and damages are subject to section 11,
+including its mandatory exceptions. A perpetual entitlement has no ordinary
+term expiry; it is subject only to the agreed scope, section 9 and applicable
+law.
+
+8. Rights after execution ends
+
+At expiry or termination of an execution entitlement, cease execution under
+that entitlement, including automated jobs, APIs, tests and use through
+contractors. Another independently valid entitlement may permit further
+execution within its own scope. No general production transition period is
+included; an extension requires express agreement.
+
+The expiry of an evaluation or subscription does not itself end compliant
+source collaboration permissions under sections 2 and 5. Source and
+modifications may be retained, inspected, edited and redistributed within
+those permissions, but retaining or compiling them does not authorize
+execution. You may retain inactive binary copies and backups for evidence,
+archival or legal-retention purposes without executing or externally
+distributing them.
+
+You may retain, export and use your data and outputs lawfully generated while
+a production entitlement was valid, including implementing an already
+generated production plan. New or revised calculations after expiry require a
+valid execution entitlement. Evaluation outputs remain subject to the
+restriction against use for actual operations, including after evaluation
+ends, unless an applicable production entitlement covers that use. Data
+extraction requiring execution after expiry needs an agreed extension or an
+independent legal right; export required data before expiry where possible.
+
+An independently purchased perpetual entitlement remains usable within its
+agreed scope after an unrelated subscription expires. Expiry or termination
+does not transfer ownership of your modifications or data to the Licensor.
+Confidentiality, accrued payment obligations, notices, retained-copy
+restrictions and provisions intended to apply after expiry continue as
+applicable.
+
+9. Breach and termination for cause
+
+A party alleging a remediable material breach must give notice describing it
+and a reasonable opportunity to remedy it, normally at least 30 calendar days
+from receipt. Termination for cause remains subject to applicable legal
+requirements; a shorter period or immediate termination is available only
+where justified under applicable law. A correction period does not authorize
+use beyond an existing entitlement or after its normal expiry.
+
+Termination must identify the affected agreement and rights. A breach does not
+automatically terminate unrelated versions or separately purchased
+entitlements. Reinstatement after an effective termination requires agreement
+or an applicable legal right. Rights independently available under mandatory
+law remain unaffected.
+
+An incorrect eligibility declaration must be corrected without undue delay
+after discovery. Ordinary later revenue growth is not an incorrect
+declaration. The parties must establish the correct original assessment and an
+appropriate prospective entitlement; this clause does not create a contractual
+penalty, automatic invoice, unilateral retroactive Order or usage-based fee.
+Any claim concerning earlier unauthorized use is governed by applicable law.
+Correctly purchased perpetual use remains protected against later
+revenue-growth charges.
+
+The Licensee may terminate for a material breach by the Licensor subject to
+the same applicable notice and remedy requirements. Refund, damages and other
+remedies remain available as provided by applicable law and section 11. On
+effective termination, section 8 applies to affected execution rights; if
+source collaboration rights are also validly terminated, active copying,
+modification and redistribution under those rights must cease as well, subject
+to lawful retention and mandatory rights.
+
+10. Transfers and changes of control
+
+Except for permitted source redistribution and mandatory rights, transferring
+an entitlement to a different legal entity requires the Licensor's prior
+agreement in text form. Such agreement must identify the successor and prevent
+concurrent use by an unlicensed predecessor. Mandatory transfer, succession
+and exhaustion rules are not excluded by this clause.
+
+A change in ownership of the same licensed legal entity does not by itself
+transfer its entitlement, add affiliates to its scope or terminate it. For
+Free production use and subscriptions, a change of Group is reflected at the
+next annual assessment, using the Pricing Schedule. Expansion to other
+entities or a new type of use requires an appropriate agreement before
+expansion.
+
+For a valid perpetual entitlement, a change of control of the same licensed
+entity, or later growth in its or its Group's revenue, does not by itself
+impose an additional fee or compulsory tier change for the purchased scope. A
+merger into another entity or transfer of the Software entitlement is
+addressed under the transfer rule and mandatory law. The Licensee must notify
+the Licensor of a relevant ownership or entity change without undue delay;
+this creates no continuous revenue-reporting obligation.
+
+11. Releases, operation, defects and liability
+
+11.1 Agreed functionality and absence of additional promises
+
+The agreed description of the covered release determines its contractual
+functionality. The Licensor gives no additional guarantee of uninterrupted or
+entirely error-free operation, compatibility with an undisclosed environment,
+a globally optimal schedule, production throughput, cost savings or any other
+particular business outcome, unless expressly agreed. This does not override
+agreed functionality or requirements imposed by applicable law.
+
+Source access, examples, benchmarks, demonstrations and the ability to modify
+the Software do not constitute a quality guarantee or a promise to develop,
+maintain, repair or support the Licensee's own changes. Distinguish the legacy
+v2 implementation, the runnable Rust implementation and proposed architecture
+or draft data models; design proposals are not promised release capabilities.
+
+The license includes no individual maintenance, support, response times,
+service level, hosting, integration, customization or future feature
+commitment. Such services require a separate agreement. AI model and provider
+charges are separate. The absence of purchased support does not by itself
+remove an otherwise applicable defect remedy.
+
+11.2 Self-hosting, inputs and modifications
+
+For a self-hosted deployment, the Licensee is responsible for its
+infrastructure, access control, configuration, backups and recovery
+procedures; the accuracy and completeness of its inputs and planning rules;
+and testing its deployment and changes before operational use. It must apply
+safeguards proportionate to its operations, including schedule validation,
+risk-appropriate supervision and fallback procedures before outputs influence
+live operations. The Licensor does not operate or supervise that deployment
+merely by granting a license.
+
+The Licensor is not responsible for a defect or loss to the extent caused by
+the Licensee's or an independent third party's changes, unsuitable
+configuration, inaccurate inputs, use outside the agreed scope, or systems and
+services outside the Licensor's contractual responsibility. This allocation
+does not exclude responsibility for an original Software defect, or for an
+integration, configuration or modification for which the Licensor is
+responsible under an agreement.
+
+Making changes does not automatically void claims for unrelated defects. A
+party relying on a customer-side cause remains subject to the applicable rules
+on causation and burden of proof. Any failure to maintain reasonable backups
+or mitigate loss is assessed under the applicable rules on contributory fault;
+it does not automatically eliminate all liability. Section 11.4 prevails.
+
+11.3 Defects and warranties for free and paid permissions
+
+For gratuitous source access, Free use, research and teaching, and evaluation,
+the Software is provided "AS IS" and "AS AVAILABLE". No additional express or
+implied warranty is given as to quality, merchantability, fitness for a
+particular purpose or non-infringement. Claims for defects are excluded to the
+extent such claims may validly be excluded for the relevant gratuitous grant,
+subject to sections 11.4 and 11.5 and any rights that cannot lawfully be
+waived. No contractual duty to supply corrections, updates, maintenance or
+support is assumed merely by providing that free grant.
+
+This gratuitous-use exclusion does not apply to rights or services supplied
+for consideration under a paid agreement, even if a component is also
+obtainable for free. Statutory protections or reduced liability applicable to
+genuinely gratuitous grants remain available to the Licensor; this license
+does not extend them to a transaction that is legally paid or otherwise
+outside their scope.
+
+For a paid subscription or perpetual entitlement, the agreed functionality and
+applicable statutory defect remedies govern. No additional guarantee is given
+beyond the agreement. The Licensee must give reasonably available information
+about a reported defect and a reasonable opportunity for the Licensor to
+investigate and provide any required remedy. This does not impose a
+contractual forfeiture period or require disclosure of unrelated confidential
+data.
+
+Where applicable law permits the Licensor to choose the form of cure, it may
+correct the Software or provide an equivalent replacement. A workaround
+qualifies only if it restores the agreed functionality without an unreasonable
+burden on the Licensee. Statutory rights to price reduction, withdrawal,
+termination or other relief where cure fails, is refused, is unreasonable or
+is not legally required before relief remain available. Damages are governed
+by sections 11.4 to 11.7.
+
+Source access does not require the Licensee to repair a defect at its own
+expense instead of exercising a valid claim against the Licensor. Source
+inspection, execution or payment alone does not waive claims for undisclosed
+defects or constitute a separate acceptance of defective performance. No
+statutory limitation period is shortened by this license.
+
+11.4 Exceptions that take precedence
+
+No exclusion, allocation of responsibility or limitation in this license
+excludes or limits liability or remedies arising under applicable law:
+
+- for intent, gross negligence, fraud or fraudulent concealment of a defect;
+- for death or injury to body or health;
+- under an expressly assumed guarantee, to the extent covered by that
+  guarantee;
+- under mandatory product-liability law, including the German Product
+  Liability Act where applicable; or
+- under other mandatory law, including consumer protections and other rights
+  that cannot lawfully be excluded or limited.
+
+These exceptions apply to the Licensor's legal representatives and persons
+whose conduct is attributed to it as well as to the Licensor itself. They
+preserve liability where it exists; they do not create a cause of action or
+guarantee that would not otherwise exist.
+
+11.5 Limits on liability for ordinary negligence
+
+Subject to section 11.4, the Licensor is liable for ordinary negligence only
+for breach of a material contractual obligation. A material contractual
+obligation is one whose performance is necessary for proper performance of the
+agreement and on whose performance the Licensee may ordinarily rely.
+
+For an ordinarily negligent breach of such an obligation, liability is limited
+to the loss foreseeable at formation of the relevant agreement and typical of
+that agreement. Liability for other ordinarily negligent breaches is excluded.
+These rules do not impose liability where applicable law provides none or
+broaden statutory liability for gratuitous grants.
+
+Claims for lost profit, business interruption, production loss, wasted
+material, loss of data or other consequential loss are subject to this same
+test. They are not categorically excluded where they arise from a material
+obligation and are foreseeable and typical, or where section 11.4 applies. No
+zero-fee or license-fee-only damages cap is imposed by this license.
+
+11.6 Initial defects under German rental law
+
+If a paid software-use agreement with a business or institutional customer is
+governed by German law and classified as a rental agreement, the Licensor's
+no-fault liability in damages for defects already present when the agreement
+was made under section 536a(1), first alternative, of the German Civil Code is
+excluded. Section 11.4 takes precedence.
+
+This exclusion does not remove an obligation to remedy defects, a statutory
+rent-reduction right, liability based on fault or delay in remedying a defect,
+or other remedies not covered by that specific exclusion. It does not apply to
+consumer agreements or by analogy to agreements governed by other law.
+
+11.7 Scope of these provisions
+
+Sections 11.4 and 11.5 apply to damages and reimbursement of wasted
+expenditure, whether claimed in contract, tort or on another legal basis, and
+also benefit the Licensor's legal representatives, employees and persons
+performing its obligations to the extent legally permissible. They do not
+extinguish independently available performance, cure, reduction, withdrawal or
+termination rights.
+
+Separate paid hosting, support, integration or development services are
+governed by their own agreement. The free-use disclaimer in section 11.3 does
+not apply to those paid services. Any valid individually agreed guarantee or
+liability provision takes precedence within its stated scope. Existing
+agreements are not amended merely by publication of this license version.
+
+12. Document versions and precedence
+
+For a paid Order, individually agreed provisions prevail, followed by the
+accepted Order or Custom agreement, this license and any additional commercial
+terms expressly incorporated in that Order. An Order must identify any express
+departure from this license. Free source and execution permissions are fully
+governed by this license, including sections 13 and 14. Other repository
+documents, contract templates and website terms are not incorporated by
+reference and do not impose additional conditions on those free permissions.
+
+Later repository, website or price-list edits do not amend existing
+entitlements or remove rights in already covered versions. A future version
+may be offered under different terms, requiring acceptance for that version.
+Revenue reassessment uses the rules incorporated into the relevant
+entitlement, not a silently substituted schedule. No passage of time
+automatically converts this license into an open-source license.
+
+This license does not select a governing law or exclusive court. Applicable
+law and jurisdiction are determined by the relevant legal rules, including
+conflict-of-laws rules. A separately accepted commercial agreement may make
+its own valid choice. Mandatory legal protections remain unaffected.
+
+Contractual notices must identify the sender and be capable of retention and
+unchanged reproduction. Notices may be sent to the contact designated in the
+relevant Order, or otherwise to the recipient's publicly designated legal or
+business contact, subject to applicable requirements for effective notice.
+This does not require a free user to register an account or provide contact
+details before exercising an otherwise valid permission. A notice or cure
+period in section 9 begins on effective receipt under applicable law.
+Individually agreed arrangements retain their precedence under applicable law.
+If a provision is ineffective, applicable law determines the consequences; no
+replacement restriction or fee is automatically inserted.
+
+13. Revenue assessment and entity scope
+
+13.1 Revenue and assessment date
+
+Revenue is total worldwide revenue from ordinary activities recognized in the
+applicable annual accounts under consistently applied accounting standards,
+after discounts, returns and sales taxes or VAT. It means turnover, not
+profit, enterprise value, funding raised or only revenue attributable to APEX.
+
+Assess eligibility before first production use and at each subsequent annual
+assessment for Free production use or an agreed subscription term. Use the
+most recent completed fiscal year as of that date, not a rolling twelve-month
+period or forecast where a completed year exists. If final accounts are
+unavailable, use documented provisional figures for that year and correct the
+assessment when final figures become available. Incorrect original
+declarations are addressed under section 9.
+
+If no fiscal year has been completed, use a documented good-faith estimate for
+the first fiscal year. Reassess using the latest completed fiscal year at the
+next applicable annual assessment. Ordinary later revenue changes do not
+change an accurately established Free entitlement or subscription tier during
+its twelve-month assessment period.
+
+Perpetual pricing and eligibility are assessed at purchase. A valid perpetual
+entitlement has no later revenue reassessment, surcharge or compulsory tier
+change for its agreed scope, including when revenue crosses a Custom
+threshold.
+
+13.2 Groups
+
+Control means direct or indirect ownership of more than 50 percent of voting
+rights, or the power to direct an entity's management. A Group consists of the
+ultimate controlling parent and all entities it controls, including the
+Licensee. Entities under common control are affiliates.
+
+For a Group member, use the Group's worldwide consolidated revenue for its
+latest completed fiscal year, eliminating intra-group revenue. Where
+consolidated accounts are not prepared, use an equivalent aggregation for that
+period with intra-group revenue eliminated. A small subsidiary cannot use only
+its own revenue to determine eligibility.
+
+If members have different reporting years, use documented accounting records
+covering the same group fiscal period. Any necessary alternative estimation
+method must be agreed with the Licensor before relying on a tier. A change of
+Group of the same licensed entity is reflected at the next annual assessment
+for Free production use and subscriptions. Section 10 governs changes of
+control and transfers and preserves the protection for valid perpetual
+entitlements.
+
+Revenue measurement does not enlarge license scope. Free, Business and
+Business Plus each cover one entity and all its own sites. Shared access,
+planning or operation for more than one entity requires Custom regardless of
+revenue. A single Group member may use a standard tier when consolidated
+revenue qualifies and no other Custom trigger applies.
+
+13.3 Currency conversion
+
+If the applicable accounts report in EUR, use that amount. Otherwise convert
+the fiscal-year revenue using the arithmetic mean of daily rates into EUR for
+the same completed fiscal year:
+
+1. Use the European Central Bank reference-rate series for days in that fiscal
+   year on which a reporting-currency-per-EUR rate is published.
+2. Divide 1 by each daily reporting-currency-per-EUR rate to obtain EUR per
+   unit of reporting currency.
+3. Take the arithmetic mean of those daily inverse rates and multiply by the
+   fiscal-year revenue. Round only the resulting EUR revenue to cents before
+   comparison with the thresholds.
+
+For Group accounts, convert the consolidated reporting-currency total, without
+converting subsidiaries a second time. For a first-year estimate, use the same
+method for the twelve months preceding assessment until a completed fiscal
+year is available. Do not select a single favorable day or use today's spot
+rate.
+
+If the ECB does not publish the currency, or the series is unavailable, agree
+and document an alternative public central-bank series and equivalent
+averaging method with the Licensor before relying on a tier. These rates
+determine eligibility, not invoice exchange rates.
+
+13.4 Eligibility records
+
+Keep a reasonable record of the assessment date, fiscal year, revenue figure,
+Group perimeter and conversion method. The Licensor may request a declaration
+and proportionate supporting evidence for an applicable assessment. This does
+not create continuous revenue reporting, usage metering, remote inspection
+rights or access to production data. Redacted records may be supplied where
+reasonably sufficient.
+
+The Licensor must treat non-public eligibility information as confidential,
+use it only for license administration, eligibility verification or legal
+claims, restrict access to people and advisers who need it, and disclose it
+only with permission or where legally required. Personal-data processing
+remains subject to applicable law. Purchased perpetual use is not subject to
+later annual revenue reporting.
+
+14. Commercial schedule and Custom uses
+
+14.1 Standard tiers
+
+The following bands apply to ordinary Internal Use at the applicable
+assessment:
+
+- Free: revenue up to and including EUR 2,000,000; no license fee.
+- Business: revenue above EUR 2,000,000 and below EUR 10,000,000; EUR 2,148
+  per twelve-month subscription term, equivalent to EUR 179 per month.
+- Business Plus: revenue at least EUR 10,000,000 and below EUR 50,000,000; EUR
+  4,308 per twelve-month subscription term, equivalent to EUR 359 per month.
+- Custom: revenue at least EUR 50,000,000, or a Custom deployment under
+  section 14.3; individual quotation.
+
+Exactly EUR 2,000,000 qualifies for Free; exactly EUR 10,000,000 falls into
+Business Plus; exactly EUR 50,000,000 requires Custom. The research and
+teaching and evaluation permissions in sections 3.2 and 3.3 apply
+independently of these revenue bands and do not authorize operational services
+outside their scope.
+
+Standard subscriptions are paid annually in advance, plus applicable taxes.
+Monthly amounts are comparison figures only; they do not create monthly
+billing or cancellation rights. A Custom subscription is also twelve months,
+paid annually in advance, unless expressly agreed otherwise.
+
+A paid entitlement requires an Order accepted by both parties in text form,
+identifying their legal names, the covered entity or entities, scope,
+entitlement type, start date, subscription end date or purchased version,
+price, taxes, payment arrangements and incorporated document versions. The
+price schedule alone is not an accepted Order. The full annual subscription
+fee is due before the term starts unless expressly agreed otherwise. These
+prices create no automatic payment obligation or paid conversion.
+
+14.2 Perpetual alternative
+
+Perpetual licenses are individually quoted from EUR 8,000 once, plus
+applicable taxes, based on company size and deployment scope at purchase.
+Larger companies and broader deployments are quoted higher. No fixed Business
+Plus perpetual price, future upgrade price or upgrade credit is included.
+
+The accepted Order fixes the exact one-time price, covered entities and use,
+purchased version identified by release and immutable commit or artifact
+digest, entitlement start and payment arrangements. Source access, internal
+modifications and private forks of that version are included. There is no
+annual renewal or recurring fee and no additional license charge for later
+revenue growth within the agreed scope. Future Licensor versions, upgrades and
+separately agreed services are not included.
+
+14.3 Uses requiring Custom
+
+The following require express Custom rights regardless of revenue or whether a
+fee is charged to the third party:
+
+- Group-wide or other multi-entity operational use, including shared
+  scheduling centers serving separately incorporated affiliates.
+- SaaS: giving third parties access to APEX functionality through hosting, a
+  managed service or an API, including running APEX to perform their
+  scheduling.
+- OEM: distributing or embedding APEX or Modified Software in a third-party
+  product, appliance or solution.
+- White Label: making APEX or Modified Software available to third parties
+  under another brand.
+
+The source collaboration permission in section 5 and contractor access in
+section 4 are expressly permitted exceptions within their stated scope. They
+do not grant executable product distribution or an independent right to
+provide scheduling services. Selling the Licensee's own manufactured goods
+does not by itself constitute SaaS or OEM use. Separately purchased
+infrastructure hosting for its own deployment does not authorize offering APEX
+functionality to others.
+
+The parties must expressly agree the additional entities and distribution,
+hosting, embedding, service or branding rights in a Custom Order. No such
+rights arise merely because the Licensee pays for an ordinary internal-use
+subscription or perpetual license.
+
+14.4 Included scope and separate costs
+
+Standard internal-use entitlements cover all of the named entity's own sites,
+without user, installation, site, operation, planning-volume or run limits or
+related charges. The commercial tiers do not introduce usage metering.
+
+Integration, hosting, customization, support, maintenance commitments and
+service levels are included only if separately agreed. This license does not
+promise these services; defect remedies and liability are governed by section
+11. AI model and provider charges are separate from the APEX license.

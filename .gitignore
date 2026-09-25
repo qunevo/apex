@@ -76,12 +76,13 @@ temp/
 Thumbs.db
 
 # Dependency resolution is source metadata, not a runtime lock.
-!/Cargo.lock
-!/package-lock.json
+!/app/Cargo.lock
+!/app/package-lock.json
 
-# Generated test and measurement output (migration evidence is in docs/migration-audit.md)
+# Generated test and measurement output (migration evidence is in dev/docs/migration-audit.md)
 /docs/reports/*
-!/docs/reports/.gitignore
+/app/docs/reports/*
+!/app/docs/reports/.gitignore
 coverage/
 htmlcov/
 .coverage*

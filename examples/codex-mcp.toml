@@ -1,8 +1,0 @@
-# Replace these absolute paths with your checkout and compiled executable.
-# bash scripts/setup-mcp.sh creates the local configuration (use Git Bash on Windows).
-[mcp_servers.apex]
-command = "/absolute/path/to/apex/target/release/apex"
-args = ["mcp", "--with-viewer", "--workspace", "/absolute/path/to/apex"]
-cwd = "/absolute/path/to/apex"
-startup_timeout_sec = 20
-tool_timeout_sec = 120
