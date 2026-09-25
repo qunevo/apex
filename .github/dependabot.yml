@@ -1,25 +1,28 @@
 version: 2
 updates:
   - package-ecosystem: cargo
-    directory: /
+    directory: /app
+    target-branch: dev
     schedule:
-      interval: weekly
+      interval: monthly
     open-pull-requests-limit: 5
     groups:
       compatible-updates:
         update-types: [minor, patch]
   - package-ecosystem: npm
-    directory: /
+    directory: /app
+    target-branch: dev
     schedule:
-      interval: weekly
+      interval: monthly
     open-pull-requests-limit: 5
     groups:
       test-tooling:
         update-types: [minor, patch]
   - package-ecosystem: github-actions
     directory: /
+    target-branch: dev
     schedule:
-      interval: weekly
+      interval: monthly
     open-pull-requests-limit: 5
     groups:
       actions:
