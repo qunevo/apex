@@ -16,8 +16,20 @@ fn error(code: &str, message: impl ToString) -> Value {
     json!({"code":code,"message":message.to_string()})
 }
 fn hash(value: &Value) -> String {
-    format!("{:x}", Sha256::digest(serde_json::to_vec(value).unwrap()))
+    Sha256::digest(serde_json::to_vec(value).unwrap())
+        .iter()
+        .map(|byte| format!("{byte:02x}"))
+        .collect()
 }
+
+#[test]
+fn import_hash_preserves_sha256_hex_encoding() {
+    assert_eq!(
+        hash(&Value::Null),
+        "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+    );
+}
+
 fn id() -> String {
     format!(
         "a{:x}-{:x}-{:x}",
