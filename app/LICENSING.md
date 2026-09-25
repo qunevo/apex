@@ -29,8 +29,8 @@ At subscription or evaluation expiry, further execution requires another entitle
 ## Documents and status
 
 - [LICENSE](LICENSE): operative public license text, including the complete revenue and commercial schedule in sections 13 and 14.
-- [Pricing guide](app/docs/legal/pricing.md): readable summary of the same rules; the LICENSE and accepted Order control.
-- [Legal document guide](app/docs/legal/README.md): document roles and the boundary between the public license and separately accepted agreements.
+- [Pricing guide](docs/legal/pricing.md): readable summary of the same rules; the LICENSE and accepted Order control.
+- [Legal document guide](docs/legal/README.md): document roles and the boundary between the public license and separately accepted agreements.
 
 The public license identifies a Licensor by its authority as a copyright holder or authorized grantor. It does not invent a contracting entity or address. Commercial Orders must identify their actual legal parties. The license makes no choice of governing law or exclusive court; the relevant legal rules determine those matters unless a separate agreement validly provides otherwise.
 
