@@ -2,6 +2,8 @@
 
 - For development, run `python -B dev/scripts/repo_status.py` once and briefly flag other open work before editing. Use `dev/skills/apex-development/SKILL.md` for investigation, a concrete plan and implementation approval; existing explicit approval counts. Feature branches start from `origin/dev`; use an isolated worktree when the checkout contains unrelated work. Contributor merge, release, refactoring, documentation and cleanup skills live in `dev/skills`, with generated discovery entries in `.agents/skills`. Customer workflows remain in `app/skills`.
 
+- Merge/release completion includes deleting the task's merged temporary remote and local branches, while preserving `main`, `dev` and active work. Follow `dev/docs/developer-workflow.md#branch-lifecycle`; after release synchronization, verify equal content unless newer feature work entered `dev`. Different merge commit IDs are normal.
+
 - Use English for source comments, identifiers, documentation, examples and user-facing messages in the repository. Conversation language can follow the user.
 - Keep the scheduling core independent of any real customer. Place optional source adapters and domain extensions in customization modules.
 - Commit only deliberately synthetic examples. Do not copy or rename customer exports into fixtures. Do not commit customer names, identifiers, production data, credentials, private endpoints, model checkpoints or derived vector stores.
