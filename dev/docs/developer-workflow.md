@@ -30,6 +30,9 @@ Canonical contributor instructions live under [dev/skills](../skills). Tiny gene
 | Reduce source/context complexity | [apex-refactor](../skills/apex-refactor/SKILL.md) | Audit and propose responsibility-based batches; implement the approved batch |
 | Reconcile documentation | [apex-docs](../skills/apex-docs/SKILL.md) | Repair demonstrated drift; clarify contradictions about intended behavior |
 | Clean legacy/generated artifacts | [apex-artifacts](../skills/apex-artifacts/SKILL.md) | Establish provenance and consumers; obtain a scoped removal decision when not already authorized |
+| Explicitly maintain the planning board | [apex-board](../skills/apex-board/SKILL.md) | Invoke by name; inspect and propose, then apply the approved classification and changes |
+
+The [project board](project-board.md) holds features, child tasks, bugs and draft notes. Its skill has implicit invocation disabled; routine development does not take work from it or maintain it automatically. Discovery synchronization also copies a skill's `agents/openai.yaml` so invocation policy remains effective.
 
 Prior approval of a concrete plan remains valid. Skills must not ask for the same approval again. New ideas require clarification only where it affects scope, behavior, compatibility or meaningful risk. Generic GitHub approval clicks are not part of the normal process. Missing authentication or a real failed check is a blocker to explain, not a reason to bypass safeguards.
 
