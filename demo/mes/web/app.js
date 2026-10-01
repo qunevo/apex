@@ -1,5 +1,6 @@
 import {icon} from './icons.js';
 import {createDetails} from './details.js';
+import {createShowcase, isShowcase} from './showcase.js';
 
 const $ = (query, root = document) => root.querySelector(query);
 const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -8,6 +9,7 @@ const displayDate = value => value ? new Date(value).toLocaleString('en-GB', {da
 const state = {page:'orders', offset:0, q:'', sort:'id', direction:'asc', filter:'', exact:null, rows:[], meta:null, references:{}, planningTab:'dispatch'};
 let requestSequence = 0, toastTimer, previousFocus;
 const details = createDetails({$, esc, api, badge, displayDate, state, openDrawer, closeDrawer, editDialog, navigate, reloadMeta, render, notify});
+const showcase = createShowcase({navigate});
 const masterPages = ['items','routings','item_routings','routing_steps','routing_modes','routing_materials'];
 const peoplePages = ['personnel','shifts','absences'];
 const productionPages = ['orders','lots','operations','confirmations'];
@@ -27,16 +29,17 @@ function badge(value) {
   return `<span class="badge ${color}">${esc(value)}</span>`;
 }
 function navItem(page, label, count = '') {
-  return `<button class="nav-item ${state.page===page?'active':''}" data-nav="${page}" title="${label}">${icon(page)}<span>${label}</span>${count ? `<span class="count">${count}</span>` : ''}</button>`;
+  return `<button class="nav-item ${state.page===page || isShowcase(page) && isShowcase(state.page)?'active':''}" data-nav="${page}" title="${label}">${icon(isShowcase(page)?'showcase':page)}<span>${label}</span>${count ? `<span class="count">${count}</span>` : ''}</button>`;
 }
 function shell() {
   const m = state.meta;
   $('#sidebar').innerHTML = `<div class="brand"><img class="brand-mark" src="/assets/qunevo-logo.svg" alt="Qunevo" width="38" height="38"><div class="brand-identity"><strong aria-hidden="true">QUNEVO<span>.</span></strong><small>DEMO MES</small></div></div>
+    <div class="nav-section">INTRODUCTION</div>${navItem(isShowcase(state.page)?state.page:showcase.lastPage,'Showcase')}
     <div class="nav-section">SHOP FLOOR</div>${navItem('orders','Production',m.counts.orders)}${navItem('receipts','Inbound deliveries')}${navItem('downtime','Unavailability')}
     <div class="nav-section">MASTER DATA</div>${navItem('items','Articles & workplans')}${navItem('machines','Equipment')}${navItem('materials','Material stock')}${navItem('personnel','People & shifts')}
     <div class="nav-section">PLANNING</div>${navItem('workbook','Excel planning')}
-    <div class="nav-bottom">${navItem('guide','Factory guide')}<button class="nav-item" id="reset-demo" title="Reset demo">${icon('reset')}<span>Reset demo</span></button><div class="environment"><span class="dot"></span> Synthetic demo <span class="environment-version">V1.0</span></div></div>`;
-  const label = state.meta.catalog[state.page]?.label || (state.page==='workbook'?'Excel planning':'Factory guide');
+    <div class="nav-bottom"><button class="nav-item" id="reset-demo" title="Reset demo">${icon('reset')}<span>Reset demo</span></button><div class="environment"><span class="dot"></span> Synthetic demo <span class="environment-version">V1.0</span></div></div>`;
+  const label = state.meta.catalog[state.page]?.label || (state.page==='workbook'?'Excel planning':'Showcase');
   const section = productionPages.includes(state.page) ? 'Production' : label;
   $('#topbar').innerHTML = `<div class="breadcrumb"><span class="app-name">Qunevo Demo MES</span>${icon('chevron')}<strong>${esc(section)}</strong></div><div class="top-right"><span class="plant-label">Plant 01</span><button id="demo-clock" class="button text" title="Advance the demo clock">${icon('clock')} ${displayDate(m.factory.as_of)}</button><span class="avatar" title="Demo planner">PL</span></div>`;
   for (const button of document.querySelectorAll('[data-nav]')) button.addEventListener('click', () => navigate(button.dataset.nav));
@@ -63,7 +66,8 @@ function tabs(entries) {
 }
 async function render() {
   shell();
-  if (state.page === 'guide') return renderGuide();
+  if (isShowcase(state.page)) return showcase.render(state.page);
+  showcase.leave();
   if (state.page === 'workbook') return renderWorkbook();
   const schema = state.meta.catalog[state.page];
   const production = productionPages.includes(state.page);
@@ -281,19 +285,12 @@ async function renderWorkbook() {
   if(state.planningTab==='dispatch') $('#workbook-table').innerHTML=`<table><thead><tr>${['Operation','Workplace','Sequence','Start','Finish','Person','Commitment'].map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${plan.rows.slice(0,35).map(row=>`<tr><td class="id">${esc(row.operation_id)}<span class="sub">${esc(row.operation)}</span></td><td>${row.machine_id}</td><td>${row.sequence}</td><td>${displayDate(row.start)}</td><td>${displayDate(row.end)}</td><td>${row.person_id}</td><td>${row.fixed==='Yes'?'<span class="badge amber">Fixed</span>':'<span class="badge">Proposed</span>'}</td></tr>`).join('')}</tbody></table>`;
   else $('#workbook-table').innerHTML=`<table><thead><tr>${['Person','Setup','Mechanical','Precision','Electrical','Calibration','Testing'].map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${skills.rows.map(row=>`<tr><td class="id">${esc(row.person_id)}<span class="sub">${esc(row.name)}</span></td>${['Setup','Mechanical','Precision','Electrical','Calibration','Testing'].map(key=>`<td>${row[key]?'<span class="skills-yes">'+icon('check')+'</span>':'<span class="skills-no">—</span>'}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
 }
-function renderGuide() {
-  $('#main').innerHTML=`<div class="page-title"><div><div class="eyebrow">THE DEMO / FACTORY GUIDE</div><h1>A familiar factory. A complex plan.</h1><p class="subtitle">Meet Northstar Valve Works, a deliberately fictional make-to-order manufacturer.</p></div><button class="button" id="guide-production">Open production ${icon('arrow')}</button></div>
-    <div class="guide-intro"><div><h2>From metal blank to tested valve assembly.</h2><p>Northstar produces distributor, regulator and sensor assemblies for equipment makers. Orders share machining capacity, assembly benches and specialist people. The MES tracks what must be made and what has happened. The planner coordinates the next steps in Excel.</p></div><div class="factory-monogram">N</div></div>${stats()}
-    <div class="flow"><div class="flow-card"><span>01 / BODY MANUFACTURING</span><h3>Machine, deburr, wash</h3><p>Combined machining or a separate roughing/drilling route, with explicit alternative CNC cells and component needs. The body becomes available to assembly after cleaning.</p></div>${icon('arrow')}<div class="flow-card"><span>02 / ASSEMBLY & QUALITY</span><h3>Assemble, calibrate, test</h3><p>Variant-specific routes, shared specialists and a qualified final test before shipment.</p></div></div>
-    <h2>Three products, shared capacity</h2><div class="guide-grid">
-    <div class="guide-card"><span class="badge green">D / DISTRIBUTOR</span><p>A machined body with seals, plugs and connectors. The shortest route still competes for the same people and equipment.</p><div class="route">Body manufacturing → Assembly → Leak test</div></div>
-    <div class="guide-card"><span class="badge amber">R / REGULATOR</span><p>Control valves are installed and adjusted. Precision assembly and qualified functional testing become additional constraints.</p><div class="route">Body manufacturing → Assembly → Adjustment → Function test</div></div>
-    <div class="guide-card"><span class="badge blue">S / SENSOR</span><p>Electronics add a specialist route. The lot returns to an assembly bench after calibration for final completion.</p><div class="route">Body manufacturing → Preassembly → Sensor installation → Calibration → Final assembly → Function test</div></div></div>
-    <div class="guide-note"><h3>The Monday morning handover</h3><p>The initial snapshot is 05 October 2026, 10:00, Europe/Berlin. Use the snapshot button to advance the demo clock. Some work is already complete or running. A sensor delivery is confirmed for Wednesday, CNC-03 has a spindle inspection, and QA-03 has a calibration appointment. The first two hours of upcoming work are marked as fixed in Excel.</p><h3>Try a normal planning change</h3><p>Copy a workplan into a draft revision, edit its steps and release it. Approve it for an article, then select it on a new order. Record good pieces, scrap and actual times, or put a lot on quality hold. Move an inbound delivery or add dated equipment and personnel blocks. The MES retains the edit and flags the workbook baseline for review. Use Reset demo to return to the original situation.</p><h3>What the current baseline represents</h3><p>All names, quantities and times are synthetic. The Excel plan is a reproducible conventional baseline, not an APEX-optimized result. It uses fixed lots and setup allowances, whole-lot transfer, resource calendars, staffing and confirmed material supply. Sequence-dependent setup optimization and live Excel synchronization are future integration work.</p></div>`;
-  $('#guide-production').addEventListener('click',()=>navigate('orders'));
-}
 async function start() {
-  try {await reloadMeta();const page=location.hash.slice(1);if(page in state.meta.catalog||['guide','workbook'].includes(page))state.page=page;await render();}
+  try {await reloadMeta();const page=location.hash.slice(1);if(page in state.meta.catalog||page==='workbook'||isShowcase(page))state.page=page;await render();}
   catch(error){$('#main').innerHTML=`<div class="connection-error">Could not open the MES: ${esc(error.message)}</div>`;}
 }
+window.addEventListener('hashchange', () => {
+  const page = location.hash.slice(1);
+  if (state.meta && (page in state.meta.catalog || page === 'workbook' || isShowcase(page))) navigate(page);
+});
 start();

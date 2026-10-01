@@ -33,7 +33,7 @@ The first start generates the synthetic data and conventional planning baseline,
 
 For equipment, **Schedule unavailability** records a required start, end and reason. Open an equipment row to review, edit or cancel its periods. Its status is **Available** or **Unavailable** at the current factory snapshot, with the active or next block shown alongside it. Intervals include their start and exclude their end; overlapping or adjoining periods form one continuous block. Maintenance is a reason, not a third status. Use **Permanently unavailable** only for equipment out of service indefinitely; clearing it leaves dated periods intact. These exceptions describe equipment blocks, independently of shift working hours.
 
-The **Factory guide** explains the products and source ownership. The detailed [factory description](factory.md) defines the synthetic assumptions and baseline limits.
+The **Showcase** area presents the factory in six chapters with a five-minute speaking budget: factory, products, material flow, decisions, Monday handover and the APEX handoff. Use **Present** to hide MES navigation, **Previous / Next** or the arrow keys to move through chapters, and **Escape** to exit the presentation layout. Chapters have direct URLs such as `#showcase/flow`; the former `#guide` link opens the introduction. Links into production, equipment and Excel return to ordinary MES use, and **Showcase** resumes the last chapter. The presentation describes the initial synthetic baseline, independently of later MES edits, and identifies APEX integration as future work. The detailed [factory description](factory.md) defines the synthetic assumptions and baseline limits.
 
 ## Source ownership
 
@@ -88,6 +88,7 @@ Equipment rows expose read-only `status`, `unavailable_from`, `unavailable_until
 python -B -m unittest discover -s demo/mes/tests -v
 node --check demo/mes/web/app.js
 node --check demo/mes/web/details.js
+node --check demo/mes/web/showcase.js
 ```
 
 Tests cover relationships, resource and employee occupancy, calendar placement, material readiness, revisions, atomic order creation, progress rules and HTTP validation. Workbook authoring performs formula recalculation, an input-change check and per-sheet rendering; previews remain local.

@@ -1,4 +1,5 @@
 const paths = {
+  showcase:'<rect x="3" y="3" width="18" height="13" rx="2"/><path d="m9 7 6 3-6 3V7ZM12 16v5m-4 0h8"/>',
   orders:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2M9 9h6M9 13h6M9 17h4"/>',
   lots:'<path d="m12 3 9 5-9 5-9-5 9-5Zm-9 5v9l9 5 9-5V8M12 13v9M7 5.8l9 5"/>',
   operations:'<path d="M4 6h16M4 12h16M4 18h16"/><circle cx="8" cy="6" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="10" cy="18" r="2"/>',

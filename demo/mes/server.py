@@ -129,6 +129,8 @@ class Handler(BaseHTTPRequestHandler):
             return
         allowed = {"/": ("index.html", "text/html; charset=utf-8"), "/app.js": ("app.js", "text/javascript"),
                    "/details.js": ("details.js", "text/javascript"),
+                   "/showcase.js": ("showcase.js", "text/javascript"),
+                   "/showcase.css": ("showcase.css", "text/css"),
                    "/assets/qunevo-logo.svg": ("assets/qunevo-logo.svg", "image/svg+xml"),
                    "/assets/outfit-latin.woff2": ("assets/outfit-latin.woff2", "font/woff2"),
                    "/assets/bricolage-grotesque-latin.woff2": ("assets/bricolage-grotesque-latin.woff2", "font/woff2"),
