@@ -4,7 +4,7 @@ The repository contains an independently usable application, contributor tooling
 
 | Location | Responsibility |
 | --- | --- |
-| [app/](../../app) | Complete customer source: Rust package and lockfile, embedded viewer, schemas, synthetic examples, public customization, product skills, deployment helpers, documentation and product tests |
+| [app/](../../app) | Complete customer source: Rust package and lockfile, embedded viewer, schemas, public customization, product skills, deployment helpers, documentation and product tests with synthetic fixtures |
 | [dev/](..) | Fixture generation, wiki/publication checks, detached application verification, contributor documentation and tests of these tools |
 | [demo/](../../demo) | Standalone fictional factory: local MES web app, synthetic business records and a separate Excel planning baseline; optional and not required by the application |
 | [dev/skills/](../skills) | Canonical contributor workflows for planning, development, integration, releases and maintenance |

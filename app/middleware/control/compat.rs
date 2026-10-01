@@ -464,9 +464,10 @@ impl Service {
             ),
             "demo.create" => {
                 if args["profile"].as_str() == Some("production") {
-                    let input =
-                        serde_json::from_str(include_str!("../../examples/production-orders.json"))
-                            .map_err(|e| error("DEMO", e))?;
+                    let input = serde_json::from_str(include_str!(
+                        "../../customization/demo/model/production-orders.json"
+                    ))
+                    .map_err(|e| error("DEMO", e))?;
                     return self.save(crate::production::expand(input).map_err(diagnostics)?, None);
                 }
                 self.save(

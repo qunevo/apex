@@ -78,7 +78,7 @@ def generate():
                    objectives=[dict(metric="weighted_tardiness", weight=1, priority=0),
                                dict(metric="transition_work", weight=1, priority=1)],
                    rules=[], assumptions=[])
-    target = ROOT / "examples" / "shift-factory.json"
+    target = ROOT / "tests/fixtures/shift-factory.json"
     target.write_text(json.dumps(problem, indent=2) + "\n", encoding="utf-8")
     print(target)
 

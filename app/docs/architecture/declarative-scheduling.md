@@ -61,7 +61,7 @@ The automatic Q divides the coefficient by estimated work and conditional work. 
 }
 ```
 
-This snippet needs matching resources, tasks, families and explicit coefficients. The runnable [synthetic example](../../examples/dispatch-campaign.json) is complete.
+This snippet needs matching resources, tasks, families and explicit coefficients. The runnable [synthetic example](../../tests/fixtures/dispatch-campaign.json) is complete.
 
 ## Mandatory dispatch policies
 

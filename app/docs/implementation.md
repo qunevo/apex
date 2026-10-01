@@ -16,7 +16,7 @@ cargo clippy --all-targets -- -D warnings
 cargo test
 cargo build --release
 
-target/release/apex expand examples/production-orders.json --out .apex/production-expanded.json
+target/release/apex expand customization/demo/model/production-orders.json --out .apex/production-expanded.json
 target/release/apex plan .apex/production-expanded.json --out .apex/schedule.json
 target/release/apex hypersearch .apex/production-expanded.json --iterations 128 --workers 4 --out .apex/xh.json
 target/release/apex validate .apex/production-expanded.json .apex/xh.json

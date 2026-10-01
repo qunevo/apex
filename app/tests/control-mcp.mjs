@@ -52,7 +52,7 @@ try {
   const resource = await client.readResource({ uri: ui });
   assert.equal(resource.contents[0].mimeType, 'text/html;profile=mcp-app');
   assert.ok(resource.contents[0].text.includes('ui/initialize'));
-  const facts = JSON.parse(await readFile(path.join(root, 'examples/shift-factory.json'), 'utf8'));
+  const facts = JSON.parse(await readFile(path.join(root, 'tests/fixtures/shift-factory.json'), 'utf8'));
   const created = await call('scenarios.create', { name: 'Synthetic SDK scenario', engine: 'apex', content: { facts } });
   const scenario = created.scenario.id;
   const revision = await call('revisions.get', { scenario_id: scenario, number: 1 });

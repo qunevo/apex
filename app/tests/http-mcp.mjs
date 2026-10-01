@@ -33,7 +33,7 @@ try {
   const schema=await call('schema.get',{model:'production'});assert.ok(schema.root.properties.demands);
   results.push({case:'official SDK Streamable HTTP, bearer token, origin checks, OpenAPI and plain JSON tools',passed:true});
 
-  const imported=await call('production.import',{path:'examples/production-orders.json'});
+  const imported=await call('production.import',{path:'customization/demo/model/production-orders.json'});
   const baseline=await call('schedule.create',{scenario_id:imported.scenario_id});
   assert.equal(baseline.tasks,10);assert.equal(Object.keys(baseline.route_choices).length,5);
   const evolved=await call('schedule.evolve',{scenario_id:imported.scenario_id,schedule_id:baseline.schedule_id,options:{iterations:24,budget_ms:0,xh:{population_size:4}}});

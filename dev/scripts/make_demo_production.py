@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2] / "app"
-base = json.loads((ROOT / "examples/shift-factory.json").read_text(encoding="utf-8"))
+base = json.loads((ROOT / "tests/fixtures/shift-factory.json").read_text(encoding="utf-8"))
 base.update(schema_version="apex.v3.2", id="synthetic-route-factory", tasks=[], dependencies=[],
             transitions=[], locks=[], rules=[], inventory={"RAW": 100}, receipts=[], objectives=[])
 
@@ -39,4 +39,4 @@ demands = [{"id": f"ORDER-{i+1}", "item": "PRODUCT", "quantity": quantity,
             "due": 1000 + i * 750, "priority": 3 - i}
            for i, quantity in enumerate([12, 8, 16])]
 result = {"problem": base, "workplans": workplans, "demands": demands}
-(ROOT / "examples/production-orders.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+(ROOT / "customization/demo/model/production-orders.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")

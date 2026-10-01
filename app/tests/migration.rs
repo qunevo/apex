@@ -556,7 +556,10 @@ fn metric_catalog_units_and_reserved_names_are_unambiguous() {
 #[test]
 fn fractional_objectives_and_native_metrics_survive_json_persistence() {
     let mut p: Problem = apex::production::expand(
-        serde_json::from_str(include_str!("../examples/production-orders.json")).unwrap(),
+        serde_json::from_str(include_str!(
+            "../customization/demo/model/production-orders.json"
+        ))
+        .unwrap(),
     )
     .unwrap();
     p.customization = Some(CustomizationRef {

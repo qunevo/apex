@@ -26,7 +26,7 @@ try {
   assert.ok(schema.properties.modes);
   results.push({ case: 'official SDK handshake, schema discovery and 32 tools', passed: true });
 
-  const imported = await call('problem.import', { path: 'examples/shift-factory.json' });
+  const imported = await call('problem.import', { path: 'tests/fixtures/shift-factory.json' });
   const baseline = await call('schedule.create', { scenario_id: imported.scenario_id });
   assert.equal(baseline.valid, true);
   const evolved=await call('schedule.evolve',{scenario_id:imported.scenario_id,schedule_id:baseline.schedule_id,options:{iterations:24,budget_ms:0,xh:{population_size:4}}});
@@ -55,7 +55,7 @@ try {
   await call('scenario.patch', { scenario_id: fork.scenario_id, expected_revision: 1, patches: [] }, true);
   await call('solver.solve', {}, true);
 
-  const governed = await call('problem.import', {path:'examples/dispatch-campaign.json'});
+  const governed = await call('problem.import', {path:'tests/fixtures/dispatch-campaign.json'});
   const inspected = await call('policy.inspect', {scenario_id:governed.scenario_id});
   assert.equal(inspected.planning.policies[0].id, 'six-productive-hours');
   const governedPlan = await call('schedule.create', {scenario_id:governed.scenario_id});
@@ -69,7 +69,7 @@ try {
   }
   results.push({case:'declarative campaign, immutable explanations, blocked prefix and both searches through MCP',passed:true});
   const count = process.argv.includes('--large') ? 100000 : 2000;
-  const template = JSON.parse(fs.readFileSync(path.join(root, 'examples/demo.json'), 'utf8'));
+  const template = JSON.parse(fs.readFileSync(path.join(root, 'tests/fixtures/demo.json'), 'utf8'));
   const taskTemplate = template.tasks[0];
   template.tasks = [];
   template.horizon = Math.max(86400, count * 1000);

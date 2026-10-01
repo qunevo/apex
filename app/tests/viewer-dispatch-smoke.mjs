@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 const root=path.resolve(import.meta.dirname,'..'),origin=process.env.APEX_VIEWER||'http://127.0.0.1:8765';
 async function tool(name,args={}){const r=await fetch(origin+'/api/tool',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,arguments:args})});const value=await r.json();assert.ok(r.ok,JSON.stringify(value));return value;}
-const source=await tool('problem.import',{path:'examples/dispatch-campaign.json'});
+const source=await tool('problem.import',{path:'tests/fixtures/dispatch-campaign.json'});
 const result=await tool('schedule.create',{scenario_id:source.scenario_id});
 const u=new URL(result.viewer_url);u.searchParams.set('task','A-02');
 const browser=await chromium.launch({headless:true,executablePath:process.env.APEX_BROWSER||'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});

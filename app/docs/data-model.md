@@ -54,7 +54,7 @@ Canonical `consume`/`produce` values are already total quantities for that task.
 Use `production.import` directly, or:
 
 ```text
-apex expand examples/production-orders.json --out .apex/production-expanded.json
+apex expand customization/demo/model/production-orders.json --out .apex/production-expanded.json
 apex plan .apex/production-expanded.json --out .apex/production-schedule.json
 ```
 
@@ -174,7 +174,7 @@ Schedules carry `metric_version: 1`. Validation requires the expanded KPI set an
 
 ## Reproduce a chat-first scenario
 
-1. Import [the synthetic chain model](../examples/chain-routing.json) with `problem.import`.
+1. Import [the synthetic chain model](../tests/fixtures/chain-routing.json) with `problem.import`.
 2. Call `material.prepare` and retain the returned scenario ID. Routes remain free.
 3. Use `schedule.create` or `schedule.improve` with a bounded budget.
 4. Inspect `PRODUCE-FAST`: its business due date is 800, while the downstream order produces derived due 75 / priority 9.

@@ -166,7 +166,7 @@ Keep reusable physical semantics in the core and optional domain behavior in cus
 
 ## Change map for coding agents
 
-Read existing tests in the affected row before editing. Synthetic examples are in [examples](../../examples); never turn customer exports into fixtures.
+Read existing tests in the affected row before editing. Synthetic regression inputs are in [tests/fixtures](../../tests/fixtures); the embedded production demo input belongs to [customization/demo](../../customization/demo/model/production-orders.json). Never turn customer exports into fixtures.
 
 | Change | Update together | Verification starting points |
 | --- | --- | --- |

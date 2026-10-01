@@ -8,7 +8,7 @@ The same 32 tools are available over MCP stdio, MCP Streamable HTTP and a JSON H
 
 ## Repository areas
 
-- [app/](app/README.md) is the independent customer source distribution, with its own manifests, lockfiles, license, product skills, deployment helpers, examples and tests. Build and run it without the parent repository. Keep local data and generated files out of distributed copies.
+- [app/](app/README.md) is the independent customer source distribution, with its own manifests, lockfiles, license, product skills, deployment helpers and tests. Build and run it without the parent repository. Keep local data and generated files out of distributed copies.
 - [dev/](dev/docs/repository-layout.md) contains contributor documentation, fixture generation, wiki/publication tooling and standalone verification.
 - [.agents/skills/](.agents/skills) contains repository development workflows.
 - [.github/](.github) contains CI and contribution infrastructure.
@@ -24,7 +24,7 @@ target/release/apex serve
 
 On Windows use `target/release/apex.exe`, then open `http://127.0.0.1:8765`. The default viewer shows the schedule, KPIs, commitments and operation details. Planning changes run through your agent chat; `?mode=workbench` exposes development controls.
 
-The [Bash helpers](app/docs/implementation.md#bash-helpers) cover build/checks, viewer startup and local MCP setup on Linux, macOS and Git Bash on Windows. For the repository's Codex setup, run `bash deploy/setup-mcp.sh` after building, then reconnect MCP in a trusted project. Other clients can use the [MCP configuration template](app/examples/codex-mcp.toml) and [agent integration guide](app/docs/agent-integration.md).
+The [Bash helpers](app/docs/implementation.md#bash-helpers) cover build/checks, viewer startup and local MCP setup on Linux, macOS and Git Bash on Windows. For the repository's Codex setup, run `bash deploy/setup-mcp.sh` after building, then reconnect MCP in a trusted project. Other clients can use the [MCP configuration template](app/deploy/codex-mcp.toml) and [agent integration guide](app/docs/agent-integration.md).
 
 Use `schedule.create` for quick planning and `schedule.improve` for improvement under one shared budget. Improvement defaults to XH and XT; an agent can explicitly enable the optional XE phase. See [combined improvement](app/docs/architecture/combined-improvement.md) for semantics and limits.
 
@@ -40,7 +40,7 @@ Start with the [documentation index](app/docs/README.md). The main references ar
 - [Migration audit](dev/docs/migration-audit.md): v2 comparison, implemented coverage and remaining migration boundaries.
 - [Benchmark of 24 September 2026](benchmark/README.md): frozen sources, scientific instances, results and standalone reproduction instructions in one ZIP.
 
-Runnable synthetic inputs include [production orders](app/examples/production-orders.json), [shift and material constraints](app/examples/shift-factory.json), [material chains](app/examples/chain-routing.json) and [dispatch policies](app/examples/dispatch-campaign.json). The [customization knowledge bundle](app/customization/demo/model/KNOWLEDGE.md) describes the extension workflow.
+The [factory showcase](demo/README.md) combines a fictional MES with Excel planning. Its application integration belongs to [customization/demo](app/customization/demo/model/KNOWLEDGE.md); the live adapter is still pending. Technical regression inputs live under `app/tests/fixtures`.
 
 The executable schema is `apex.v3.4`; canonical `apex.v3.1`, `apex.v3.2` and `apex.v3.3` inputs remain accepted by the same Rust runtime. Rust is the sole scheduling implementation; the [migration audit](dev/docs/migration-audit.md) records the v2 source removal and historical comparisons. Tested coverage does not establish complete legacy parity, optimality or production readiness. Repository documentation and examples use English, and all fixtures are deliberately synthetic.
 

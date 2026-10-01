@@ -17,7 +17,7 @@ target/release/apex serve
 
 On Windows use `target/release/apex.exe`, then open `http://127.0.0.1:8765`. The default viewer shows the schedule, KPIs, commitments and operation details. Planning changes run through your agent chat; `?mode=workbench` exposes development controls.
 
-The [Bash helpers](docs/implementation.md#bash-helpers) cover build/checks, viewer startup and local MCP setup on Linux, macOS and Git Bash on Windows. For this installation's Codex setup, run `bash deploy/setup-mcp.sh` after building, then reconnect MCP in a trusted project. Other clients can use the [MCP configuration template](examples/codex-mcp.toml) and [agent integration guide](docs/agent-integration.md).
+The [Bash helpers](docs/implementation.md#bash-helpers) cover build/checks, viewer startup and local MCP setup on Linux, macOS and Git Bash on Windows. For this installation's Codex setup, run `bash deploy/setup-mcp.sh` after building, then reconnect MCP in a trusted project. Other clients can use the [MCP configuration template](deploy/codex-mcp.toml) and [agent integration guide](docs/agent-integration.md).
 
 Use `schedule.create` for quick planning and `schedule.improve` for improvement under one shared budget. Improvement defaults to XH and XT; an agent can explicitly enable the optional XE phase. See [combined improvement](docs/architecture/combined-improvement.md) for semantics and limits.
 
@@ -37,7 +37,7 @@ Start with the [documentation index](docs/README.md). The main references are:
 - [Migration audit](https://github.com/qunevo/apex/blob/main/dev/docs/migration-audit.md): v2 comparison, implemented coverage and remaining migration boundaries.
 - [Benchmark of 24 September 2026](https://github.com/qunevo/apex/blob/main/benchmark/README.md): frozen sources, scientific instances, results and standalone reproduction instructions in one ZIP.
 
-Runnable synthetic inputs include [production orders](examples/production-orders.json), [shift and material constraints](examples/shift-factory.json), [material chains](examples/chain-routing.json) and [dispatch policies](examples/dispatch-campaign.json). The [customization knowledge bundle](customization/demo/model/KNOWLEDGE.md) describes the extension workflow.
+The [factory showcase](https://github.com/qunevo/apex/tree/main/demo) combines a fictional MES with Excel planning. Its application integration belongs to [customization/demo](customization/demo/model/KNOWLEDGE.md); the live adapter is still pending. Technical regression inputs live under `tests/fixtures`.
 
 The executable schema is `apex.v3.4`; canonical `apex.v3.1`, `apex.v3.2` and `apex.v3.3` inputs remain accepted by the same Rust runtime. Rust is the sole scheduling implementation; the [migration audit](https://github.com/qunevo/apex/blob/main/dev/docs/migration-audit.md) records the v2 source removal and historical comparisons. Tested coverage does not establish complete legacy parity, optimality or production readiness. Repository documentation and examples use English, and all fixtures are deliberately synthetic.
 

@@ -16,7 +16,12 @@ Prefer existing core types; new semantics require independent validation tests.
 
 ## Optional technical policies
 
-These synthetic examples demonstrate extension hooks independently of the factory mapping. They are not factory defaults. [`rules.json`](rules.json) can be supplied through a `scenario.patch` of kind `rules` for [`examples/demo.json`](../../../examples/demo.json).
+[`production-orders.json`](production-orders.json) supplies the compatibility
+tool's `demo.create` production profile and CLI production-expansion checks.
+It is a small synthetic input, not an export of the MES/Excel factory. Regenerate
+it with `dev/scripts/make_demo_production.py` in the contributor repository.
+
+These synthetic examples demonstrate extension hooks independently of the factory mapping. They are not factory defaults. [`rules.json`](rules.json) can be supplied through a `scenario.patch` of kind `rules` for [`tests/fixtures/demo.json`](../../../tests/fixtures/demo.json).
 
 ### Urgency completion
 
@@ -58,7 +63,7 @@ Native hooks implement `Send + Sync`. Declare selected metric names through `obj
 
 ## Declarative campaign example (implemented)
 
-[`dispatch-campaign.json`](../../../examples/dispatch-campaign.json) keeps family A for 21,600 productive main-operation seconds on M0 when a matching feasible continuation remains. Initial historical credit is zero, start-fixed work is explicitly exempt, and no-match permits a switch. Pauses and cleaning do not count as productive time. The example is a construction policy, not a universal final-schedule campaign invariant. Inspect the actual KPI trade-off against a scenario without the policy.
+[`dispatch-campaign.json`](../../../tests/fixtures/dispatch-campaign.json) keeps family A for 21,600 productive main-operation seconds on M0 when a matching feasible continuation remains. Initial historical credit is zero, start-fixed work is explicitly exempt, and no-match permits a switch. Pauses and cleaning do not count as productive time. The example is a construction policy, not a universal final-schedule campaign invariant. Inspect the actual KPI trade-off against a scenario without the policy.
 
 Native `filter_candidates` hooks and the required prefix-decoration contract are documented in the [language reference](../../../docs/architecture/declarative-scheduling.md); the existing synthetic sequence decorator is declared prefix-safe. Tests in `tests/dispatch.rs` exercise all strategies, both searches, replay corruption and placement interactions.
 
