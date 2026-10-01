@@ -34,6 +34,8 @@ Each piece consumes one material-appropriate body blank and one seal kit. Regula
 
 The initial sensor stock is deliberately limited. More sensor kits arrive Wednesday 07 October at 10:00. Seal kits arrive Tuesday; valve kits arrive Thursday. The seed includes a CNC-03 spindle inspection, a QA-03 reference instrument calibration and WS-02 bath service. The baseline respects these blocked intervals.
 
+Equipment unavailability is normally a dated exception with a start, end and reason. Status at the factory snapshot is derived from these periods; future maintenance does not make a machine unavailable today. The end is exclusive. A separate permanent-unavailability flag covers equipment out of service indefinitely. Periods may be edited or cancelled, and multiple periods per machine are supported. Operating shifts remain a separate calendar constraint.
+
 ## The existing Excel plan
 
 The workbook represents a planner's reproducible starting arrangement, not an actual human performance measurement or an APEX result. Its construction follows order due dates and priority, then picks compatible available equipment and personnel. It protects scarce qualifications when another person is available within a reasonable wait. Setup allowances are fixed per operation. Sequence-dependent setup matrices are part of the future APEX model, not enforced in this baseline.

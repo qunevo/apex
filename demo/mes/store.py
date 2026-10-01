@@ -5,7 +5,8 @@ import json
 import re
 import sqlite3
 
-from .catalog import CATALOG, ROUTES
+from .availability import availability_at, normalize_machine
+from .catalog import CATALOG
 from .seed import expand_order, refresh_progress
 
 
@@ -25,6 +26,13 @@ class Store:
                 CREATE TABLE IF NOT EXISTS audit (id INTEGER PRIMARY KEY, at TEXT NOT NULL,
                     entity TEXT NOT NULL, record_id TEXT NOT NULL, detail TEXT NOT NULL);
             """)
+            # Upgrade only equipment fields; retain business edits and audit history.
+            for row in db.execute("SELECT id,data FROM records WHERE entity='machines'").fetchall():
+                before = json.loads(row["data"])
+                after = normalize_machine(before)
+                if before != after:
+                    db.execute("UPDATE records SET data=?,version=version+1 WHERE entity='machines' AND id=?",
+                               (json.dumps(after), row["id"]))
 
     @contextmanager
     def connect(self):
@@ -38,8 +46,15 @@ class Store:
 
     @staticmethod
     def all(db, entity):
-        return [dict(json.loads(row["data"]), _version=row["version"])
+        rows = [dict(json.loads(row["data"]), _version=row["version"])
                 for row in db.execute("SELECT data,version FROM records WHERE entity=? ORDER BY id", (entity,))]
+        if entity == "downtime":
+            rows = [dict(row, cancelled=bool(row.get("cancelled", False))) for row in rows]
+        if entity == "machines":
+            at = Store.meta(db, "factory")["as_of"]
+            periods = Store.all(db, "downtime")
+            rows = [dict(row, **availability_at(row, periods, at)) for row in rows]
+        return rows
 
     @staticmethod
     def meta(db, key):
@@ -64,6 +79,8 @@ class Store:
             db.execute("DELETE FROM audit")
             for entity, rows in data["records"].items():
                 for row in rows:
+                    if entity == "machines":
+                        row = normalize_machine(row)
                     self.insert(db, entity, row)
             for key in ["factory", "qualifications", "plan"]:
                 self.put_meta(db, key, data[key])
@@ -83,7 +100,10 @@ class Store:
                 raise ValueError(f"{col['label']} is required")
             if value in (None, ""):
                 continue
-            if col["type"] in ("number", "integer"):
+            if col["type"] == "boolean":
+                if not isinstance(value, bool):
+                    raise ValueError(f"{col['label']} must be true or false")
+            elif col["type"] in ("number", "integer"):
                 if isinstance(value, bool) or not isinstance(value, (float, int)) or not 0 <= value <= 1_000_000:
                     raise ValueError(f"{col['label']} must be between 0 and 1,000,000")
                 if col["type"] == "integer" and int(value) != value:

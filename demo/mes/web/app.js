@@ -27,7 +27,7 @@ function navItem(page, label, count = '') {
 function shell() {
   const m = state.meta;
   $('#sidebar').innerHTML = `<div class="brand"><div class="brand-mark">N</div><div><strong>northstar</strong><small>MANUFACTURING</small></div></div>
-    <div class="nav-section">SHOP FLOOR</div>${navItem('orders','Production',m.counts.orders)}${navItem('receipts','Inbound deliveries')}${navItem('downtime','Maintenance')}
+    <div class="nav-section">SHOP FLOOR</div>${navItem('orders','Production',m.counts.orders)}${navItem('receipts','Inbound deliveries')}${navItem('downtime','Unavailability')}
     <div class="nav-section">MASTER DATA</div>${navItem('items','Articles & workplans')}${navItem('machines','Equipment')}${navItem('materials','Material stock')}${navItem('personnel','People & shifts')}
     <div class="nav-section">PLANNING</div>${navItem('workbook','Excel planning')}
     <div class="nav-bottom">${navItem('guide','Factory guide')}<button class="nav-item" id="reset-demo" title="Reset demo">${icon('reset')}<span>Reset demo</span></button><div class="environment"><span class="dot"></span> SYNTHETIC DEMO · V1.0</div></div>`;
@@ -62,7 +62,7 @@ async function render() {
   const schema = state.meta.catalog[state.page];
   const production = ['orders','lots','operations'].includes(state.page);
   const title = production ? 'Production' : ['items','routings'].includes(state.page) ? 'Articles & workplans' : ['personnel','shifts'].includes(state.page) ? 'People & shifts' : schema.label;
-  const subtitle = production ? 'One view of every order, lot and operation on the shop floor.' : schema.description + '.';
+  const subtitle = production ? 'One view of every order, lot and operation on the shop floor.' : state.page==='machines' ? `Availability at ${displayDate(state.meta.factory.as_of)} · Local plant time. Open equipment to manage its unavailable periods.` : schema.description + '.';
   let tabBar = production ? tabs([['orders','Customer orders'],['lots','Production lots'],['operations','Operations']]) : ['items','routings'].includes(state.page) ? tabs([['items','Articles'],['routings','Workplans']]) : ['personnel','shifts'].includes(state.page) ? tabs([['personnel','Personnel'],['shifts','Shift calendars']]) : '';
   const filterField = schema.columns.find(col => col.key === 'status' || col.key === 'attendance');
   const choices = state.exact ? [] : filterField?.choices || (state.page==='orders'||state.page==='lots' ? ['Released','In progress','Complete'] : state.page==='operations' ? ['Waiting','Running','Complete'] : []);
@@ -72,7 +72,11 @@ async function render() {
     <section class="panel"><div class="toolbar"><div class="toolbar-left"><label class="search">${icon('search')}<input id="search" aria-label="Search records" placeholder="Search ${schema.label.toLowerCase()}…" value="${esc(state.q)}"></label>${choices.length?`<select id="status-filter" aria-label="Filter status"><option value="">All statuses</option>${choices.map(v=>`<option>${v}</option>`).join('')}</select>`:''}</div><div class="toolbar-right"><button id="export" class="button">${icon('download')} Export CSV</button></div></div><div class="table-scroll" id="table"><div class="loading">Loading records…</div></div><div class="pagination" id="pagination"></div></section>
     <div class="table-footnote">${icon('info')} ${state.page==='operations'?'Open an operation to record production progress.':'Select a row to view details or edit a record.'} Changes are saved in the local MES.</div>`;
   for (const tab of document.querySelectorAll('[data-tab]')) tab.addEventListener('click', () => navigate(tab.dataset.tab));
-  $('#add-record')?.addEventListener('click', () => editDialog());
+  if(state.page==='machines'){
+    $('.page-title').insertAdjacentHTML('beforeend',`<button id="schedule-unavailability" class="button primary">${icon('plus')} Schedule unavailability</button>`);
+    $('#schedule-unavailability').addEventListener('click',()=>unavailabilityDialog());
+  }
+  $('#add-record')?.addEventListener('click', () => state.page==='downtime'?unavailabilityDialog():editDialog());
   $('#clear-filter')?.addEventListener('click', () => navigate(state.page));
   let timer;
   $('#search').addEventListener('input', event => {state.q=event.target.value;state.offset=0;clearTimeout(timer);timer=setTimeout(loadRows,180);});
@@ -98,7 +102,9 @@ const tableColumns = {
 };
 function cell(row, col) {
   const value = row[col.key];
+  if(state.page==='machines'&&col.key==='status')return badge(value)+`<span class="sub">${esc(availabilitySummary(row))}</span>`;
   if (['status','attendance'].includes(col.key)) return badge(value);
+  if(col.type==='boolean')return value?'Yes':'No';
   if (col.key==='priority') return `<span class="priority ${esc(value)}">${esc(value)}</span>`;
   if (col.type==='datetime') return displayDate(value);
   if (col.type==='integer'||col.type==='number') return number(value);
@@ -151,14 +157,31 @@ document.addEventListener('keydown',event=>{
     if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
   }
 });
-async function editDialog(row = null) {
-  const entity=state.page, isNew=!row, schema=state.meta.catalog[entity];
-  let columns=schema.columns;
+function availabilitySummary(row) {
+  if(row.permanently_unavailable)return 'Permanently unavailable';
+  if(!row.unavailable_until)return 'No upcoming unavailable periods';
+  return row.status==='Unavailable'?`Until ${displayDate(row.unavailable_until)}`:`Next: ${displayDate(row.unavailable_from)} – ${displayDate(row.unavailable_until)}`;
+}
+function unavailabilityDialog(machineId='') {
+  return editDialog(null,'downtime',{id:`DT-${Date.now()}`,resource_id:machineId,start:state.meta.factory.as_of});
+}
+async function equipmentPeriods(row) {
+  const data=await api(`/api/tables/downtime?filter_field=resource_id&filter_value=${encodeURIComponent(row.id)}&sort=start&limit=200`);
+  const section=$('#equipment-periods');if(!section)return;
+  section.innerHTML=`<h3>Unavailable periods</h3><p class="subtitle">Start and end are required. Maintenance is a reason for a dated block.</p>${data.rows.map((period,i)=>`<button class="period-row" data-period="${i}"><span><strong>${displayDate(period.start)} → ${displayDate(period.end)}</strong><span>${esc(period.reason)}${period.cancelled?' · Cancelled':''}</span></span>${icon('chevron')}</button>`).join('')||'<p class="subtitle">No unavailable periods recorded.</p>'}${data.total>data.rows.length?'<p class="subtitle">Showing the first 200 periods. Open Unavailability for the complete list.</p>':''}<button class="button primary" id="add-period">${icon('plus')} Schedule unavailability</button>`;
+  $('#add-period').addEventListener('click',()=>unavailabilityDialog(row.id));
+  for(const button of section.querySelectorAll('[data-period]'))button.addEventListener('click',()=>editDialog(data.rows[Number(button.dataset.period)],'downtime'));
+}
+async function editDialog(row = null, entity=state.page, initial={}) {
+  const isNew=!row, schema=state.meta.catalog[entity];
+  let columns=schema.columns.filter(col=>!col.computed&&!(isNew&&col.key==='cancelled'));
+  if(entity==='machines')columns=[...columns.filter(col=>col.key==='permanently_unavailable'),...columns.filter(col=>col.key!=='permanently_unavailable')];
   if(isNew&&entity==='orders') columns=[...columns.filter(c=>c.key!=='status'),{key:'lot_size',label:'Pieces per lot',type:'integer',required:true,editable:true}];
   await Promise.all(columns.filter(c=>c.ref).map(c=>reference(c.ref)));
   const input = col => {
     const disabled=!isNew&&!col.editable;
-    let value=row?.[col.key] ?? (col.key==='lot_size'?20:col.key==='quantity'?100:col.key==='priority'?'Normal':'');
+    let value=row?.[col.key] ?? initial[col.key] ?? (col.key==='lot_size'?20:col.key==='quantity'?100:col.key==='priority'?'Normal':'');
+    if(col.type==='boolean')return `<label class="field wide checkbox-field"><input type="checkbox" name="${col.key}" ${value?'checked':''} ${disabled?'disabled':''}><span>${esc(col.label)}${col.key==='permanently_unavailable'?'<small>Use only when this equipment is out of service indefinitely. Dated periods remain in effect when unchecked.</small>':''}</span></label>`;
     const options=col.ref?state.references[col.ref].map(r=>[r.id,`${r.id} · ${r.name||r.customer||r.id}`]):col.choices?.map(v=>[v,v]);
     let control;
     if(options&&!disabled) control=`<select name="${col.key}" ${col.required?'required':''}>${value?'':'<option value="">Choose…</option>'}${options.map(([id,label])=>`<option value="${esc(id)}" ${id===value?'selected':''}>${esc(label)}</option>`).join('')}</select>`;
@@ -172,6 +195,11 @@ async function editDialog(row = null) {
     `<button class="button" id="cancel">Close</button>${editable||isNew?'<button class="button primary" id="save-record" type="submit" form="record-form">Save changes</button>':''}`);
   $('#related-lots')?.addEventListener('click',()=>navigate('lots',{field:'order_id',value:row.id}));
   $('#book-progress')?.addEventListener('click',()=>progressDialog(row));
+  if(row&&entity==='machines'){
+    $('#record-form').insertAdjacentHTML('beforebegin',`<div class="equipment-status">${badge(row.status)}<span>${esc(availabilitySummary(row))}</span></div>`);
+    $('#record-form').insertAdjacentHTML('beforebegin','<div class="detail-list" id="equipment-periods"></div>');
+    await equipmentPeriods(row);
+  }
   if(row&&entity==='lots') {
     const data=await api(`/api/tables/operations?filter_field=lot_id&filter_value=${encodeURIComponent(row.id)}&sort=sequence`);
     if($('#operation-detail')) $('#operation-detail').innerHTML=`<h3>Material flow</h3><table><tbody>${data.rows.map(op=>`<tr><td>${op.sequence}</td><td>${esc(op.name)}</td><td>${badge(op.status)}</td></tr>`).join('')}</tbody></table><button id="lot-operations" class="button text">Open work instructions ${icon('arrow')}</button>`;
@@ -182,6 +210,7 @@ async function editDialog(row = null) {
     try{
       const data=Object.fromEntries(new FormData(event.target));
       for(const col of columns) if(col.key in data&&['number','integer'].includes(col.type)) data[col.key]=Number(data[col.key]);
+      for(const col of columns) if(col.type==='boolean'&&col.editable)data[col.key]=event.target.elements.namedItem(col.key).checked;
       await api(`/api/tables/${entity}${row?'/'+encodeURIComponent(row.id):''}`,{method:row?'PATCH':'POST',body:JSON.stringify({data,expected_version:row?._version})});
       closeDrawer();await reloadMeta();await render();notify(isNew?'Record created. Review the Excel plan.':'Changes saved to MES.');
     }catch(error){$('#form-error').textContent=error.message;$('#form-error').hidden=false;button.disabled=false;}

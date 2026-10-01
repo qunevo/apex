@@ -5,6 +5,7 @@ from pathlib import Path
 import random
 
 from .catalog import CATALOG, ROUTES, SKILLS, STEPS
+from .availability import normalize_machine
 
 DEMO = Path(__file__).resolve().parents[1]
 
@@ -61,7 +62,7 @@ def create_records(config):
             if group == "Test":
                 capability = "Distributor only" if n == 1 else "Universal function test"
             rows["machines"].append(dict(id=f"{prefix}-{n:02d}", name=f"{group} {n:02d}",
-                group=group, capability=capability, calendar="TWO", status="Available", note=""))
+                group=group, capability=capability, calendar="TWO", permanently_unavailable=False, note=""))
     first_names = ["Alex", "Blair", "Casey", "Drew", "Ellis", "Finley", "Harper", "Jamie", "Jules", "Kit", "Morgan", "Noel"]
     qualifications = []
     for i in range(24):
@@ -141,7 +142,8 @@ def make_baseline(config, records, qualifications):
     skills = {p["person_id"]: p for p in qualifications}
     occupied = {p["id"]: [] for p in machines + people}
     for down in records["downtime"]:
-        occupied[down["resource_id"]].append((datetime.fromisoformat(down["start"]), datetime.fromisoformat(down["end"])))
+        if not down.get("cancelled", False):
+            occupied[down["resource_id"]].append((datetime.fromisoformat(down["start"]), datetime.fromisoformat(down["end"])))
     items = {a["id"]: a for a in records["items"]}
     orders = {a["id"]: a for a in records["orders"]}
     ops = {}
@@ -201,7 +203,7 @@ def make_baseline(config, records, qualifications):
             ready = max(ready, material_ready.get(op["group"], origin))
             choices = []
             for machine in machines:
-                if eligible(machine, item, op):
+                if not normalize_machine(machine)["permanently_unavailable"] and eligible(machine, item, op):
                     for person in people:
                         if skills[person["id"]][op["skill"]]:
                             start, end = slot(ready, machine["id"], person, minutes, labor)

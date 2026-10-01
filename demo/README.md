@@ -25,6 +25,8 @@ The first start generates the synthetic data and conventional planning baseline,
 5. Open an operation and **Record progress**. Book cumulative good quantity on an eligible machine. Predecessors must be complete. Lot and order states update with it.
 6. Use **Reset demo**, entering the displayed confirmation text, to restore the original MES and local workbook copy. Separately downloaded Excel files are unaffected.
 
+For equipment, **Schedule unavailability** records a required start, end and reason. Open an equipment row to review, edit or cancel its periods. Its status is **Available** or **Unavailable** at the fixed factory snapshot, with the active or next block shown alongside it. Intervals include their start and exclude their end; overlapping or adjoining periods form one continuous block. Maintenance is a reason, not a third status. Use **Permanently unavailable** only for equipment out of service indefinitely; clearing it leaves dated periods intact. These exceptions describe equipment blocks, independently of shift working hours.
+
 The **Factory guide** explains the products and source ownership. The detailed [factory description](factory.md) defines the synthetic assumptions and baseline limits.
 
 ## Source ownership
@@ -68,6 +70,8 @@ The same loopback API backs the browser and a future adapter:
 | `POST /api/reset` | `{ "confirmation": "RESET DEMO" }`; demo-owned local state only |
 
 Dates use `YYYY-MM-DDTHH:MM` in the named plant timezone. The October seed stays within CEST. Monetary costs and time-zone transitions are outside this initial case. Row updates reject stale versions with HTTP 409. Invalid values and references return HTTP 400. There is no deletion or automatic source-system writeback. This local mock has no multi-user authentication and is not a deployment-ready MES.
+
+Equipment rows expose read-only `status`, `unavailable_from`, `unavailable_until` and `unavailability_reason`, calculated at `factory.as_of`. Edit `downtime` records for dated blocks (`cancelled: true` withdraws a period), or explicitly set the Boolean `permanently_unavailable`. Production booking checks availability at that same snapshot. Existing local databases are upgraded without resetting edits; legacy global Maintenance/Unavailable values become permanent exceptions because no end date was recorded. The Excel baseline remains a separate snapshot after any availability change.
 
 ## Verify
 

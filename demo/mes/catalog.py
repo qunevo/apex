@@ -1,9 +1,9 @@
 """Explicit field contracts shared by the UI, API and seed validation."""
 
 
-def field(key, label, kind="text", *, choices=None, ref=None, editable=True, required=True):
+def field(key, label, kind="text", *, choices=None, ref=None, editable=True, required=True, computed=False):
     return dict(key=key, label=label, type=kind, choices=choices, ref=ref,
-                editable=editable, required=required)
+                editable=editable, required=required, computed=computed)
 
 
 def table(label, description, columns, *, create=True):
@@ -51,7 +51,11 @@ CATALOG = {
         field("name", "Description"), field("group", "Group", editable=False),
         field("capability", "Capability", editable=False),
         field("calendar", "Calendar", ref="shifts"),
-        field("status", "Status", choices=["Available", "Maintenance", "Unavailable"]),
+        field("permanently_unavailable", "Permanently unavailable", "boolean"),
+        field("status", "Status at snapshot", choices=["Available", "Unavailable"], editable=False, required=False, computed=True),
+        field("unavailable_from", "Unavailable from", "datetime", editable=False, required=False, computed=True),
+        field("unavailable_until", "Unavailable until", "datetime", editable=False, required=False, computed=True),
+        field("unavailability_reason", "Unavailability reason", editable=False, required=False, computed=True),
         field("note", "Note", required=False),
     ], create=False),
     "personnel": table("Personnel", "Attendance is kept here; the qualification matrix is maintained in Excel", [
@@ -75,10 +79,11 @@ CATALOG = {
         field("status", "Status", choices=["Confirmed", "Delayed", "Received"]),
         field("note", "Delivery note", required=False),
     ]),
-    "downtime": table("Maintenance & absence", "Known capacity exceptions in the planning period", [
+    "downtime": table("Equipment unavailability", "Dated equipment blocks, including maintenance", [
         field("resource_id", "Machine / workplace", ref="machines"),
         field("start", "From", "datetime"), field("end", "Until", "datetime"),
         field("reason", "Reason"),
+        field("cancelled", "Cancel this period", "boolean", required=False),
     ]),
 }
 
