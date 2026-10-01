@@ -13,6 +13,8 @@ Read `AGENTS.md` at the application root and `docs/data-model.md`, then query `c
 
 Use the current schemas from that tool installation. They ship with the main application release and have no independent version fields. Do not add format-version markers or assume historical input compatibility; keep the reported tool version with the external mapping record.
 
+Keep customer mappings in `customization/<id>/adapter`. If intake requires base application changes, follow the [extension boundary and approval workflow](../apex-extension/SKILL.md#customization-boundary-and-approval) before editing outside the package.
+
 ## Produce a traceable snapshot
 
 - Inspect headers, a bounded sample, counts and units. Resolve stable IDs, relationships, timezone/epoch and quantity units. Record source references in task `source` fields; keep real source data and credentials outside distribution files.

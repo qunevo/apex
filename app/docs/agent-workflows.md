@@ -14,6 +14,8 @@ Three portable repository skills live in `skills/`:
 | `apex-planning` | Discuss domain rules, explain plans, run scenarios and sensitivity cases | Validated results, KPI trade-offs, viewer links |
 | `apex-extension` | Implement new rules, objectives, hooks and measured Q proxies | Tested code/schema, synthetic examples, documented limits |
 
+Customer extensions follow the [customization boundary and approval workflow](../skills/apex-extension/SKILL.md#customization-boundary-and-approval). The agent uses existing package interfaces first and obtains informed, scoped approval before changing shipped base application files, including registration/build wiring. The skill records upgrade implications; it is agent guidance, not a runtime write barrier.
+
 A single agent can switch skills. Separate agents are optional when distinct credentials, domains or independently testable implementation work justify them. They must exchange artifact references and explicit requirements, not duplicate full production exports in their context. These are ordinary Markdown skills; hosts without skill discovery can load the relevant file as workflow guidance.
 
 External writeback is deferred. A later writeback capability needs an explicit target, source revision, agreed change set, conflict handling and retry semantics. The current roles do not publish plans into MES/ERP.

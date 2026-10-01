@@ -20,3 +20,5 @@ selection scopes server state and inputs. `Problem.customization` independently
 selects a statically registered native extension; a folder does not register
 Rust code. Skills must be loaded by the agent host. UI extensions need explicit
 build/server registration. Real customer packages and data are not published.
+
+For customer changes, follow the [extension boundary and approval workflow](../skills/apex-extension/SKILL.md#customization-boundary-and-approval). It distinguishes package work, explicit registration outside the package and base application changes, and records the approved changes needed when upgrading APEX.

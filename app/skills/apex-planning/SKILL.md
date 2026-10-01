@@ -25,7 +25,7 @@ For campaign, idle-gap and urgency requirements, inspect `policy.inspect` and th
 
 ## Know when implementation is required
 
-Typed rules can be added as input where supported. A new metric, physical rule or proxy outside the schema belongs to the `apex-extension` workflow with tests. Writing Markdown does not activate a constraint. Explain a proposed rule with concrete examples before encoding ambiguous business semantics.
+Typed rules can be added as input where supported. A new metric, physical rule or proxy outside the schema belongs to the [apex-extension workflow](../apex-extension/SKILL.md#customization-boundary-and-approval) with tests; apply its approval boundary before changing base application files. Writing Markdown does not activate a constraint. Explain a proposed rule with concrete examples before encoding ambiguous business semantics.
 
 Material preparation allocates only existing supply. Read `docs/material-dispatch.md` and `docs/data-model.md`. Free workplans and differing-material main modes remain searchable under `material_policy: reallocate_routes`; the preparation report is a preview, while `model.page` / `materials` shows actual saved allocations. Reprepare the original source when changing materials/routes of a fully selected, materialized snapshot. Started input is assumed consumed already. Missing material is a diagnostic, not permission to create replenishment orders.
 
