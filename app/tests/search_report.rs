@@ -37,7 +37,10 @@ fn measured_search_and_proxy_quality() {
     }
     let mut timings = vec![];
     let production = apex::production::expand(
-        serde_json::from_str(include_str!("../examples/production-orders.json")).unwrap(),
+        serde_json::from_str(include_str!(
+            "../customization/demo/model/production-orders.json"
+        ))
+        .unwrap(),
     )
     .unwrap();
     for (name, p) in [

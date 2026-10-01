@@ -60,7 +60,7 @@ def main():
         output = temporary / "planning results"
         output.mkdir()
         problem = output / "production.json"
-        run([binary, "expand", "examples/production-orders.json", "--out", problem], app, env)
+        run([binary, "expand", "customization/demo/model/production-orders.json", "--out", problem], app, env)
         completed = []
         for method in ("plan", "hypersearch", "treesearch", "improve", "evolve"):
             schedule = output / f"{method}.json"
@@ -69,8 +69,8 @@ def main():
             completed.append(method)
         for fixture in ("chain-routing", "dispatch-campaign", "shift-factory"):
             schedule = output / f"{fixture}.json"
-            run([binary, "plan", f"examples/{fixture}.json", "--out", schedule], app, env)
-            run([binary, "validate", f"examples/{fixture}.json", schedule], app, env)
+            run([binary, "plan", f"tests/fixtures/{fixture}.json", "--out", schedule], app, env)
+            run([binary, "validate", f"tests/fixtures/{fixture}.json", schedule], app, env)
         schema = run([binary, "schema"], app, env, capture_output=True, text=True)
         assert json.loads(schema.stdout)["$schema"]
         workspace = temporary / "customer workspace"

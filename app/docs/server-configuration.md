@@ -1,8 +1,12 @@
 # Server configuration and customization packages
 
-One APEX executable serves MCP/HTTP and the embedded viewer. Core algorithms
-remain independent of transport and persistent state. Use the explicit
-configuration file to host several installed packages:
+The central `apex-control` service and the compatibility `apex` executable use
+the same configuration file and package manifests. Both accept `--config FILE`
+or `APEX_CONFIG`. Core algorithms remain independent of transport and persistent
+state. For the central service, pass `apex-control serve --config FILE` with your configuration;
+see [control platform](control-platform.md) for scenario-bound selection and
+PostgreSQL storage. The rest of this page documents the file-backed compatibility
+interface:
 
 ```bash
 apex serve --config /opt/apex/apex.config.json --workspace /var/lib/apex
@@ -14,15 +18,17 @@ Without either, the existing flat workspace/store behavior is unchanged.
 `deploy/setup-mcp.sh` preserves its existing default; pass `--config` in the
 generated entry's `args` when package routing is wanted.
 
-The bundled [configuration](../apex.config.json) is:
+The base container stack leaves `APEX_CONFIG` empty. An optional package-specific [configuration](../customization/demo/apex.config.json) illustrates selecting the bundled synthetic package:
 
 ```json
 {
-  "customization_root": "customization",
+  "customization_root": "..",
   "default_customization": "demo",
-  "enabled_customizations": ["demo", "dummy_customer"]
+  "enabled_customizations": ["demo"]
 }
 ```
+
+Use this optional file with `--config customization/demo/apex.config.json` in a native build, or select its container path through a deployment override. See [containers](containers.md#configuration-and-retained-state).
 
 The package root resolves relative to the configuration file, independent of
 the server's working directory. Each enabled folder must contain `package.json`
@@ -51,13 +57,15 @@ default does not move existing data. A new manifest version starts a separate
 store; migrating old state requires an explicit future migration procedure.
 
 Native model selection is separate: `Problem.customization` still selects a
-compiled, versioned scheduling extension. Enabling the `dummy_customer` package
-does not silently impose its native policy on every problem. The `demo` package
-defines the integration boundary; its live MES/Excel adapter is still pending.
+compiled, versioned scheduling extension. Enabling the `demo` package
+does not impose its optional technical policy (`demo@1`) on every problem.
+The package also defines the factory integration boundary; its live MES/Excel
+adapter is still pending.
 Folders and Markdown never execute code or automatically install agent skills.
 
 The server remains a shared-trust workspace service. Package namespaces are
 not per-user authorization or tenant isolation: clients with server access can
 select any enabled package. Use the existing authenticated HTTP deployment
-contract. Active-plan lifecycle, database storage and MCP Apps UI embedding
-remain future work.
+contract. The central `apex-control` service supplies active-plan lifecycle,
+database storage, tenant authorization and MCP Apps resources. Its UUID-based
+records are separate; file artifacts are not migrated automatically.

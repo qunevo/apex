@@ -9,13 +9,27 @@ import {chromium} from 'playwright';
 
 const root=path.resolve(import.meta.dirname,'..');
 const workspace=await fs.mkdtemp(path.join(os.tmpdir(),'apex configured '));
+// A second test-only package exercises routing without shipping another domain.
+const bundledConfig=path.join(root,'customization/demo/apex.config.json');
+const config=JSON.parse(await fs.readFile(bundledConfig,'utf8'));
+for(const id of config.enabled_customizations) {
+  const folder=path.join(workspace,'customization',id);
+  await fs.mkdir(folder,{recursive:true});
+  await fs.copyFile(path.resolve(path.dirname(bundledConfig),config.customization_root,id,'package.json'),path.join(folder,'package.json'));
+}
+await fs.mkdir(path.join(workspace,'customization/secondary'));
+await fs.writeFile(path.join(workspace,'customization/secondary/package.json'),JSON.stringify({id:'secondary',version:'1'}));
+config.customization_root='customization';
+config.enabled_customizations.push('secondary');
+const configPath=path.join(workspace,'apex.config.json');
+await fs.writeFile(configPath,JSON.stringify(config));
 const reservation=net.createServer();
 await new Promise(resolve=>reservation.listen(0,'127.0.0.1',resolve));
 const port=reservation.address().port;
 await new Promise(resolve=>reservation.close(resolve));
 const origin=`http://127.0.0.1:${port}`;
 const binary=process.env.APEX_BINARY||path.join(root,'target/release',process.platform==='win32'?'apex.exe':'apex');
-const server=spawn(binary,['serve','--port',String(port),'--config',path.join(root,'apex.config.json'),'--workspace',workspace],{
+const server=spawn(binary,['serve','--port',String(port),'--config',configPath,'--workspace',workspace],{
   cwd:workspace,windowsHide:true,env:{...process.env,APEX_BIND:'127.0.0.1',APEX_PUBLIC_URL:origin,APEX_API_TOKEN:''},stdio:['ignore','ignore','pipe']
 });
 let errors='';server.stderr.on('data',chunk=>errors+=chunk);
@@ -33,12 +47,12 @@ try {
   }
   assert.ok(ready,'Configured server did not start');
   const caps=await tool('capabilities');assert.equal(caps.customization_package.id,'demo');
-  const source=await tool('demo.create',{customization:'dummy_customer',tasks:4});
-  const plan=await tool('schedule.create',{customization:'dummy_customer',scenario_id:source.scenario_id});
+  const source=await tool('demo.create',{customization:'secondary',tasks:4});
+  const plan=await tool('schedule.create',{customization:'secondary',scenario_id:source.scenario_id});
   const rejected=await fetch(`${origin}/api/tools/scenario.get`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario_id:source.scenario_id})});
   assert.equal(rejected.status,422);
-  const rpc=await fetch(`${origin}/mcp`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method:'tools/call',params:{name:'scenario.get',arguments:{customization:'dummy_customer',scenario_id:source.scenario_id}}})});
-  assert.equal((await rpc.json()).result.structuredContent.customization_package.id,'dummy_customer');
+  const rpc=await fetch(`${origin}/mcp`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method:'tools/call',params:{name:'scenario.get',arguments:{customization:'secondary',scenario_id:source.scenario_id}}})});
+  assert.equal((await rpc.json()).result.structuredContent.customization_package.id,'secondary');
   const executablePath=process.env.APEX_BROWSER||(process.platform==='win32'?'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe':undefined);
   browser=await chromium.launch({headless:true,...(executablePath?{executablePath}:{})});
   const page=await browser.newPage();const calls=[],pageErrors=[];
@@ -47,15 +61,15 @@ try {
   await page.goto(plan.viewer_url);
   await page.waitForFunction(()=>!document.querySelector('#factory').disabled);
   assert.equal(await page.locator('#status').evaluate(element=>element.classList.contains('error')),false);
-  assert.ok(calls.length>0);assert.ok(calls.every(args=>args.customization==='dummy_customer'));
+  assert.ok(calls.length>0);assert.ok(calls.every(args=>args.customization==='secondary'));
   await page.locator('#ask-agent').click();
-  assert.match(await page.locator('#agent-context').inputValue(),/Customization: dummy_customer/);
+  assert.match(await page.locator('#agent-context').inputValue(),/Customization: secondary/);
   await page.locator('#toggle-workbench').click();
   await page.waitForFunction(()=>!document.querySelector('#factory').disabled);
   await page.locator('#demo').click();
   await page.waitForFunction(()=>!document.querySelector('#factory').disabled);
-  assert.equal(new URL(page.url()).searchParams.get('customization'),'dummy_customer');
-  assert.ok(calls.every(args=>args.customization==='dummy_customer'));
+  assert.equal(new URL(page.url()).searchParams.get('customization'),'secondary');
+  assert.ok(calls.every(args=>args.customization==='secondary'));
   assert.deepEqual(pageErrors,[]);
   console.log(JSON.stringify({passed:true,cases:['HTTP selection','cross-package rejection','MCP routing','viewer context and navigation']}));
 } finally {

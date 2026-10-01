@@ -1,7 +1,7 @@
 [workspace]
 resolver = "3"
-members = ["core", "control", "engine-adapter", "control-postgres", "control-server", "desktop"]
-default-members = [".", "core", "control", "engine-adapter", "control-postgres", "control-server"]
+members = ["core", "middleware/control", "middleware/data", "middleware/api", "ui/desktop"]
+default-members = [".", "core", "middleware/control", "middleware/data", "middleware/api"]
 
 [workspace.package]
 edition = "2024"
@@ -34,10 +34,11 @@ path = "lib.rs"
 
 [[bin]]
 name = "apex"
-path = "server/main.rs"
+path = "middleware/api/cli.rs"
 
 [dependencies]
 apex-engine = { path = "core" }
+apex-control = { path = "middleware/control" }
 serde.workspace = true
 serde_json.workspace = true
 sha2.workspace = true

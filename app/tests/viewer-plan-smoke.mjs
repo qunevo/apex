@@ -21,7 +21,7 @@ const page=await browser.newPage({viewport:{width:1600,height:1100}});
 const errors=[],calls=[];
 page.on('pageerror',e=>errors.push(e.message));
 page.on('request',r=>{if(r.url().endsWith('/api/tool'))calls.push(r.postDataJSON().name);});
-async function done(){await page.waitForFunction(()=>!document.querySelector('#factory').disabled);assert.ok(!await page.locator('#status').evaluate(e=>e.classList.contains('error')),await page.locator('#status').textContent());}
+async function done(){await page.waitForFunction(()=>document.querySelector('#factory')?.disabled===false);assert.ok(!await page.locator('#status').evaluate(e=>e.classList.contains('error')),await page.locator('#status').textContent());}
 try {
   await page.goto(url.href);await done();
   for(const id of ['fork','apply','repair','outage','freeze','hypersearch','search-settings'])assert.equal(await page.locator('#'+id).isVisible(),false,id);

@@ -1,17 +1,17 @@
 # Current architecture
 
-This is the implementation map for agents changing APEX. Read it after [repository conventions](../../AGENTS.md), then follow the source and test links below. The executable input is `apex.v3.4`; canonical v3.1–v3.3 inputs use the same Rust implementation. There is no separate legacy scheduler in this checkout.
+This is the implementation map for agents changing APEX. Read it after [repository conventions](../../AGENTS.md), then follow the source and test links below. The executable input is `apex.v3.4`; canonical v3.1â€“v3.3 inputs use the same Rust implementation. There is no separate legacy scheduler in this checkout.
 
 Use the [data model](../data-model.md) for field semantics, the [operating guide](../implementation.md) for commands, and the [migration audit](https://github.com/qunevo/apex/blob/main/dev/docs/migration-audit.md) for historical v2 evidence. This directory documents implemented behavior.
 
 ## Runtime boundaries
 
-[Cargo.toml](../../Cargo.toml) is the workspace root and the `apex-scheduler` package with the `apex` library and the `apex` binary. The scheduling core is the `apex-engine` crate in `core/`; the [control platform](../control-platform.md) crates build on it without changing this executable. [lib.rs](../../lib.rs) exposes the modules; [main.rs](../../server/main.rs) selects CLI commands and transports. The scheduler does not depend on Python, an LLM or an external solver. Repository Python/Node scripts support fixtures and verification.
+[Cargo.toml](../../Cargo.toml) is the workspace root and the `apex-scheduler` package with the `apex` library and the `apex` binary. The scheduling core is the `apex-engine` crate in `core/`; the [control platform](../control-platform.md) crates build on it without changing this executable. [lib.rs](../../lib.rs) exposes the modules; [main.rs](../../middleware/api/cli.rs) selects CLI commands and transports. The scheduler does not depend on Python, an LLM or an external solver. Repository Python/Node scripts support fixtures and verification.
 
 ```mermaid
 flowchart TD
   Agent[Agent client] --> Transport[transport.rs: MCP stdio, MCP HTTP, JSON HTTP]
-  Viewer[ui/index.html: embedded viewer] --> Transport
+  Viewer[ui/mcp-app/compat.html: embedded viewer] --> Transport
   CLI[main.rs: CLI] --> Service[service.rs: scenarios and saved artifacts]
   Transport --> Service
   CLI --> Search[xh.rs, xt.rs, xe.rs, improve.rs]
@@ -26,20 +26,44 @@ flowchart TD
   Service --> Store[Local .apex artifact store]
 ```
 
-The engine-only product is the root package and its `apex` executable. Its source boundaries are:
+The application has five responsibility boundaries. Cargo crates inside them keep
+dependencies explicit; they are not separate deployment services.
 
 | Directory | Responsibility |
 | --- | --- |
 | `core/` | `apex-engine` crate: in-memory scheduling semantics, algorithms and independent validation |
-| `server/` | CLI, configuration, request routing, tool orchestration and MCP/HTTP |
-| `data/` | Scenario/import/result records, file access, atomic writes and store locking |
-| `ui/` | Embedded browser viewer and future shared chat views |
+| `middleware/api/` | HTTP/MCP, authentication, events, workers and CLI entry points |
+| `middleware/control/` | Scenarios, immutable revisions, runs, approvals, package configuration and core invocation |
+| `middleware/data/` | PostgreSQL store, migrations and compatibility file persistence |
+| `ui/mcp-app/`, `ui/desktop/` | MCP App and native display clients of the same middleware |
 | `skills/` | General agent workflows |
 | `customization/<id>/` | Package manifest, adapters, domain model/knowledge, skills, tests and optional views |
 
 `lib.rs` retains existing public module re-exports for library callers. The service
 orchestrates persistence through `data::FileStore`; scheduling modules operate
 on in-memory models. CLI `plan`, `hypersearch`, `treesearch`, `improve` and `evolve` also call those modules directly. Search changes candidate decisions or ranking parameters and uses the same evaluation path as quick planning.
+
+```mermaid
+flowchart LR
+  Chat[Agent and MCP App] --> API[middleware/api]
+  Desktop[ui/desktop] --> API
+  API --> Control[middleware/control]
+  Control --> Core[core]
+  Control --> Store[Store contract]
+  Data[middleware/data] -. implements .-> Store
+  Packages[customization packages] --> Control
+```
+
+`middleware/control/src/apex.rs` is the optional built-in implementation of the
+engine contract. It is not a separate adapter service. Domain source adapters
+belong in `customization/<id>/adapter`. The desktop depends on control contracts
+without enabling the `apex` feature. The MCP App receives `results.get` through
+its host bridge and does not persist authoritative planning state.
+
+The [container deployment](../containers.md) starts this central server with
+PostgreSQL; it does not start the compatibility executable or native desktop.
+Application container files are independent of the root demo. The root demo
+composes additional source services and selects a customization through config.
 
 ## Source map
 
@@ -60,8 +84,8 @@ All module links below point into `core` unless stated otherwise.
 | Direct evolution (XE) | [xe.rs](../../core/xe.rs): schedule chromosomes and genetic operators. |
 | Shared search and portfolio | [search.rs](../../core/search.rs): budgets, workers, randomness, selection and reporting helpers. [improve.rs](../../core/improve.rs): shared-budget XH/XT/optional XE portfolio. |
 | Independent validation | [validate.rs](../../core/validate.rs): `validate`, `validate_active`, `validate_customized`; reconstructs expected semantics and checks output. Uses `policy::verify` for governed construction and [extensions.rs](../../core/extensions.rs) for native validation and metrics. |
-| Native customization | `rules::Customization` declares the contract. [extensions.rs](../../core/extensions.rs) registers, lowers and decorates models. [customizations/dummy_customer](../../customization/dummy_customer/model/KNOWLEDGE.md) is the linked synthetic example. |
-| Agent API and viewer | [service.rs](../../server/service.rs): `Service::call`, package routing and tool orchestration. [transport.rs](../../server/transport.rs): tool schemas, JSON-RPC, HTTP and OpenAPI. [ui/index.html](../../ui/index.html): embedded schedule viewer and optional development workbench. |
+| Native customization | `rules::Customization` declares the contract. [extensions.rs](../../core/extensions.rs) registers, lowers and decorates models. [customization/demo](../../customization/demo/model/KNOWLEDGE.md) is the linked synthetic example. |
+| Agent API and viewer | [service.rs](../../middleware/control/compat.rs): `Service::call`, package routing and tool orchestration. [transport.rs](../../middleware/api/compat.rs): tool schemas, JSON-RPC, HTTP and OpenAPI. [ui/mcp-app/compat.html](../../ui/mcp-app/compat.html): embedded schedule viewer and optional development workbench. |
 
 ## One scheduling evaluation
 
@@ -109,14 +133,23 @@ The [combined-improvement contract](combined-improvement.md) specifies budget di
 
 ## Service state, transport and UI
 
-The default store is `.apex` under the configured workspace. `data/mod.rs` stores separate JSON artifacts for imports, scenarios and schedules. Writes use a temporary file, flush/sync and rename. `Service::call` selects the request package and holds its exclusive `store.lock` across the entire tool call, including scheduling. Calls sharing a store therefore serialize; search workers provide parallel candidate evaluation inside a call. Chunked imports reduce request/context size, but the complete problem is still held in memory for planning.
+The central `apex-control` service owns immutable scenario revisions, queued runs,
+validated results and approval/publication through the `Store` contract. Its
+PostgreSQL implementation is in `middleware/data`; the in-memory store supports
+tests and transient demonstrations. Both clients use this workflow; see the
+[control platform](../control-platform.md) for deployment and authorization.
+
+The following describes the retained file-backed `apex` compatibility interface.
+It has separate records and does not automatically migrate them to PostgreSQL.
+
+The default store is `.apex` under the configured workspace. `middleware/data/files.rs` stores separate JSON artifacts for imports, scenarios and schedules. Writes use a temporary file, flush/sync and rename. `Service::call` selects the request package and holds its exclusive `store.lock` across the entire tool call, including scheduling. Calls sharing a store therefore serialize; search workers provide parallel candidate evaluation inside a call. Chunked imports reduce request/context size, but the complete problem is still held in memory for planning.
 
 With explicit configuration, package state is scoped by ID and version and input
 files by package ID. Responses, saved records and viewer links retain package
 context. Requests never change a global active package. Unconfigured flat stores
 remain compatible. See [server configuration](../server-configuration.md) for
-selection, version changes and shared-trust limitations. Active-plan lifecycle,
-per-user authorization and MCP Apps UI resources remain future work.
+selection, version changes and shared-trust limitations. Use `apex-control` for
+active-plan lifecycle, tenant authorization and MCP Apps resources.
 
 A scenario has a revision, problem and optional parent. Patches require `expected_revision`. A saved schedule contains its scenario identity/revision, the exact problem snapshot and the result. Improve/evolve can reuse an incumbent only for the same scenario and revision; after a patch or fork, create a result for that model. Validation and explanations use the saved problem, not the current mutable scenario.
 
@@ -127,18 +160,18 @@ The viewer is compiled into the Rust binary with `include_str!`; HTML edits requ
 ## Customization boundary
 
 Server packages group adapter, model, skills, tests and optional UI by domain.
-[Package configuration](../../server/config.rs) validates manifests; it does not
-execute code. [Data storage](../../data/mod.rs) owns persistence. Package selection
+[Package configuration](../../middleware/control/src/packages.rs) validates manifests; it does not
+execute code. [Data storage](../../middleware/data/files.rs) owns persistence. Package selection
 and `Problem.customization` have different meanings: the latter selects native
 scheduling behavior. The demo package's live MES/Excel adapter is not implemented.
 
-`rules::Customization` covers typed lowering, sequence decorations, candidate filters/rank, Qs, objectives/metrics, validation and genetic proposals. Native implementations are deterministic, versioned, statically linked and `Send + Sync`. Registration is explicit in `extensions::registered`; `dummy_customer@1` is the current bundled implementation.
+`rules::Customization` covers typed lowering, sequence decorations, candidate filters/rank, Qs, objectives/metrics, validation and genetic proposals. Native implementations are deterministic, versioned, statically linked and `Send + Sync`. Registration is explicit in `extensions::registered`; `demo@1` is the current bundled implementation.
 
 Keep reusable physical semantics in the core and optional domain behavior in customization modules. New native code needs a build. Tool arguments, Markdown knowledge and `skills/` guide the agent; they do not execute plugins or enforce rules. Sequence hooks used by exact dispatch policies must support meaningful prefix decoration, with tests for every affected interaction.
 
 ## Change map for coding agents
 
-Read existing tests in the affected row before editing. Synthetic examples are in [examples](../../examples); never turn customer exports into fixtures.
+Read existing tests in the affected row before editing. Synthetic regression inputs are in [tests/fixtures](../../tests/fixtures); the embedded production demo input belongs to [customization/demo](../../customization/demo/model/production-orders.json). Never turn customer exports into fixtures.
 
 | Change | Update together | Verification starting points |
 | --- | --- | --- |
@@ -149,7 +182,7 @@ Read existing tests in the affected row before editing. Synthetic examples are i
 | Search or genetic operator | `xh`/`xt`/`xe`/`search`/`improve`, option types, budget accounting, commitment preservation, replay and evidence | [search](../../tests/search.rs), [improve](../../tests/improve.rs), [evolution](../../tests/xe.rs) |
 | Native domain rule | `Customization` implementation, registry/version, typed lowering, metric/validation hooks and synthetic knowledge bundle | [customization](../../tests/customization.rs), relevant dispatch/XE tests |
 | Tool or persistence behavior | Service dispatch, `tool_names`, `transport::tools` schema/OpenAPI and saved-artifact revision semantics | [service](../../tests/service.rs), [MCP smoke](../../tests/mcp-smoke.mjs), [HTTP/MCP](../../tests/http-mcp.mjs) |
-| Viewer explanation | `ui/index.html` and bounded service fields needed to explain the decision | [viewer plan smoke](../../tests/viewer-plan-smoke.mjs), [dispatch viewer](../../tests/viewer-dispatch-smoke.mjs), [evolution viewer](../../tests/viewer-xe.mjs) |
+| Viewer explanation | `ui/mcp-app/compat.html` and bounded service fields needed to explain the decision | [viewer plan smoke](../../tests/viewer-plan-smoke.mjs), [dispatch viewer](../../tests/viewer-dispatch-smoke.mjs), [evolution viewer](../../tests/viewer-xe.mjs) |
 
 For Rust changes run the required checks from the application root (`app/` in the development checkout):
 

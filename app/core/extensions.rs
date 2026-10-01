@@ -58,7 +58,7 @@ pub fn lower(p: &Problem, extension: &dyn Customization) -> Result<Problem, Vec<
 
 pub fn registered(reference: &CustomizationRef) -> Result<Box<dyn Customization>, Vec<Diagnostic>> {
     match (reference.id.as_str(), reference.version.as_str()) {
-        ("dummy_customer", "1") => Ok(Box::new(crate::dummy_customer::Policy)),
+        ("demo", "1") => Ok(Box::new(crate::demo_policy::Policy)),
         _ => Err(vec![Diagnostic::new(
             "CUSTOMIZATION_VERSION",
             &reference.id,

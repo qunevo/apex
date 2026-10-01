@@ -22,7 +22,7 @@ class PublicationTests(unittest.TestCase):
 
     def test_customization_policy_applies_to_repository_and_standalone_layouts(self):
         for prefix in (Path("."), Path("app")):
-            allowed = self.root / prefix / "customizations/dummy_customer/policy.rs"
+            allowed = self.root / prefix / "customizations/demo/policy.rs"
             rejected = self.root / prefix / "customizations/synthetic_unapproved/policy.rs"
             for path in (allowed, rejected):
                 path.parent.mkdir(parents=True, exist_ok=True)
@@ -38,7 +38,8 @@ class PublicationTests(unittest.TestCase):
             path.write_text("Synthetic fixture.\n", encoding="utf-8")
         findings = publication.scan(self.root)
         self.assertEqual([f for f in findings if f["code"] == "NON_DEMO_CUSTOMIZATION"],
-                         [{"code": "NON_DEMO_CUSTOMIZATION", "path": "app/customization/private/model/KNOWLEDGE.md"}])
+                         [{"code": "NON_DEMO_CUSTOMIZATION", "path": f"app/customization/{name}/model/KNOWLEDGE.md"}
+                          for name in ("dummy_customer", "private")])
 
     def declare(self):
         digest = hashlib.sha256(self.archive.read_bytes()).hexdigest()
@@ -64,6 +65,10 @@ class PublicationTests(unittest.TestCase):
         self.assertEqual(self.codes(), set())
         (self.root / "other.zip").write_bytes(self.archive.read_bytes())
         self.assertEqual(self.codes(), {"REMOVE_OR_REVIEW_BINARY_ARTIFACT"})
+
+    def test_frozen_source_retains_reviewed_historical_customization(self):
+        self.bundle("snapshot/customizations/dummy_customer/policy.rs", "// Historical synthetic fixture.")
+        self.assertEqual(self.codes(), set())
 
     def test_missing_manifest_and_changed_bytes_fail(self):
         self.bundle()

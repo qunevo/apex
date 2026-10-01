@@ -70,7 +70,7 @@ There is no adaptive budget learning, resumed cross-request search, alternating 
 | [search.rs](../../core/search.rs) | Shared budgets, workers, randomness, selection and report helpers. |
 | [xe.rs](../../core/xe.rs) | Evolves priority chromosomes and mode/route/conditional genes from validated schedules; selects and credits built-in or registered native operators. |
 | [xg.rs](../../core/xg.rs) | `evaluate` runs common lowering, dispatch, decoding, exact metrics and validation. A search strategy cannot opt out of hard rules. |
-| [service.rs](../../server/service.rs) | Verifies incumbent scenario identity and revision before invoking the portfolio; saves the accepted result with its problem snapshot. |
+| [service.rs](../../middleware/control/compat.rs) | Verifies incumbent scenario identity and revision before invoking the portfolio; saves the accepted result with its problem snapshot. |
 
 A new search decision must be represented in options/replay, preserve caller commitments and pass shared evaluation. A new objective needs its exact evaluator and validation before a heuristic Q can rank candidates for it. See the [change map](README.md#change-map-for-coding-agents) for the affected modules and tests.
 

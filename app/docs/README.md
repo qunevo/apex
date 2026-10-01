@@ -6,6 +6,7 @@ This index describes the runnable Rust implementation with executable schema **`
 
 | Guide | Read it for |
 | --- | --- |
+| [Container start](containers.md) | One-command server startup, credentials and retained state |
 | [Operating guide](implementation.md) | Build, run, verify and understand runtime limits |
 | [Agent workflows](agent-workflows.md) | Data intake, planner conversations and extension responsibilities |
 | [Agent integration](agent-integration.md) | MCP, HTTP, authentication, pagination and large imports |
@@ -17,20 +18,13 @@ This index describes the runnable Rust implementation with executable schema **`
 | [Combined improvement](architecture/combined-improvement.md) | One shared budget for XH, XT and optional XE |
 | [Direct schedule evolution](direct-schedule-evolution.md) | Priority chromosomes, genetic operators and extension contracts |
 | [Declarative scheduling](architecture/declarative-scheduling.md) | Typed constraints, mandatory dispatch policies and explanations |
-| [Synthetic customization](../customization/dummy_customer/model/KNOWLEDGE.md) | Domain knowledge, native hooks and validation requirements |
+| [Synthetic customization](../customization/demo/model/KNOWLEDGE.md) | Domain knowledge, native hooks and validation requirements |
 
-## Schemas and examples
+## Schemas and demo
 
 The current generated schemas cover the [canonical problem](../schemas/apex.v3.4.json), [production templates](../schemas/production.v3.4.json) and [planning options](../schemas/options.v3.4.json). Only these current snapshots are kept in the repository. The CLI and `schema.get` generate schemas from Rust types; acceptance of older canonical inputs is enforced by the runtime and does not depend on historical schema files.
 
-| Synthetic example | Focus |
-| --- | --- |
-| [Demo](../examples/demo.json) | Basic canonical scheduling input |
-| [Production orders](../examples/production-orders.json) | Quantities, lot expansion and selectable workplans |
-| [Shift factory](../examples/shift-factory.json) | Calendars, conditional work and material |
-| [Material chains](../examples/chain-routing.json) | Flexible routing, allocation and downstream urgency |
-| [Dispatch campaign](../examples/dispatch-campaign.json) | Mandatory construction policies |
-| [Release times](../examples/improve-release-times.json) | Combined-improvement scenario |
+The [factory showcase](https://github.com/qunevo/apex/tree/main/demo) presents the MES/Excel workflow. Its [customization package](../customization/demo/model/KNOWLEDGE.md) defines the application integration boundary and optional technical policies. The live factory adapter is still pending. Small synthetic inputs used to verify individual engine capabilities remain [test fixtures](../tests/fixtures).
 
 ## Work on the repository
 

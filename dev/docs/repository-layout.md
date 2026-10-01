@@ -4,7 +4,7 @@ The repository contains an independently usable application, contributor tooling
 
 | Location | Responsibility |
 | --- | --- |
-| [app/](../../app) | Complete customer source: Rust package and lockfile, embedded viewer, schemas, synthetic examples, public customization, product skills, deployment helpers, documentation and product tests |
+| [app/](../../app) | Complete customer source: Rust package and lockfile, embedded viewer, schemas, public customization, product skills, deployment helpers, documentation and product tests with synthetic fixtures |
 | [dev/](..) | Fixture generation, wiki/publication checks, detached application verification, contributor documentation and tests of these tools |
 | [demo/](../../demo) | Standalone fictional factory: local MES web app, synthetic business records and a separate Excel planning baseline; optional and not required by the application |
 | [dev/skills/](../skills) | Canonical contributor workflows for planning, development, integration, releases and maintenance |
@@ -14,13 +14,13 @@ The repository contains an independently usable application, contributor tooling
 
 ## Independent application
 
-Inside `app/`, `core/` owns algorithms, `server/` owns entry points and tool
-orchestration, `data/` owns existing file-backed state, and `ui/` owns the viewer.
+Inside `app/`, `core/` owns algorithms. `middleware/` groups API entry points,
+control operations and data persistence. `ui/` contains the MCP App and desktop.
 `skills/` holds general workflows; `customization/<id>/` groups each domain's
 adapter, model, skills, tests and optional views. `app/Cargo.toml` is also the
 workspace root for the `apex-engine` crate in `core/` and the control-platform
-crates (`control/`, `engine-adapter/`, `control-postgres/`, `control-server/`,
-`desktop/`); see [control platform](../../app/docs/control-platform.md). The
+crates (`middleware/control/`, `middleware/data/`, `middleware/api/`,
+`ui/desktop/`); see [control platform](../../app/docs/control-platform.md). The
 desktop client is not a default member, so ordinary builds do not need GPUI.
 See [server configuration](../../app/docs/server-configuration.md) for package
 allowlists, defaults and request-specific selection.
@@ -34,6 +34,21 @@ The root [LICENSE](../../LICENSE) is canonical. [app/LICENSE](../../app/LICENSE)
 The module architecture remains [with the application source](../../app/docs/architecture/README.md), because customers implementing native customizations need that contract too. Contributor processes and historical migration evidence live in `dev/docs`.
 
 See [developer workflow](developer-workflow.md) for the dev/main branch model and agent authorization, [versioning](versioning.md) for product releases, and [documentation maintenance](documentation-maintenance.md) for drift and context audits.
+
+## Container deployment boundaries
+
+`app/compose.yaml` and its Docker build context work from an application-only
+copy. Initialization and migration services prepare PostgreSQL and access tokens.
+`demo/compose.yaml` includes that base and supplies its own APEX override, MES
+image and host workbook mount. No application deployment file refers to the
+parent demo. The desktop remains an optional native client.
+See the [container contract](../../app/docs/containers.md).
+
+Run `python -B dev/scripts/check_containers.py` with a Linux Docker engine to
+verify both deployments in temporary source exports. It builds the app with no
+parent demo present, plans through MCP, checks the UI resource and database role,
+then recreates services to verify credentials, plans and MES/Excel persistence.
+The test only removes its uniquely named projects and temporary files.
 
 ## Verification
 
