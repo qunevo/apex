@@ -10,6 +10,7 @@ This index describes the runnable Rust implementation with executable schema **`
 | [Agent workflows](agent-workflows.md) | Data intake, planner conversations and extension responsibilities |
 | [Agent integration](agent-integration.md) | MCP, HTTP, authentication, pagination and large imports |
 | [Server configuration](server-configuration.md) | Enabled packages, per-call selection and scoped state |
+| [Control platform](control-platform.md) | Tenants, versioned scenarios, background runs, approval, PostgreSQL, MCP/HTTP and the desktop display client |
 | [Executable data model](data-model.md) | Units, routes, orders, conditional activities, locks, objectives and KPIs |
 | [Material preparation](material-dispatch.md) | Existing-supply allocation, flexible routes and material modes |
 | [Search and objectives](search-and-parity.md) | Q policies, XH, XT, replay and search limits |

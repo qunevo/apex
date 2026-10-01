@@ -6,7 +6,7 @@ Use the [data model](../data-model.md) for field semantics, the [operating guide
 
 ## Runtime boundaries
 
-[Cargo.toml](../../Cargo.toml) defines one Rust package, the `apex` library and the `apex` binary. [lib.rs](../../lib.rs) exposes the modules; [main.rs](../../server/main.rs) selects CLI commands and transports. The scheduler does not depend on Python, an LLM or an external solver. Repository Python/Node scripts support fixtures and verification.
+[Cargo.toml](../../Cargo.toml) is the workspace root and the `apex-scheduler` package with the `apex` library and the `apex` binary. The scheduling core is the `apex-engine` crate in `core/`; the [control platform](../control-platform.md) crates build on it without changing this executable. [lib.rs](../../lib.rs) exposes the modules; [main.rs](../../server/main.rs) selects CLI commands and transports. The scheduler does not depend on Python, an LLM or an external solver. Repository Python/Node scripts support fixtures and verification.
 
 ```mermaid
 flowchart TD
@@ -26,11 +26,11 @@ flowchart TD
   Service --> Store[Local .apex artifact store]
 ```
 
-The application remains one Rust package and executable. Its source boundaries are:
+The engine-only product is the root package and its `apex` executable. Its source boundaries are:
 
 | Directory | Responsibility |
 | --- | --- |
-| `core/` | In-memory scheduling semantics, algorithms and independent validation |
+| `core/` | `apex-engine` crate: in-memory scheduling semantics, algorithms and independent validation |
 | `server/` | CLI, configuration, request routing, tool orchestration and MCP/HTTP |
 | `data/` | Scenario/import/result records, file access, atomic writes and store locking |
 | `ui/` | Embedded browser viewer and future shared chat views |
@@ -174,6 +174,6 @@ Use `target/release/apex.exe` on Windows. Keep only the current generated schema
 
 - The decoder constructs append-based schedules with integer-second time and fixed resource identities within each phase. It has no completeness or optimality guarantee.
 - Exact policy probes use a specialized independent-task fast path or reconstruct `prefix + candidate`. There is no general transactional rollback or incremental cross-resource repair engine.
-- The service uses a local file store and serialized tool calls. It is not the removed v2 SaaS deployment or a tenant-management system.
+- The `apex` service uses a local file store and serialized tool calls. Tenants, durable runs, approval and publication belong to the separate [control platform](../control-platform.md).
 - There is no external solver backend, stochastic simulator, general simultaneous batch formation, arbitrary plugin hot-loading, automatic Q-formula generation or automatic operator synthesis.
 - Supported input versions share one runtime; passing current tests does not establish complete v2 parity. Keep measured comparisons in the [migration audit](https://github.com/qunevo/apex/blob/main/dev/docs/migration-audit.md) and separate benchmark workstream.

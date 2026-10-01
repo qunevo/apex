@@ -79,6 +79,11 @@ jobs:
           cargo clippy --locked --all-targets -- -D warnings
           cargo test --locked
           cargo build --locked --release
+      - name: Lint and test the desktop display client
+        if: runner.os == 'macOS'
+        run: |
+          cargo clippy --locked -p apex-desktop --all-targets -- -D warnings
+          cargo test --locked -p apex-desktop
       - name: Install Node for Linux integration
         if: runner.os == 'Linux'
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -163,6 +168,40 @@ jobs:
           TARGET_BRANCH: ${{ needs.changes.outputs.target }}
         run: python -B dev/scripts/release.py check --base "$BASE_REVISION" --target "$TARGET_BRANCH"
 
+  control-postgres:
+    name: Control platform on PostgreSQL
+    needs: changes
+    if: needs.changes.outputs.runtime == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: app
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_PASSWORD: apex
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install stable Rust
+        run: |
+          rustup toolchain install stable --profile minimal --no-self-update
+          rustup default stable
+      - name: Store conformance and row-level security
+        env:
+          APEX_TEST_DATABASE_URL: postgres://postgres:apex@127.0.0.1:5432/postgres
+        run: cargo test --locked -p apex-control-postgres
+
   standalone:
     name: Standalone application
     needs: changes
@@ -186,7 +225,7 @@ jobs:
   required:
     name: Required checks
     if: ${{ always() }}
-    needs: [changes, rust, publication, standalone]
+    needs: [changes, rust, control-postgres, publication, standalone]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -195,6 +234,7 @@ jobs:
           SCOPE_RESULT: ${{ needs.changes.result }}
           RUNTIME_REQUIRED: ${{ needs.changes.outputs.runtime }}
           RUST_RESULT: ${{ needs.rust.result }}
+          POSTGRES_RESULT: ${{ needs.control-postgres.result }}
           PUBLICATION_RESULT: ${{ needs.publication.result }}
           STANDALONE_RESULT: ${{ needs.standalone.result }}
         run: |
@@ -202,9 +242,11 @@ jobs:
           test "$PUBLICATION_RESULT" = success
           if test "$RUNTIME_REQUIRED" = true; then
             test "$RUST_RESULT" = success
+            test "$POSTGRES_RESULT" = success
             test "$STANDALONE_RESULT" = success
           elif test "$RUNTIME_REQUIRED" = false; then
             test "$RUST_RESULT" = skipped
+            test "$POSTGRES_RESULT" = skipped
             test "$STANDALONE_RESULT" = skipped
           else
             exit 1

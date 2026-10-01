@@ -58,3 +58,8 @@ See the [licensing overview](LICENSING.md) and [pricing and eligibility](docs/le
 The application is organized into `core/`, `server/`, `data/`, `ui/`, `skills/`
 and `customization/`, with one executable. See [server configuration](docs/server-configuration.md)
 for an enabled-package list, default selection and per-request customization.
+
+The [control platform](docs/control-platform.md) adds tenants, versioned scenarios,
+background runs, approval and publication on PostgreSQL, served over HTTP and MCP by
+the `apex-control` executable, and a desktop display client. It uses the same
+scheduling engine crate and leaves the `apex` executable unchanged.

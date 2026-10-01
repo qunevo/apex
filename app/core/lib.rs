@@ -1,4 +1,7 @@
 //! Scheduling semantics and algorithms; no transport or persistent state.
+
+/// Engine version recorded in result provenance.
+pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 pub mod activities;
 pub mod calendar;
 pub mod compile;
@@ -25,3 +28,7 @@ pub mod xh;
 pub mod xt;
 
 pub(crate) mod placement;
+
+// The bundled synthetic customization is statically registered by `extensions`.
+#[path = "../customization/dummy_customer/model/policy.rs"]
+pub mod dummy_customer;
