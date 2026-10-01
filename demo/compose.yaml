@@ -1,0 +1,36 @@
+name: apex-demo
+
+include:
+  - path:
+      - ../app/compose.yaml
+      - ./apex.compose.yaml
+
+services:
+  mes:
+    build:
+      context: .
+    environment:
+      DEMO_UID: ${DEMO_UID:-1000}
+      DEMO_GID: ${DEMO_GID:-1000}
+    command:
+      - --bind
+      - 0.0.0.0
+      - --allow-host
+      - mes:8788
+      - --allow-host
+      - 127.0.0.1:${DEMO_MES_PORT:-8788}
+      - --allow-host
+      - localhost:${DEMO_MES_PORT:-8788}
+      - --data-dir
+      - /var/lib/demo
+    ports:
+      - "127.0.0.1:${DEMO_MES_PORT:-8788}:8788"
+    volumes:
+      - ./.local/container:/var/lib/demo
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8788/api/meta', timeout=3).read()"]
+      interval: 5s
+      timeout: 5s
+      start_period: 120s
+      retries: 20
+    restart: unless-stopped

@@ -44,6 +44,13 @@ usable on its own.
 - **Roles.** `viewer` reads; `planner` edits scenarios and starts or cancels runs;
   `approver` approves, rejects and publishes; `admin` may do everything.
 
+## Start with containers
+
+From the standalone application directory, run `docker compose up --build`.
+Initialization, database roles and migrations are automatic; state and initial
+access tokens survive normal shutdown. Follow the [container guide](containers.md).
+No source system or customization is activated by the base Compose file.
+
 ## Run locally
 
 ```text

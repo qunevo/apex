@@ -1,6 +1,6 @@
 # Current architecture
 
-This is the implementation map for agents changing APEX. Read it after [repository conventions](../../AGENTS.md), then follow the source and test links below. The executable input is `apex.v3.4`; canonical v3.1–v3.3 inputs use the same Rust implementation. There is no separate legacy scheduler in this checkout.
+This is the implementation map for agents changing APEX. Read it after [repository conventions](../../AGENTS.md), then follow the source and test links below. The executable input is `apex.v3.4`; canonical v3.1â€“v3.3 inputs use the same Rust implementation. There is no separate legacy scheduler in this checkout.
 
 Use the [data model](../data-model.md) for field semantics, the [operating guide](../implementation.md) for commands, and the [migration audit](https://github.com/qunevo/apex/blob/main/dev/docs/migration-audit.md) for historical v2 evidence. This directory documents implemented behavior.
 
@@ -59,6 +59,11 @@ engine contract. It is not a separate adapter service. Domain source adapters
 belong in `customization/<id>/adapter`. The desktop depends on control contracts
 without enabling the `apex` feature. The MCP App receives `results.get` through
 its host bridge and does not persist authoritative planning state.
+
+The [container deployment](../containers.md) starts this central server with
+PostgreSQL; it does not start the compatibility executable or native desktop.
+Application container files are independent of the root demo. The root demo
+composes additional source services and selects a customization through config.
 
 ## Source map
 

@@ -1,10 +1,12 @@
 # Chat-led scheduling
 
-The default web UI is a plan viewer: schedule, KPIs, order completion, commitments and operation details. It does not require the planner to understand scenario forks, patches, Q policies or search budgets. The agent performs those operations through tools and returns a saved-plan link. `?mode=workbench` exposes the development controls when needed.
+The central server uses `scenarios.create|revise`, `runs.start|get` and `results.get`. Facts are canonical engine input; production-template expansion and live source adapters are not exposed as central tools yet. A supporting chat host displays the MCP App returned with a result. Approval/publication sets the active plan inside APEX and does not write back to MES/ERP. See [control platform](control-platform.md).
+
+The compatibility executable's web UI is a plan viewer: schedule, KPIs, order completion, commitments and operation details. It does not require the planner to understand scenario forks, patches, Q policies or search budgets. The agent performs those operations through tools and returns a saved-plan link. `?mode=workbench` exposes the development controls when needed.
 
 The **Discuss in your chat** button copies a bounded context with scenario, revision, schedule, baseline and selected operation IDs. It does not send a message or embed another model. A tool-capable chat needs an actual MCP/HTTP connection; a URL alone does not grant tool access. The UI is independent of the chat provider.
 
-## Roles, not mandatory separate agents
+## Agent workflows
 
 Three portable repository skills live in `skills/`:
 
@@ -38,6 +40,8 @@ flowchart LR
   Results --> Viewer[Lean plan viewer]
   Results --> Planning
 ```
+
+The following fork/freeze/patch sequence describes the compatibility tools. On the central server, preserve a baseline scenario, submit canonical facts to a new scenario or revision, and compare retained result metrics explicitly.
 
 ```mermaid
 sequenceDiagram

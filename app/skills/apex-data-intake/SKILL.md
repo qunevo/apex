@@ -9,7 +9,11 @@ Paths below are relative to the APEX application installation (`app/` in the dev
 
 Act as an optional source adapter. A dedicated connector is not required when available file tools, scripts or authorized system tools can obtain the data reliably. Prefer repeatable extraction and mapping scripts over copying rows through chat.
 
-Read `AGENTS.md` at the application root and `docs/data-model.md`, then query `capabilities` and only the relevant `schema.get` definitions. Tool names here are APEX names; hosts may prefix them.
+Read `AGENTS.md` at the application root and `docs/data-model.md`, then discover the connected tool catalog. Tool names here are APEX names; hosts may prefix them.
+
+For the central Compose server, query `engines.list` and use the shipped canonical schema. Submit the mapped canonical problem as `content.facts` to `scenarios.create` or `scenarios.revise` with `expected_revision`; see [control platform](../../docs/control-platform.md). Production templates need expansion before submission. The central catalog does not expose workspace-file imports, chunk sessions or automatic MES/Excel extraction. Mounted source files alone do not import data. Keep mapping artifacts outside chat and use available authorized file/connector tools to prepare the request.
+
+The import, material-preparation and paging tool names below apply only to the compatibility catalog. When it advertises `capabilities`, query it and only the relevant `schema.get` definitions before using those operations. The mapping and source-ownership requirements apply to both catalogs.
 
 ## Produce a traceable snapshot
 

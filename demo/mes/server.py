@@ -1,4 +1,4 @@
-"""Loopback-only MES web server. Run with python -B -m demo.mes.server."""
+"""Local MES server with explicit container binding and host allowlists."""
 import argparse
 import csv
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -53,8 +53,10 @@ class Handler(BaseHTTPRequestHandler):
 
     def guard(self):
         host = self.headers.get("Host", "")
-        if host not in [f"127.0.0.1:{self.server.server_port}", f"localhost:{self.server.server_port}"]:
-            raise ValueError("Use the loopback address printed by the demo server")
+        allowed = {f"127.0.0.1:{self.server.server_port}", f"localhost:{self.server.server_port}"}
+        allowed.update(getattr(self.server, "allowed_hosts", ()))
+        if host not in allowed:
+            raise ValueError("Use a configured demo server address")
         origin = self.headers.get("Origin")
         if origin and origin != f"http://{host}":
             raise ValueError("Cross-origin requests are not permitted")
@@ -188,11 +190,14 @@ class Handler(BaseHTTPRequestHandler):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port", type=int, default=8788)
+    parser.add_argument("--bind", choices=("127.0.0.1", "0.0.0.0"), default="127.0.0.1")
+    parser.add_argument("--allow-host", action="append", default=[], help="Additional exact HTTP Host value, including port")
     parser.add_argument("--data-dir", type=Path, default=DEMO / ".local")
     args = parser.parse_args()
     directory = args.data_dir.resolve()
     store, seed = prepare(directory)
-    server = ThreadingHTTPServer(("127.0.0.1", args.port), Handler)
+    server = ThreadingHTTPServer((args.bind, args.port), Handler)
+    server.allowed_hosts = set(args.allow_host)
     server.store, server.seed, server.directory = store, seed, directory
     print(f"Qunevo Demo MES: http://127.0.0.1:{server.server_port}", flush=True)
     print(f"Synthetic demo state: {directory}", flush=True)

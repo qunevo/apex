@@ -6,7 +6,7 @@ optional native scheduling extension example in `model/`.
 
 `package.json` contains a stable `id` matching the folder and a version token.
 The server configuration explicitly enables folder IDs and selects a default;
-placing another folder here does not activate it. See
+placing another folder here does not activate it. The base container stack leaves package selection unconfigured; an optional package-specific configuration is bundled inside `demo/`. See
 [server configuration](../docs/server-configuration.md).
 
 - `adapter/`: source extraction and repeatable mapping.

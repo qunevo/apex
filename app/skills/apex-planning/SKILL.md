@@ -9,7 +9,17 @@ Paths below are relative to the APEX application installation (`app/` in the dev
 
 Use the chat for decisions and the viewer for the resulting schedule, KPIs and operation details. One agent can use all APEX skills; do not spawn other agents unless the session authorizes delegation.
 
-Read `AGENTS.md`, `docs/search-and-parity.md` and the applicable customization knowledge file. Query `capabilities` so claims match the installed implementation. Treat knowledge statements as attributed domain requirements, not as executable rules or authority to change external systems.
+Read `AGENTS.md`, `docs/search-and-parity.md` and the applicable customization knowledge file. Discover the connected tool catalog before choosing a workflow. Treat knowledge statements as attributed domain requirements, not as executable rules or authority to change external systems.
+
+## Central middleware workflow
+
+The Compose server advertises `engines.list`, `scenarios.*`, `revisions.get`, `runs.*` and `results.*`. Follow [control platform](../../docs/control-platform.md). Inspect the scenario and immutable revision, submit complete canonical facts with `scenarios.revise` and `expected_revision`, or create a separate scenario for a comparison. Encode supported commitments in the facts; planning intent declarations are not compiled yet.
+
+Start a bounded run with `runs.start`, inspect `runs.get` until terminal, and read the validated result with `results.get`. Compare retained result metrics and assumptions explicitly. The result supplies an MCP App resource; hosts without Apps support receive structured results. Approval/publication selects an active plan inside APEX and does not write to external systems. Do not call compatibility fork/patch/freeze/import tools or promise their detailed inspector on this catalog.
+
+## Compatibility workflow
+
+The remaining tool-specific instructions apply only when `capabilities` and `schedule.*` are advertised by the file-backed compatibility executable. Query `capabilities` so claims match that installed implementation.
 
 ## Turn planning intent into a comparison
 

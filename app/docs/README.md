@@ -6,6 +6,7 @@ This index describes the runnable Rust implementation with executable schema **`
 
 | Guide | Read it for |
 | --- | --- |
+| [Container start](containers.md) | One-command server startup, credentials and retained state |
 | [Operating guide](implementation.md) | Build, run, verify and understand runtime limits |
 | [Agent workflows](agent-workflows.md) | Data intake, planner conversations and extension responsibilities |
 | [Agent integration](agent-integration.md) | MCP, HTTP, authentication, pagination and large imports |

@@ -4,11 +4,15 @@ The executable model is **`apex.v3.4`**, with canonical v3.1/v3.2/v3.3 input com
 
 The [executable model](data-model.md) covers route- and mode-aware material allocation, upstream chain urgency, conditional choices and grouped/resource/stage KPIs. [Direct schedule evolution](direct-schedule-evolution.md) adds priority chromosomes, adaptive operators and declared native conditional alternatives. The implementation includes route selection, mode-dependent conditional activity graphs, quantity/order expansion, native customization hooks, XG construction and XH hypersearch, independent validation, durable scenario tools and a browser workbench. This is experimental software; tested feature coverage does not establish universal equivalence with every v2 customization or production readiness.
 
+## Central server and containers
+
+The default deployment starts with `docker compose up --build` from the application directory. See [containers](containers.md) for initialization, PostgreSQL, credentials and retained state, and [control platform](control-platform.md) for the central HTTP/MCP catalog, background runs and MCP App. The rest of this guide covers direct engine commands and the separate file-backed compatibility server.
+
 ## Build and run
 
 Run the following commands from the application directory: `cd app` in the development checkout, or the root of a standalone application copy. The parent repository is not needed.
 
-Install stable Rust and its native linker. Windows needs Visual Studio C++ Build Tools for the MSVC target. This checkout was tested with Rust 1.98.1. The executable needs neither Python nor an external solver.
+Install stable Rust and its native linker. Windows needs Visual Studio C++ Build Tools for the MSVC target. The executable needs neither Python nor an external solver.
 
 ```text
 cargo fmt --check
@@ -50,7 +54,7 @@ The workbench offers a production example, canonical/production JSON import, res
 
 ## Agent access and large input
 
-[Agent integration](agent-integration.md) documents MCP stdio, Streamable HTTP, plain HTTP tools, generated OpenAPI and deployment configuration. All transports use the same 32 tools. No model API key is required by APEX; the conversational host supplies its own agent.
+[Agent integration](agent-integration.md) documents MCP stdio, Streamable HTTP, plain HTTP tools, generated OpenAPI and deployment configuration. The compatibility transports use the same 32 tools; the central middleware has its own scenario/run/result catalog. No model API key is required by APEX; the conversational host supplies its own agent.
 
 An optional source adapter can be a connector, an agent-created conversion script or a ready canonical artifact. Read samples and mapping metadata into context, then convert complete source artifacts outside the model. Durable task imports accept at most 5,000 tasks and 4 MiB per chunk. Finalization validates cross-chunk references. Oversized responses become artifacts inspectable remotely through `artifact.read`. Batching bounds transport and context; compilation and planning still hold the problem in memory.
 
@@ -82,7 +86,7 @@ Mandatory candidate filtering is implemented in the shared dispatch path. Exact 
 
 The `.apex` store uses a process-shared filesystem lock, temporary writes and atomic replacement. Scenario patches require `expected_revision`; failed multi-patch requests do not partially update state. Forks are independent. Saved schedules pin their input/revision, so later edits do not alter historical validation. Chunk IDs/content hashes support idempotent retries and persisted imports can resume after restart.
 
-The service remains synchronous, single-writer and filesystem-based, with whole-state loading and an input copy per saved schedule. It has no database, per-user identity, tenant isolation, asynchronous cancellation or crash-injection coverage. Remote HTTP requires configured authentication and network deployment; hosted agents cannot reach another computer's loopback address.
+The compatibility `apex` service remains synchronous, single-writer and filesystem-based, with whole-state loading and an input copy per saved schedule. It has no database, per-user identity or tenant isolation. Use the central `apex-control` service for PostgreSQL persistence, tenant roles, queued runs and result approval. Remote HTTP requires configured authentication and network deployment; hosted agents cannot reach another computer's loopback address.
 
 No external solver is connected: `solver.solve` returns `UNSUPPORTED_BACKEND`. A complete solver export/import contract is future work. Automatic generation of missing production orders, dynamic named-worker replacement within one phase, arbitrary preemption, simultaneous production batches, unrestricted cross-task internal activity graphs and stochastic simulation are not implemented. Optional route-aware allocation of existing material supply is available through `material.prepare`; see [material preparation](material-dispatch.md) for its limits.
 

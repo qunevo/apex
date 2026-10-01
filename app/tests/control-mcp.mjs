@@ -24,7 +24,7 @@ const auth = path.join(directory, 'auth.json');
 await writeFile(auth, JSON.stringify({ tenants: [{ id: tenant, name: 'Synthetic test' }], tokens: [{ sha256: createHash('sha256').update(token).digest('hex'), tenant, actor: 'test-agent', roles: ['admin'] }] }));
 const env = { ...process.env };
 delete env.APEX_CONTROL_DATABASE_URL;
-const server = spawn(binary, ['serve', '--auth', auth, '--config', path.join(root, 'apex.config.json'), '--bind', `127.0.0.1:${port}`, '--workers', '1'], { cwd: directory, windowsHide: true, env, stdio: 'pipe' });
+const server = spawn(binary, ['serve', '--auth', auth, '--config', path.join(root, 'customization/demo/apex.config.json'), '--bind', `127.0.0.1:${port}`, '--workers', '1'], { cwd: directory, windowsHide: true, env, stdio: 'pipe' });
 let diagnostics = '';
 server.stderr.on('data', data => { diagnostics += data; });
 server.stdout.resume();

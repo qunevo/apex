@@ -7,7 +7,27 @@ The application uses Qunevo's logo, colors and locally bundled website fonts.
 assets. Northstar Valve Works remains the fictional factory represented by the
 MES and planning workbook.
 
-## Start
+## Start the complete showcase
+
+Install Docker with Linux containers and Docker Compose 2.20.3 or newer. From this directory:
+
+```bash
+docker compose up --build
+```
+
+Open **http://127.0.0.1:8788** for the MES. APEX is available at **http://127.0.0.1:8780/mcp**. Retrieve chat/desktop access tokens with `docker compose exec apex apex-container access`. The first build downloads images/dependencies; initial MES generation can take about a minute. `docker compose up --build -d --wait` waits for readiness in the background.
+
+[compose.yaml](compose.yaml) includes the normal application stack and [apex.compose.yaml](apex.compose.yaml) selects its demo customization. PostgreSQL stores APEX state in project-scoped named volumes; the MES database and editable Excel working file live in **`.local/container/`**. Open `.local/container/production-planning.xlsx` in Excel to edit the actual mounted workbook. The versioned `planning/production-planning.xlsx` remains the reset baseline. The original native `.local/` working state is separate.
+
+The APEX container receives that same working directory at `/sources/demo` read-only and the deployment's [sources.json](sources.json) inside the demo customization's adapter directory. The MES is reachable there as `http://mes:8788`. These prepare source access; the live adapter and factory-model mapping remain unimplemented, so starting the stack does not import MES or Excel data or optimize the factory automatically.
+
+`docker compose down` retains both database volumes and local MES/Excel files. **Reset demo** resets only MES state and its working workbook, not APEX scenarios. `docker compose down -v` deletes the Compose project's APEX database and credentials; the bind-mounted `.local/container/` is retained. See the [application container guide](../app/docs/containers.md) for connection and lifecycle details.
+
+The standalone app and this showcase use different Compose projects but the same default APEX port. Stop one before starting the other, or set `APEX_HTTP_PORT`. Set `DEMO_MES_PORT` to change the MES host port. On native Linux, users whose UID/GID differ from 1000 can set `DEMO_UID` and `DEMO_GID` to their host IDs for editable workbook ownership. Windows/macOS use Docker Desktop's file sharing.
+
+The MES container listens on its internal network interface but publishes only a host loopback port. Exact allowed Host values include the internal service and configured local port; cross-origin browser requests remain rejected. Desktop remains an optional separate client.
+
+## MES-only Python start
 
 Requires Python 3.10 or newer. The MES uses only the Python standard library; no package installation, scheduler build, database service or account is required.
 
@@ -17,7 +37,7 @@ From the repository root:
 bash demo/scripts/start.sh
 ```
 
-Or run `python -B -m demo.mes.server`. Open **http://127.0.0.1:8788**. Use `--port 8789` for a different local port. The server binds to loopback only. Stop it with Ctrl+C.
+Or run `python -B -m demo.mes.server`. Open **http://127.0.0.1:8788**. Use `--port 8789` for a different local port. The native start binds to loopback by default. Stop it with Ctrl+C.
 
 The first start generates the synthetic data and conventional planning baseline, then creates `demo/.local/mes.sqlite`. Initial generation can take about a minute depending on the host. Later starts reuse the local database. The reviewed [Excel baseline](planning/production-planning.xlsx) is copied to the local working directory and can be downloaded from **Excel planning** in the MES.
 
@@ -60,13 +80,13 @@ The browser workbook views are previews of the original seed, not a live spreads
 - `.local/`: ignored database, seed cache, working Excel copy, previews and test outputs.
 - `scripts/start.sh`: portable launcher, including Git Bash on Windows.
 
-No parent dependency is added to `app/`. This demo does not require or change the APEX executable, the bundled technical examples or frozen paper evidence. The APEX package boundary is in `app/customization/demo/`; the live adapter remains a subsequent integration step.
+No parent dependency is added to `app/`. The container showcase composes the existing APEX server; the MES-only Python start still runs independently. Frozen paper evidence is unchanged. The APEX package boundary is in `app/customization/demo/`; the live adapter remains a subsequent integration step.
 
 To regenerate after changing seed code, stop the server, run `python -B -m demo.mes.seed`, rebuild the source workbook with the authoring runtime, and then use **Reset demo** after restarting. This is an intentional maintainer operation; do not reset someone else's active demo.
 
 ## API
 
-The same loopback API backs the browser and a future adapter:
+The same API backs the browser and a future adapter; Compose also makes it available on the private container network:
 
 | Method and path | Contract |
 | --- | --- |

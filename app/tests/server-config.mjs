@@ -10,11 +10,12 @@ import {chromium} from 'playwright';
 const root=path.resolve(import.meta.dirname,'..');
 const workspace=await fs.mkdtemp(path.join(os.tmpdir(),'apex configured '));
 // A second test-only package exercises routing without shipping another domain.
-const config=JSON.parse(await fs.readFile(path.join(root,'apex.config.json'),'utf8'));
+const bundledConfig=path.join(root,'customization/demo/apex.config.json');
+const config=JSON.parse(await fs.readFile(bundledConfig,'utf8'));
 for(const id of config.enabled_customizations) {
   const folder=path.join(workspace,'customization',id);
   await fs.mkdir(folder,{recursive:true});
-  await fs.copyFile(path.resolve(root,config.customization_root,id,'package.json'),path.join(folder,'package.json'));
+  await fs.copyFile(path.resolve(path.dirname(bundledConfig),config.customization_root,id,'package.json'),path.join(folder,'package.json'));
 }
 await fs.mkdir(path.join(workspace,'customization/secondary'));
 await fs.writeFile(path.join(workspace,'customization/secondary/package.json'),JSON.stringify({id:'secondary',version:'1'}));

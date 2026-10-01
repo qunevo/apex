@@ -224,10 +224,26 @@ jobs:
       - name: Build and run using only the application source
         run: python -B dev/scripts/check_standalone.py
 
+  containers:
+    name: Standalone and demo containers
+    needs: changes
+    if: needs.changes.outputs.runtime == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.14'
+      - name: Start, plan and recreate both deployments
+        run: python -B dev/scripts/check_containers.py
+
   required:
     name: Required checks
     if: ${{ always() }}
-    needs: [changes, rust, control-postgres, publication, standalone]
+    needs: [changes, rust, control-postgres, publication, standalone, containers]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -239,6 +255,7 @@ jobs:
           POSTGRES_RESULT: ${{ needs.control-postgres.result }}
           PUBLICATION_RESULT: ${{ needs.publication.result }}
           STANDALONE_RESULT: ${{ needs.standalone.result }}
+          CONTAINERS_RESULT: ${{ needs.containers.result }}
         run: |
           test "$SCOPE_RESULT" = success
           test "$PUBLICATION_RESULT" = success
@@ -246,10 +263,12 @@ jobs:
             test "$RUST_RESULT" = success
             test "$POSTGRES_RESULT" = success
             test "$STANDALONE_RESULT" = success
+            test "$CONTAINERS_RESULT" = success
           elif test "$RUNTIME_REQUIRED" = false; then
             test "$RUST_RESULT" = skipped
             test "$POSTGRES_RESULT" = skipped
             test "$STANDALONE_RESULT" = skipped
+            test "$CONTAINERS_RESULT" = skipped
           else
             exit 1
           fi

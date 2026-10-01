@@ -115,6 +115,17 @@ class DemoTests(unittest.TestCase):
             self.assertEqual(status,400)
             status,_=request("GET","/api/meta",headers={"Origin":"https://example.invalid"})
             self.assertEqual(status,400)
+            status,_=request("GET","/api/meta",headers={"Host":"mes:8788"})
+            self.assertEqual(status,400)
+            server.allowed_hosts={"mes:8788", "localhost:18788"}
+            status,_=request("GET","/api/meta",headers={"Host":"mes:8788"})
+            self.assertEqual(status,200)
+            status,_=request("GET","/api/meta",headers={"Host":"localhost:18788", "Origin":"http://localhost:18788"})
+            self.assertEqual(status,200)
+            status,_=request("GET","/api/meta",headers={"Host":"mes:8788", "Origin":"http://localhost:18788"})
+            self.assertEqual(status,400)
+            status,_=request("GET","/api/meta",headers={"Host":"mes:8788.evil.invalid"})
+            self.assertEqual(status,400)
         finally:
             server.shutdown();server.server_close();thread.join()
 

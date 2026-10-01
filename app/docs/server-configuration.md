@@ -3,7 +3,7 @@
 The central `apex-control` service and the compatibility `apex` executable use
 the same configuration file and package manifests. Both accept `--config FILE`
 or `APEX_CONFIG`. Core algorithms remain independent of transport and persistent
-state. For the central service, run `apex-control serve --config apex.config.json`;
+state. For the central service, pass `apex-control serve --config FILE` with your configuration;
 see [control platform](control-platform.md) for scenario-bound selection and
 PostgreSQL storage. The rest of this page documents the file-backed compatibility
 interface:
@@ -18,15 +18,17 @@ Without either, the existing flat workspace/store behavior is unchanged.
 `deploy/setup-mcp.sh` preserves its existing default; pass `--config` in the
 generated entry's `args` when package routing is wanted.
 
-The bundled [configuration](../apex.config.json) is:
+The base container stack leaves `APEX_CONFIG` empty. An optional package-specific [configuration](../customization/demo/apex.config.json) illustrates selecting the bundled synthetic package:
 
 ```json
 {
-  "customization_root": "customization",
+  "customization_root": "..",
   "default_customization": "demo",
   "enabled_customizations": ["demo"]
 }
 ```
+
+Use this optional file with `--config customization/demo/apex.config.json` in a native build, or select its container path through a deployment override. See [containers](containers.md#configuration-and-retained-state).
 
 The package root resolves relative to the configuration file, independent of
 the server's working directory. Each enabled folder must contain `package.json`

@@ -2,31 +2,46 @@
 
 [![CI](https://github.com/qunevo/apex/actions/workflows/ci.yml/badge.svg)](https://github.com/qunevo/apex/actions/workflows/ci.yml)
 
-APEX is an experimental Rust scheduler for discrete production, built for agent tool use. It supports alternative workplans, conditional activity graphs, quantity/order expansion, existing-supply material allocation, native customization hooks and independent schedule validation. XG construction, XH hypersearch, XT tree search and XE schedule evolution share the same scheduling rules. A lean browser viewer displays saved plans.
+APEX is an experimental Rust scheduler for discrete production, built for agent tool use. It supports alternative workplans, conditional activity graphs, quantity/order expansion, existing-supply material allocation, native customization hooks and independent schedule validation. XG construction, XH hypersearch, XT tree search and XE schedule evolution share the same scheduling rules. A central middleware serves agents over MCP/HTTP and presents results through an MCP App or optional desktop client.
 
-The same 32 tools are available over MCP stdio, MCP Streamable HTTP and a JSON HTTP API with OpenAPI discovery. No model API key or external solver is required by the scheduler.
+The central server owns scenarios, background runs, approvals and persistent state. The separate compatibility executable retains its file-backed tools and browser viewer. Neither scheduling path needs a model API key or external solver.
 
 ## Repository areas
 
 - [app/](app/README.md) is the independent customer source distribution, with its own manifests, lockfiles, license, product skills, deployment helpers and tests. Build and run it without the parent repository. Keep local data and generated files out of distributed copies.
+- [demo/](demo/README.md) composes the fictional MES/Excel showcase around the application.
 - [dev/](dev/docs/repository-layout.md) contains contributor documentation, fixture generation, wiki/publication tooling and standalone verification.
 - [.agents/skills/](.agents/skills) contains repository development workflows.
 - [.github/](.github) contains CI and contribution infrastructure.
 - [benchmark/](benchmark/README.md) contains the unchanged frozen reproduction package.
 
-## Run locally
+## Start APEX
 
-```text
+From the repository root, enter `app/`. Install Docker with Linux containers and Docker Compose 2.20.3 or newer. No host Rust, Python or Node.js installation is needed.
+
+```bash
 cd app
-cargo build --release
-target/release/apex serve
+docker compose up --build
 ```
 
-On Windows use `target/release/apex.exe`, then open `http://127.0.0.1:8765`. The default viewer shows the schedule, KPIs, commitments and operation details. Planning changes run through your agent chat; `?mode=workbench` exposes development controls.
+This builds APEX and starts PostgreSQL, initialization and migrations. Connect a supporting chat host to `http://127.0.0.1:8780/mcp`. Retrieve access tokens with:
 
-The [Bash helpers](app/docs/implementation.md#bash-helpers) cover build/checks, viewer startup and local MCP setup on Linux, macOS and Git Bash on Windows. For the repository's Codex setup, run `bash deploy/setup-mcp.sh` after building, then reconnect MCP in a trusted project. Other clients can use the [MCP configuration template](app/deploy/codex-mcp.toml) and [agent integration guide](app/docs/agent-integration.md).
+```bash
+docker compose exec apex apex-container access
+```
 
-Use `schedule.create` for quick planning and `schedule.improve` for improvement under one shared budget. Improvement defaults to XH and XT; an agent can explicitly enable the optional XE phase. See [combined improvement](app/docs/architecture/combined-improvement.md) for semantics and limits.
+The MCP App is displayed inside the chat. The optional desktop is a separate display client. The base stack does not activate a customization or start source systems. Read the [container guide](app/docs/containers.md) for retained state, ports, configuration and shutdown, and [control platform](app/docs/control-platform.md) for tools and clients.
+
+For native Rust builds, direct scheduling commands and the retained file-backed viewer, use the [operating guide](app/docs/implementation.md). The compatibility viewer at port 8765 has its own state and tool catalog; Compose does not start it.
+
+For the complete MES/Excel showcase, start from the repository's `demo/` directory instead:
+
+```bash
+cd demo
+docker compose up --build
+```
+
+The demo includes the same APEX stack and adds its MES at `http://127.0.0.1:8788`. Start one stack at a time with the default ports. Source-system mapping is still pending; see the [demo guide](demo/README.md).
 
 ## Documentation
 

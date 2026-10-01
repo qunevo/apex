@@ -35,6 +35,21 @@ The module architecture remains [with the application source](../../app/docs/arc
 
 See [developer workflow](developer-workflow.md) for the dev/main branch model and agent authorization, [versioning](versioning.md) for product releases, and [documentation maintenance](documentation-maintenance.md) for drift and context audits.
 
+## Container deployment boundaries
+
+`app/compose.yaml` and its Docker build context work from an application-only
+copy. Initialization and migration services prepare PostgreSQL and access tokens.
+`demo/compose.yaml` includes that base and supplies its own APEX override, MES
+image and host workbook mount. No application deployment file refers to the
+parent demo. The desktop remains an optional native client.
+See the [container contract](../../app/docs/containers.md).
+
+Run `python -B dev/scripts/check_containers.py` with a Linux Docker engine to
+verify both deployments in temporary source exports. It builds the app with no
+parent demo present, plans through MCP, checks the UI resource and database role,
+then recreates services to verify credentials, plans and MES/Excel persistence.
+The test only removes its uniquely named projects and temporary files.
+
 ## Verification
 
 From the repository root:
