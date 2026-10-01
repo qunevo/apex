@@ -111,6 +111,25 @@ engine, run options are `{"method": "create|hypersearch|treesearch|evolve|improv
 "options": <apex Options>}`. Without a strategy, the queue policy is used, matching
 the engine-only tools.
 
+## Identity and customization
+
+A bearer token identifies a tenant, an actor and that actor's roles. Several
+clients may reuse one token; they then share that identity and its permissions.
+Separate tokens are useful for distinct people or integrations, not required for
+every chat. The initial agent and viewer tokens have different roles in the same
+tenant. Token files are loaded at server startup. Newly added tokens and removals
+take effect after restarting the APEX process; existing tokens need no restart.
+
+Customization selection is independent of authentication. With a package
+configuration, `scenarios.create` uses its configured default or an explicit
+`customization` ID from the enabled list. The server pins the selected package
+ID and version to the scenario; follow-up runs use that identity. Revisions cannot
+switch packages. In the repository demo, `demo` is the configured default.
+
+The enabled-package list is server-wide. There is currently no token- or
+tenant-specific customization allowlist, so package selection must not be treated
+as an authorization boundary between departments.
+
 ## HTTP
 
 | Method and path | Operation |

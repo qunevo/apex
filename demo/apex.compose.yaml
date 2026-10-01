@@ -3,6 +3,7 @@ services:
   apex:
     environment:
       APEX_CONFIG: /opt/apex/customization/demo/apex.config.json
+      APEX_SHOW_ACCESS: ${APEX_SHOW_ACCESS:-1}
     volumes:
       - ../demo/.local/container:/sources/demo:ro
       - ../demo/sources.json:/opt/apex/customization/demo/adapter/sources.json:ro

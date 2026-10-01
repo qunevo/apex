@@ -14,10 +14,10 @@ This directory is an independent source distribution. Copy its source files alon
 docker compose up --build
 ```
 
-This builds APEX and starts PostgreSQL, initialization and migrations. Connect a supporting chat host to `http://127.0.0.1:8780/mcp`. Retrieve access tokens with:
+This builds APEX and starts PostgreSQL, initialization and migrations. Connect a supporting chat host to `http://127.0.0.1:8780/mcp`. Keep the stack running and use a second terminal to display the connection details:
 
 ```bash
-docker compose exec apex apex-container access
+docker compose exec apex apex-container connect
 ```
 
 The MCP App is displayed inside the chat. The optional desktop is a separate display client. The base stack does not activate a customization or start source systems. Read the [container guide](docs/containers.md) for retained state, ports, configuration and shutdown, and [control platform](docs/control-platform.md) for tools and clients.

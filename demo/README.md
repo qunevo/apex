@@ -15,7 +15,9 @@ Install Docker with Linux containers and Docker Compose 2.20.3 or newer. From th
 docker compose up --build
 ```
 
-Open **http://127.0.0.1:8788** for the MES. APEX is available at **http://127.0.0.1:8780/mcp**. Retrieve chat/desktop access tokens with `docker compose exec apex apex-container access`. The first build downloads images/dependencies; initial MES generation can take about a minute. `docker compose up --build -d --wait` waits for readiness in the background.
+Open **http://127.0.0.1:8788** for the MES. APEX is available at **http://127.0.0.1:8780/mcp**. Startup shows the MCP address and ready-to-copy agent authorization header. The demo enables `APEX_SHOW_ACCESS=1`; set it to `0` in a local `.env` to keep the token out of startup logs. The first build downloads images/dependencies; initial MES generation can take about a minute. `docker compose up --build -d --wait` waits for readiness in the background and leaves the terminal free.
+
+Keep the stack running when connecting a chat. With attached logs, open a second terminal in this directory. Run `docker compose exec apex apex-container connect` to display the connection details again, or `docker compose exec apex apex-container access` for both agent and desktop viewer tokens. Multiple local demo clients can reuse the existing agent token; connecting another client needs no container restart. The demo customization is selected by the deployment configuration, not by that token.
 
 [compose.yaml](compose.yaml) includes the normal application stack and [apex.compose.yaml](apex.compose.yaml) selects its demo customization. PostgreSQL stores APEX state in project-scoped named volumes; the MES database and editable Excel working file live in **`.local/container/`**. Open `.local/container/production-planning.xlsx` in Excel to edit the actual mounted workbook. The versioned `planning/production-planning.xlsx` remains the reset baseline. The original native `.local/` working state is separate.
 

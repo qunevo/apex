@@ -15,6 +15,22 @@ password_file() {
     fi
 }
 
+connection_info() {
+    printf '\n%s\n' 'APEX client connection'
+    printf '  Transport: Streamable HTTP\n  MCP URL:   %s\n' "${APEX_CONNECT_URL:-http://127.0.0.1:8780/mcp}"
+    if [[ "${1:-0}" == 1 ]]; then
+        local agent_token
+        agent_token=$(sed -n 's/^  agent (admin):[[:space:]]*//p' "$state/identity/access.txt")
+        test -n "$agent_token"
+        printf '  HTTP header name:  Authorization\n  HTTP header value: Bearer %s\n' "$agent_token"
+        printf '%s\n' '  This bootstrap token can be reused by clients with the same identity.'
+    else
+        printf '%s\n' '  Show access: docker compose exec apex apex-container connect'
+    fi
+    printf '%s\n' '  Keep APEX running. Use a second terminal for exec commands.'
+    printf '%s\n\n' '  Background start: docker compose up --build -d --wait'
+}
+
 case "${1:-serve}" in
     setup)
         password_file "$bootstrap/postgres-password"
@@ -53,8 +69,12 @@ SQL
     serve)
         export APEX_CONTROL_DATABASE_URL
         APEX_CONTROL_DATABASE_URL=${APEX_CONTROL_DATABASE_URL:-$(cat "$state/database-url")}
+        connection_info "${APEX_SHOW_ACCESS:-0}"
         shift
         exec apex-control serve "$@"
+        ;;
+    connect)
+        connection_info 1
         ;;
     access)
         cat "$state/identity/access.txt"

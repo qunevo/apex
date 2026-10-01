@@ -89,6 +89,13 @@ def verify(directory, kind, image, build):
         tokens = re.findall(r"apx_[a-f0-9]+", access)
         assert len(tokens) == 2
         token = tokens[0]
+        connection = compose("exec", "-T", "apex", "apex-container", "connect")
+        assert origin + "/mcp" in connection and f"Bearer {token}" in connection
+        assert "second terminal" in connection
+        startup = compose("logs", "--no-color", "apex")
+        assert origin + "/mcp" in startup
+        assert (token in startup) == (kind == "demo")
+        assert tokens[1] not in startup
         try:
             request(origin + "/v1/scenarios")
         except HTTPError as error:

@@ -38,7 +38,16 @@ and started separately; see [desktop connection](control-platform.md#desktop-dis
 
 ## Connect a chat
 
-After startup, retrieve the initial access tokens explicitly:
+Startup prints the MCP address and connection instructions. Keep the stack
+running and open a second terminal if `docker compose up` is attached to logs.
+Alternatively, use `docker compose up --build -d --wait` to keep the terminal free.
+Display the URL and ready-to-copy agent authorization header at any time:
+
+```bash
+docker compose exec apex apex-container connect
+```
+
+To retrieve both the agent and viewer tokens:
 
 ```bash
 docker compose exec apex apex-container access
@@ -48,8 +57,20 @@ Use the agent token as the bearer credential for `http://127.0.0.1:8780/mcp`.
 Use the viewer token for the optional desktop client. Token hashes are in the
 server's auth file; the bootstrap keeps the initial plaintext tokens in the
 private `apex-state` volume so this command works after restart. They are not
-printed by normal startup or stored in the repository. A hosted chat needs a
+printed by base-stack startup or stored in the repository. Explicitly setting
+`APEX_SHOW_ACCESS=1` includes the bootstrap agent token in startup logs; the local
+repository showcase enables this for convenient setup. Set it to `0` to hide it.
+A hosted chat needs a
 reachable server address instead of this machine's loopback address.
+
+Several clients can reuse the same token and therefore the same tenant, actor
+and roles. Separate tokens distinguish identities; they are not required for
+each chat or connection. Tokens survive ordinary restart and recreation.
+The auth file is loaded when the APEX process starts: after adding or removing
+a token, restart only `apex` with `docker compose restart apex`. Reusing an
+existing token requires no restart. The token does not choose a customization;
+the configured default or explicit scenario-creation selection does. See
+[identity and customization](control-platform.md#identity-and-customization).
 
 The tool contract and a client configuration snippet are in
 [control platform](control-platform.md#agents-mcp). Skills are bundled source
@@ -66,6 +87,8 @@ Optional environment settings (or an ignored local `.env` beside the Compose fil
 | `APEX_CONTROL_WORKERS` | `2` | Concurrent background workers |
 | `APEX_CONFIG` | empty | Customization configuration path **inside the container** |
 | `APEX_IMAGE` | `apex-local:dev` | Locally built image tag |
+| `APEX_CONNECT_URL` | `http://127.0.0.1:<APEX_HTTP_PORT>/mcp` | Client-facing address printed in connection instructions; does not change network binding |
+| `APEX_SHOW_ACCESS` | `0` | Set to `1` to print the bootstrap agent token in startup logs; the local demo defaults to `1` |
 
 Mount a deployment-specific configuration and optional package files using a
 local Compose override, then set `APEX_CONFIG` to the mounted path. Native Rust
