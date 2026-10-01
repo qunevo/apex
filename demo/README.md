@@ -23,7 +23,7 @@ The APEX container receives that same working directory at `/sources/demo` read-
 
 `docker compose down` retains both database volumes and local MES/Excel files. **Reset demo** resets only MES state and its working workbook, not APEX scenarios. `docker compose down -v` deletes the Compose project's APEX database and credentials; the bind-mounted `.local/container/` is retained. See the [application container guide](../app/docs/containers.md) for connection and lifecycle details.
 
-The standalone app and this showcase use different Compose projects but the same default APEX port. Stop one before starting the other, or set `APEX_HTTP_PORT`. Set `DEMO_MES_PORT` to change the MES host port. On native Linux, users whose UID/GID differ from 1000 can set `DEMO_UID` and `DEMO_GID` to their host IDs for editable workbook ownership. Windows/macOS use Docker Desktop's file sharing.
+The standalone app and this showcase use different Compose projects but the same default APEX port. Stop one before starting the other, or set `APEX_HTTP_PORT`. Set `DEMO_MES_PORT` to change the MES host port. On native Linux, run `mkdir -p .local/container` before the first start so the host user owns the parent directories; users whose UID/GID differ from 1000 can set `DEMO_UID` and `DEMO_GID` to their host IDs for editable workbook ownership. Windows/macOS use Docker Desktop's file sharing.
 
 The MES container listens on its internal network interface but publishes only a host loopback port. Exact allowed Host values include the internal service and configured local port; cross-origin browser requests remain rejected. Desktop remains an optional separate client.
 

@@ -69,6 +69,9 @@ def verify(directory, kind, image, build):
     if hasattr(os, "getuid"):
         env.update(DEMO_UID=str(os.getuid()), DEMO_GID=str(os.getgid()))
     cwd = directory / kind
+    if kind == "demo":
+        # Keep parent directories owned by the caller instead of the Docker daemon.
+        (cwd / ".local/container").mkdir(parents=True, exist_ok=True)
     command = ["docker", "compose", "--project-name", project]
     compose = lambda *args: run(command + list(args), env, cwd)
     model = json.loads(compose("config", "--format", "json"))
@@ -135,7 +138,7 @@ def verify(directory, kind, image, build):
             assert meta["counts"]["orders"] == 120 and meta["workbook_available"]
             machine = request(mes + "/api/tables/machines?limit=1")["rows"][0]
             request(mes + "/api/tables/machines/" + machine["id"],
-                    {"expected_version": machine["version"], "data": {"name": "Container persistence check"}}, method="PATCH")
+                    {"expected_version": machine["_version"], "data": {"name": "Container persistence check"}}, method="PATCH")
             workbook = directory / "demo/.local/container/production-planning.xlsx"
             with zipfile.ZipFile(workbook, "a") as archive:
                 archive.comment = b"Container persistence check"
