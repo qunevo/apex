@@ -129,6 +129,9 @@ class Handler(BaseHTTPRequestHandler):
             return
         allowed = {"/": ("index.html", "text/html; charset=utf-8"), "/app.js": ("app.js", "text/javascript"),
                    "/details.js": ("details.js", "text/javascript"),
+                   "/assets/qunevo-logo.svg": ("assets/qunevo-logo.svg", "image/svg+xml"),
+                   "/assets/outfit-latin.woff2": ("assets/outfit-latin.woff2", "font/woff2"),
+                   "/assets/bricolage-grotesque-latin.woff2": ("assets/bricolage-grotesque-latin.woff2", "font/woff2"),
                    "/styles.css": ("styles.css", "text/css"), "/icons.js": ("icons.js", "text/javascript")}
         if path in allowed:
             file, kind = allowed[path]
@@ -194,7 +197,7 @@ def main():
     store, seed = prepare(directory)
     server = ThreadingHTTPServer(("127.0.0.1", args.port), Handler)
     server.store, server.seed, server.directory = store, seed, directory
-    print(f"Northstar MES: http://127.0.0.1:{server.server_port}", flush=True)
+    print(f"Qunevo Demo MES: http://127.0.0.1:{server.server_port}", flush=True)
     print(f"Synthetic demo state: {directory}", flush=True)
     try:
         server.serve_forever()

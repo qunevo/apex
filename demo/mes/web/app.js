@@ -31,14 +31,14 @@ function navItem(page, label, count = '') {
 }
 function shell() {
   const m = state.meta;
-  $('#sidebar').innerHTML = `<div class="brand"><div class="brand-mark">N</div><div><strong>northstar</strong><small>MANUFACTURING</small></div></div>
+  $('#sidebar').innerHTML = `<div class="brand"><img class="brand-mark" src="/assets/qunevo-logo.svg" alt="Qunevo" width="38" height="38"><div class="brand-identity"><strong aria-hidden="true">QUNEVO<span>.</span></strong><small>DEMO MES</small></div></div>
     <div class="nav-section">SHOP FLOOR</div>${navItem('orders','Production',m.counts.orders)}${navItem('receipts','Inbound deliveries')}${navItem('downtime','Unavailability')}
     <div class="nav-section">MASTER DATA</div>${navItem('items','Articles & workplans')}${navItem('machines','Equipment')}${navItem('materials','Material stock')}${navItem('personnel','People & shifts')}
     <div class="nav-section">PLANNING</div>${navItem('workbook','Excel planning')}
-    <div class="nav-bottom">${navItem('guide','Factory guide')}<button class="nav-item" id="reset-demo" title="Reset demo">${icon('reset')}<span>Reset demo</span></button><div class="environment"><span class="dot"></span> SYNTHETIC DEMO · V1.0</div></div>`;
+    <div class="nav-bottom">${navItem('guide','Factory guide')}<button class="nav-item" id="reset-demo" title="Reset demo">${icon('reset')}<span>Reset demo</span></button><div class="environment"><span class="dot"></span> Synthetic demo <span class="environment-version">V1.0</span></div></div>`;
   const label = state.meta.catalog[state.page]?.label || (state.page==='workbook'?'Excel planning':'Factory guide');
   const section = productionPages.includes(state.page) ? 'Production' : label;
-  $('#topbar').innerHTML = `<div class="breadcrumb">Plant 01 ${icon('chevron')} <strong>${esc(section)}</strong></div><div class="top-right"><button id="demo-clock" class="button text" title="Advance the demo clock">${icon('clock')} Snapshot · ${displayDate(m.factory.as_of)}</button><span class="dot"></span><span>Local MES</span><span class="avatar" title="Demo planner">PL</span></div>`;
+  $('#topbar').innerHTML = `<div class="breadcrumb"><span class="app-name">Qunevo Demo MES</span>${icon('chevron')}<strong>${esc(section)}</strong></div><div class="top-right"><span class="plant-label">Plant 01</span><button id="demo-clock" class="button text" title="Advance the demo clock">${icon('clock')} ${displayDate(m.factory.as_of)}</button><span class="avatar" title="Demo planner">PL</span></div>`;
   for (const button of document.querySelectorAll('[data-nav]')) button.addEventListener('click', () => navigate(button.dataset.nav));
   $('#reset-demo').addEventListener('click', resetDialog);
   $('#demo-clock').addEventListener('click', details.clockDialog);
@@ -159,7 +159,7 @@ async function reference(entity) {
 }
 function openDrawer(title, body, footer) {
   previousFocus = document.activeElement;
-  $('#drawer').innerHTML=`<div class="drawer-head"><div><div class="eyebrow">NORTHSTAR / MES</div><h2 id="drawer-title">${title}</h2></div><button class="close" id="close-drawer" aria-label="Close dialog">${icon('close')}</button></div><div class="drawer-body">${body}<div id="form-error" class="form-error" hidden></div></div><div class="drawer-footer">${footer}</div>`;
+  $('#drawer').innerHTML=`<div class="drawer-head"><div><div class="eyebrow">QUNEVO DEMO MES</div><h2 id="drawer-title">${title}</h2></div><button class="close" id="close-drawer" aria-label="Close dialog">${icon('close')}</button></div><div class="drawer-body">${body}<div id="form-error" class="form-error" hidden></div></div><div class="drawer-footer">${footer}</div>`;
   $('#drawer').hidden=false;$('#overlay').hidden=false;document.body.style.overflow='hidden';
   $('#close-drawer').addEventListener('click',closeDrawer);$('#cancel')?.addEventListener('click',closeDrawer);
   ($('#drawer input:not(:disabled)')||$('#close-drawer')).focus();

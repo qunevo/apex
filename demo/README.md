@@ -1,6 +1,11 @@
-# Northstar factory demo
+# Qunevo Demo MES
 
 A deliberately fictional valve factory with a small MES web application and a separate Excel production plan. All names, orders, people, quantities and times are synthetic.
+
+The application uses Qunevo's logo, colors and locally bundled website fonts.
+[Asset sources and font licenses](mes/web/assets/SOURCES.md) are recorded with the
+assets. Northstar Valve Works remains the fictional factory represented by the
+MES and planning workbook.
 
 ## Start
 
