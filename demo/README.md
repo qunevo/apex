@@ -23,13 +23,19 @@ The first start generates the synthetic data and conventional planning baseline,
 
 ## Explore
 
-1. Open **Production**. Search and filter 120 customer orders, 600 lots and 3,800 operations. Click an order, then **View production lots** to follow its material flow.
+1. Open **Production**. Search and filter 120 customer orders, 600 lots and 3,800 operations. An order shows its running operations with actual machines, operators and start times. Open an operation directly, or choose **View production lots** and follow the clickable material flow.
 2. Open **Excel planning** and download the actual `.xlsx` file. Review the dispatch sequence, machine/person assignments, fixed decisions and qualification matrix.
 3. Add an urgent order, select an approved workplan, enter total quantity and pieces per lot. Saving releases its lots and frozen instructions together, including a remainder lot. Existing Excel assignments are unchanged.
 4. Open **Articles & workplans > Workplans**. Compare combined machining with the separate roughing/drilling route. Create a draft revision, open a step, and edit its machine alternatives, times or component requirements. **Check & release** locks that revision. Approve it under **Article workplans** before selecting it on an order.
 5. Open an operation to inspect its released alternatives and components. **Record progress** captures cumulative good/scrap quantities, operator, machine and actual start/finish. A scrap reason is required. The preceding step must be complete; only its good pieces can proceed. Confirmation history and material issues remain visible in separate tables.
 6. Edit an inbound delivery, schedule equipment unavailability or a personnel absence, or place a production lot on **Quality hold** with a reason. The snapshot button advances the demo clock; it does not automatically execute the plan.
 7. Use **Reset demo**, entering the displayed confirmation text, to restore the original MES and local workbook copy. Separately downloaded Excel files are unaffected.
+
+Use **DE / EN** in the top-right header to switch the entire interface, including the showcase, forms and validation messages. The browser remembers the selection; the initial language follows the browser language. UI templates and known synthetic display labels live in `mes/web/locales/en.js` and `de.js`. IDs, API enum values, customer/person names, custom source prose and the Excel/CSV source files stay unchanged. Language changes never write to the MES database.
+
+Open **Filters** or a column's filter button. Text columns offer substring matching and searchable checkbox lists; priorities, statuses and locations offer multiple selections. Numeric fields accept inclusive minimum/maximum bounds. Date bounds include whole local calendar days; identical bounds select one day. Columns combine with AND, selected values within a column with OR. Filters apply before sorting and pagination, and the CSV export uses the same full result. Chips identify active filters and remove them individually. A linked order/lot scope combines with the column filters; switching tables clears the current filters.
+
+**In progress** on an order or lot does not imply an operation is currently running. **Running on** on a lot is populated only from a running operation's execution booking. Waiting operations show no actual machine, even if the Excel baseline assigns one. Operation details expose actual machine/operator/start/finish and links back to their lot and customer order. **Confirmations** is the production data capture history (German: **Betriebsdatenerfassung**).
 
 For equipment, **Schedule unavailability** records a required start, end and reason. Open an equipment row to review, edit or cancel its periods. Its status is **Available** or **Unavailable** at the current factory snapshot, with the active or next block shown alongside it. Intervals include their start and exclude their end; overlapping or adjoining periods form one continuous block. Maintenance is a reason, not a third status. Use **Permanently unavailable** only for equipment out of service indefinitely; clearing it leaves dated periods intact. These exceptions describe equipment blocks, independently of shift working hours.
 
@@ -65,7 +71,7 @@ The same loopback API backs the browser and a future adapter:
 | Method and path | Contract |
 | --- | --- |
 | `GET /api/meta` | Factory clock, field contracts, record counts and MES revision |
-| `GET /api/tables/{entity}` | Paged records; `q`, `offset`, `limit` (max 200), `sort`, `direction`, exact `filter_field`/`filter_value` |
+| `GET /api/tables/{entity}` | Paged records; `q`, `offset`, `limit` (max 200), `sort`, `direction`, exact `filter_field`/`filter_value`, JSON `filters`, optional `facets=1` |
 | `GET /api/tables/{entity}?format=csv` | Full filtered source export with headers |
 | `POST /api/tables/{entity}` | `{ "data": { ... } }`; creates an allowed master record or an order and its lots/operations |
 | `PATCH /api/tables/{entity}/{id}` | `{ "expected_version": 1, "data": { ... } }`; editable fields only |
@@ -78,6 +84,8 @@ The same loopback API backs the browser and a future adapter:
 | `GET /downloads/production-planning.xlsx` | Local working copy of the source workbook |
 | `POST /api/reset` | `{ "confirmation": "RESET DEMO" }`; demo-owned local state only |
 
+`filters` is an object keyed by a non-JSON catalog field. Text fields accept `{"contains":"OEM", "values":["OEM 01","OEM 02"]}`; numeric fields accept `{"min":25,"max":100}`; datetime fields accept calendar dates such as `{"min":"2026-10-07","max":"2026-10-07"}`. Empty bounds and an empty selection impose no restriction. Unknown fields/operators, invalid dates, non-finite numeric bounds and reversed ranges return HTTP 400. `facets=1` returns distinct values across the complete parent scope, independently of pagination and active column filters. Operation rows expose a computed `order_id`; lot rows expose computed `current_operation` and `resource_id` (running only). These read-only projections do not change stored records or revisions.
+
 Dates use `YYYY-MM-DDTHH:MM` in the named plant timezone. The October seed stays within CEST. Monetary costs and time-zone transitions are outside this initial case. Row updates reject stale versions with HTTP 409. Invalid values and references return HTTP 400. There is no deletion or automatic source-system writeback. This local mock has no multi-user authentication and is not a deployment-ready MES.
 
 Equipment rows expose read-only `status`, `unavailable_from`, `unavailable_until` and `unavailability_reason`, calculated at `factory.as_of`. Edit `downtime` records for dated blocks (`cancelled: true` withdraws a period), or explicitly set the Boolean `permanently_unavailable`. Production booking checks actual execution intervals against equipment calendars, dated blocks, operator shifts/breaks, absences, the original Excel qualification snapshot and existing execution bookings. Existing local databases are upgraded without resetting edits; legacy global Maintenance/Unavailable values become permanent exceptions because no end date was recorded. The Excel baseline remains a separate snapshot after any availability change.
@@ -89,9 +97,12 @@ python -B -m unittest discover -s demo/mes/tests -v
 node --check demo/mes/web/app.js
 node --check demo/mes/web/details.js
 node --check demo/mes/web/showcase.js
+node --check demo/mes/web/filters.js
+node --check demo/mes/web/production.js
+node demo/mes/tests/i18n.mjs
 ```
 
-Tests cover relationships, resource and employee occupancy, calendar placement, material readiness, revisions, atomic order creation, progress rules and HTTP validation. Workbook authoring performs formula recalculation, an input-change check and per-sheet rendering; previews remain local.
+Tests cover relationships, resource and employee occupancy, calendar placement, material readiness, revisions, atomic order creation, progress rules, composed filters, date boundaries, CSV/pagination parity, actual-machine projections and HTTP validation. Locale checks cover template parity, parameters, API error translation and unchanged source values. Workbook authoring performs formula recalculation, an input-change check and per-sheet rendering; previews remain local.
 
 ## Workplan and execution contracts
 

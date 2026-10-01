@@ -139,6 +139,16 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.14'
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+      - name: Demo MES workflows and language templates
+        run: |
+          python -B -m unittest discover -s demo/mes/tests -v
+          for source in demo/mes/web/*.js demo/mes/web/locales/*.js; do
+            node --check "$source"
+          done
+          node demo/mes/tests/i18n.mjs
       - name: Contributor tests, documentation and skill consistency
         run: |
           python -B -m unittest discover -s dev/tests -p 'test_*.py' -v
