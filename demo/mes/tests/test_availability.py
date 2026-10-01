@@ -76,10 +76,11 @@ class EquipmentAvailabilityTests(unittest.TestCase):
         with self.store.connect() as db:
             self.assertEqual(self.store.meta(db, "revision"), 0)
 
-    def test_booking_honors_current_period_but_not_future_period(self):
+    def test_booking_honors_execution_period_but_not_future_period(self):
         op, lot = self.seed["records"]["operations"][0], self.seed["records"]["lots"][0]
-        self.period()
-        booking = dict(expected_version=1, completed_quantity=lot["quantity"], resource_id="CNC-01")
+        self.period(start="2026-10-05T09:00")
+        booking = dict(expected_version=1, completed_quantity=lot["quantity"], resource_id="CNC-01",
+                       person_id="P01", actual_start="2026-10-05T08:00", actual_end="2026-10-05T10:00")
         with self.assertRaises(ValueError):
             self.store.report(op["id"], booking)
         self.store.change("downtime", {"expected_version": 1, "data": {"start": "2026-10-05T11:00"}}, "DOWN-1")

@@ -102,7 +102,7 @@ class Handler(BaseHTTPRequestHandler):
                     raise ValueError("Unknown filter field")
                 rows = [row for row in rows if str(row.get(field, "")) == query.get("filter_value", "")]
             sort = query.get("sort", "id")
-            if sort not in {col["key"] for col in CATALOG[entity]["columns"]}:
+            if sort not in {col["key"] for col in CATALOG[entity]["columns"] if col["type"] != "json"}:
                 raise ValueError("Unknown sort field")
             rows.sort(key=lambda row: row.get(sort, ""), reverse=query.get("direction") == "desc")
             if query.get("format") == "csv":
@@ -128,6 +128,7 @@ class Handler(BaseHTTPRequestHandler):
                           {"Content-Disposition": 'attachment; filename="Northstar-production-planning.xlsx"'})
             return
         allowed = {"/": ("index.html", "text/html; charset=utf-8"), "/app.js": ("app.js", "text/javascript"),
+                   "/details.js": ("details.js", "text/javascript"),
                    "/styles.css": ("styles.css", "text/css"), "/icons.js": ("icons.js", "text/javascript")}
         if path in allowed:
             file, kind = allowed[path]
@@ -164,6 +165,10 @@ class Handler(BaseHTTPRequestHandler):
                 result = {"reset": True}
             elif len(parts) == 4 and parts[:2] == ["api", "progress"] and parts[3] == "report" and self.command == "POST":
                 result = self.server.store.report(parts[2], payload)
+            elif len(parts) == 4 and parts[:2] == ["api", "workplans"] and self.command == "POST":
+                result = self.server.store.routing_action(parts[2], parts[3], payload)
+            elif path == "/api/clock" and self.command == "POST":
+                result = self.server.store.advance_clock(payload)
             elif len(parts) in (3, 4) and parts[:2] == ["api", "tables"]:
                 if (len(parts) == 3) != (self.command == "POST"):
                     raise ValueError("Use POST to create and PATCH to edit")

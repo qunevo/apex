@@ -240,14 +240,20 @@ def refresh_progress(records):
         grouped.setdefault(op["lot_id"], []).append(op)
     for lot in records["lots"]:
         operations = sorted(grouped[lot["id"]], key=lambda o: o["sequence"])
-        complete = all(o["status"] == "Complete" for o in operations)
-        active = next((o for o in operations if o["status"] != "Complete"), None)
+        complete = all(o["status"] in ("Complete", "Skipped") for o in operations)
+        active = next((o for o in operations if o["status"] not in ("Complete", "Skipped")), None)
         started = any(o["status"] != "Waiting" for o in operations)
         lot["status"] = "Complete" if complete else "In progress" if started else "Released"
         lot["location"] = "Finished goods" if complete else active["group"] if started else "Raw material store"
+        if "routing_revision" in lot:
+            lot["good_quantity"] = operations[-1]["completed_quantity"]
+            lot["scrap_quantity"] = sum(o.get("scrap_quantity", 0) for o in operations)
     for order in records["orders"]:
         lots = [lot for lot in records["lots"] if lot["order_id"] == order["id"]]
         order["status"] = "Complete" if all(lot["status"] == "Complete" for lot in lots) else "In progress" if any(lot["status"] == "In progress" or lot["status"] == "Complete" for lot in lots) else "Released"
+        if lots and "routing_revision" in lots[0]:
+            order["good_quantity"] = sum(lot["good_quantity"] for lot in lots)
+            order["scrap_quantity"] = sum(lot["scrap_quantity"] for lot in lots)
 
 
 def generate():

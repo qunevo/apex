@@ -77,6 +77,8 @@ class DemoTests(unittest.TestCase):
             self.assertEqual(self.store.all(db,"operations"),before)
 
     def test_progress_requires_precedence_and_valid_quantity(self):
+        records, skills = create_records(self.seed["factory"])
+        self.store.seed(dict(factory=self.seed["factory"], records=records, qualifications=skills, plan=[]), reset=True)
         with self.store.connect() as db:
             ops=self.store.all(db,"operations")
             first=next(o for o in ops if o["status"]=="Waiting" and o["sequence"]==10)
@@ -86,7 +88,10 @@ class DemoTests(unittest.TestCase):
             self.store.report(second["id"],dict(expected_version=1,completed_quantity=1,resource_id="DB-01"))
         with self.assertRaises(ValueError):
             self.store.report(first["id"],dict(expected_version=1,completed_quantity=lot["quantity"]+1,resource_id="CNC-03"))
-        self.store.report(first["id"],dict(expected_version=1,completed_quantity=lot["quantity"],resource_id="CNC-03"))
+        # Book in a later free shift, leaving the seeded execution history intact.
+        self.store.advance_clock(dict(expected_as_of=self.seed["factory"]["as_of"],as_of="2026-10-06T09:00"))
+        self.store.report(first["id"],dict(expected_version=1,completed_quantity=lot["quantity"],resource_id="CNC-03",
+                          person_id="P01",actual_start="2026-10-06T08:00",actual_end="2026-10-06T09:00"))
         with self.store.connect() as db:
             updated=next(l for l in self.store.all(db,"lots") if l["id"]==lot["id"])
             self.assertEqual(updated["status"],"In progress")

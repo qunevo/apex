@@ -20,12 +20,13 @@ The first start generates the synthetic data and conventional planning baseline,
 
 1. Open **Production**. Search and filter 120 customer orders, 600 lots and 3,800 operations. Click an order, then **View production lots** to follow its material flow.
 2. Open **Excel planning** and download the actual `.xlsx` file. Review the dispatch sequence, machine/person assignments, fixed decisions and qualification matrix.
-3. Add an urgent order. Its lots and work instructions are created together. Existing Excel assignments are intentionally unchanged.
-4. Edit an inbound delivery, record machine downtime or mark a person absent. A workbook review notice appears after MES changes.
-5. Open an operation and **Record progress**. Book cumulative good quantity on an eligible machine. Predecessors must be complete. Lot and order states update with it.
-6. Use **Reset demo**, entering the displayed confirmation text, to restore the original MES and local workbook copy. Separately downloaded Excel files are unaffected.
+3. Add an urgent order, select an approved workplan, enter total quantity and pieces per lot. Saving releases its lots and frozen instructions together, including a remainder lot. Existing Excel assignments are unchanged.
+4. Open **Articles & workplans > Workplans**. Compare combined machining with the separate roughing/drilling route. Create a draft revision, open a step, and edit its machine alternatives, times or component requirements. **Check & release** locks that revision. Approve it under **Article workplans** before selecting it on an order.
+5. Open an operation to inspect its released alternatives and components. **Record progress** captures cumulative good/scrap quantities, operator, machine and actual start/finish. A scrap reason is required. The preceding step must be complete; only its good pieces can proceed. Confirmation history and material issues remain visible in separate tables.
+6. Edit an inbound delivery, schedule equipment unavailability or a personnel absence, or place a production lot on **Quality hold** with a reason. The snapshot button advances the demo clock; it does not automatically execute the plan.
+7. Use **Reset demo**, entering the displayed confirmation text, to restore the original MES and local workbook copy. Separately downloaded Excel files are unaffected.
 
-For equipment, **Schedule unavailability** records a required start, end and reason. Open an equipment row to review, edit or cancel its periods. Its status is **Available** or **Unavailable** at the fixed factory snapshot, with the active or next block shown alongside it. Intervals include their start and exclude their end; overlapping or adjoining periods form one continuous block. Maintenance is a reason, not a third status. Use **Permanently unavailable** only for equipment out of service indefinitely; clearing it leaves dated periods intact. These exceptions describe equipment blocks, independently of shift working hours.
+For equipment, **Schedule unavailability** records a required start, end and reason. Open an equipment row to review, edit or cancel its periods. Its status is **Available** or **Unavailable** at the current factory snapshot, with the active or next block shown alongside it. Intervals include their start and exclude their end; overlapping or adjoining periods form one continuous block. Maintenance is a reason, not a third status. Use **Permanently unavailable** only for equipment out of service indefinitely; clearing it leaves dated periods intact. These exceptions describe equipment blocks, independently of shift working hours.
 
 The **Factory guide** explains the products and source ownership. The detailed [factory description](factory.md) defines the synthetic assumptions and baseline limits.
 
@@ -37,11 +38,11 @@ The **Factory guide** explains the products and source ownership. The detailed [
 | Excel | Proposed operation sequence, workplace/person assignments, planned starts, setup/run allowances, fixed decisions, planner notes and qualifications |
 | APEX | Future integration: executable scheduling model and validated alternative plans |
 
-The browser workbook views are previews of the original seed, not a live spreadsheet editor. Excel changes are not imported automatically. A changed MES does not silently overwrite the planner's file. Item master edits apply to future orders; existing released work instructions remain snapshots. Material figures are **opening balances at the planning-period start**, not live stock accounting.
+The browser workbook views are previews of the original seed, not a live spreadsheet editor. Excel changes are not imported automatically. A changed MES does not silently overwrite the planner's file. Item master edits apply to future orders; existing released work instructions remain snapshots. **On hand** equals opening stock plus received deliveries available at the snapshot, minus posted component issues. Confirmed or delayed deliveries are future supply, not usable stock. Confirmation consumes components for newly processed input pieces, including scrap. It never consumes the same pieces twice.
 
 ## Repository and local state
 
-- `data/factory.json`: fixed clock, reproducible seed and dataset identity.
+- `data/factory.json`: initial clock, reproducible seed and dataset identity.
 - `mes/`: web application, HTTP API, SQLite persistence, generation and tests.
 - `planning/production-planning.xlsx`: intentionally versioned, entirely synthetic source fixture representing the planner's starting workbook.
 - `planning/build-workbook.mjs`: maintainer authoring recipe using `@oai/artifact-tool` from the Codex bundled runtime. It reads `.local/seed.json`; that runtime is not required to run the MES or open the supplied Excel file.
@@ -63,7 +64,10 @@ The same loopback API backs the browser and a future adapter:
 | `GET /api/tables/{entity}?format=csv` | Full filtered source export with headers |
 | `POST /api/tables/{entity}` | `{ "data": { ... } }`; creates an allowed master record or an order and its lots/operations |
 | `PATCH /api/tables/{entity}/{id}` | `{ "expected_version": 1, "data": { ... } }`; editable fields only |
-| `POST /api/progress/{operation_id}/report` | `expected_version`, cumulative `completed_quantity`, eligible `resource_id` |
+| `POST /api/progress/{operation_id}/report` | `expected_version`, cumulative `completed_quantity` and `scrap_quantity`, released `resource_id`, qualified `person_id`, `actual_start`, `actual_end` (only when complete), `scrap_reason` |
+| `POST /api/workplans/{id}/revise` | `expected_version`, new `id` (max 24 characters), `revision`, optional `name`; copies all child rows into a draft |
+| `POST /api/workplans/{id}/release` | `expected_version`; validates the complete draft, then locks it |
+| `POST /api/clock` | `expected_as_of`, later `as_of`; advances the local demo snapshot |
 | `GET /api/plan`, `GET /api/skills` | Original Excel seed data with source and current MES revisions |
 | `GET /api/audit` | Latest 50 persisted changes |
 | `GET /downloads/production-planning.xlsx` | Local working copy of the source workbook |
@@ -71,13 +75,28 @@ The same loopback API backs the browser and a future adapter:
 
 Dates use `YYYY-MM-DDTHH:MM` in the named plant timezone. The October seed stays within CEST. Monetary costs and time-zone transitions are outside this initial case. Row updates reject stale versions with HTTP 409. Invalid values and references return HTTP 400. There is no deletion or automatic source-system writeback. This local mock has no multi-user authentication and is not a deployment-ready MES.
 
-Equipment rows expose read-only `status`, `unavailable_from`, `unavailable_until` and `unavailability_reason`, calculated at `factory.as_of`. Edit `downtime` records for dated blocks (`cancelled: true` withdraws a period), or explicitly set the Boolean `permanently_unavailable`. Production booking checks availability at that same snapshot. Existing local databases are upgraded without resetting edits; legacy global Maintenance/Unavailable values become permanent exceptions because no end date was recorded. The Excel baseline remains a separate snapshot after any availability change.
+Equipment rows expose read-only `status`, `unavailable_from`, `unavailable_until` and `unavailability_reason`, calculated at `factory.as_of`. Edit `downtime` records for dated blocks (`cancelled: true` withdraws a period), or explicitly set the Boolean `permanently_unavailable`. Production booking checks actual execution intervals against equipment calendars, dated blocks, operator shifts/breaks, absences, the original Excel qualification snapshot and existing execution bookings. Existing local databases are upgraded without resetting edits; legacy global Maintenance/Unavailable values become permanent exceptions because no end date was recorded. The Excel baseline remains a separate snapshot after any availability change.
 
 ## Verify
 
 ```bash
 python -B -m unittest discover -s demo/mes/tests -v
 node --check demo/mes/web/app.js
+node --check demo/mes/web/details.js
 ```
 
 Tests cover relationships, resource and employee occupancy, calendar placement, material readiness, revisions, atomic order creation, progress rules and HTTP validation. Workbook authoring performs formula recalculation, an input-change check and per-sheet rendering; previews remain local.
+
+## Workplan and execution contracts
+
+- A workplan ID identifies one revision. Draft child rows are editable; release locks the header, steps, machine alternatives and components. Use a new draft revision for changes. Inactive rows stay visible; records are not physically deleted.
+- Step numbers define a linear, whole-lot sequence. Machine alternatives are explicit per step, body size and body material. Setup and unit times may differ by machine. The first alternative supplies the default displayed lot allowance; all alternatives and their rates remain available in the operation snapshot. The Excel baseline retains its original rounded allowances.
+- An article can approve multiple released revisions. A new article automatically approves its default route. Alternative links must match its family and cover every step for its size/material. The order selects one route for all its lots. No mid-production rerouting occurs.
+- Each released operation freezes its instructions, output description, eligible machines, times, attendance and component quantities. Changes to article or workplan masters apply to future releases only.
+- A confirmation reports cumulative quantities, with append-only deltas in the confirmation and issue tables. Good plus scrap cannot exceed input. If all input is scrapped, following operations are marked **Skipped**; the lot closes with zero finished good pieces. **Complete** means execution is accounted for, not that the original shipping quantity was achieved. Lot/order good and scrap quantities expose that difference. Replacement demand is an explicit new order.
+- Actual start, machine and operator are fixed after the first timed confirmation. Finish is required when all input is accounted for and must not precede an earlier open confirmation. Actual execution fits one equipment shift window; operator attendance fits one shift segment. CNC attendance covers setup only. Pauses, cross-shift execution and operator handovers are not modeled.
+- A quality hold blocks new confirmations; releasing it is a recorded master edit. Scrap is recorded with a reason. Test measurements, rework routes, formal inspection dispositions and serial/batch genealogy are outside this demo.
+- Stock checks are transactional and include historical issue times. Receipt or opening-stock edits cannot invalidate already posted issues. Material reservations, warehouse transfers, finished-goods inventory and issue reversals are not implemented.
+- Qualifications remain owned by Excel. The MES validates against the original supplied qualification snapshot; editing a downloaded workbook does not update it. Newly added people therefore have no imported qualifications yet.
+
+Existing local databases receive an idempotent upgrade without reset. Original seeded releases recover article attributes from the seed; other legacy releases use the then-current article because earlier snapshots were not stored. Legacy bookings retain quantities; actual times are filled only when the booking matches the known synthetic baseline. Otherwise the confirmation identifies missing historical execution times. The SQLite database and audit history remain local.

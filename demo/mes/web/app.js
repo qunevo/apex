@@ -1,4 +1,5 @@
 import {icon} from './icons.js';
+import {createDetails} from './details.js';
 
 const $ = (query, root = document) => root.querySelector(query);
 const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -6,6 +7,10 @@ const number = value => Number(value).toLocaleString('en-GB');
 const displayDate = value => value ? new Date(value).toLocaleString('en-GB', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'}) : '—';
 const state = {page:'orders', offset:0, q:'', sort:'id', direction:'asc', filter:'', exact:null, rows:[], meta:null, references:{}, planningTab:'dispatch'};
 let requestSequence = 0, toastTimer, previousFocus;
+const details = createDetails({$, esc, api, badge, displayDate, state, openDrawer, closeDrawer, editDialog, navigate, reloadMeta, render, notify});
+const masterPages = ['items','routings','item_routings','routing_steps','routing_modes','routing_materials'];
+const peoplePages = ['personnel','shifts','absences'];
+const productionPages = ['orders','lots','operations','confirmations'];
 
 async function api(path, options = {}) {
   const response = await fetch(path, {headers:{'Content-Type':'application/json'}, ...options});
@@ -32,12 +37,13 @@ function shell() {
     <div class="nav-section">PLANNING</div>${navItem('workbook','Excel planning')}
     <div class="nav-bottom">${navItem('guide','Factory guide')}<button class="nav-item" id="reset-demo" title="Reset demo">${icon('reset')}<span>Reset demo</span></button><div class="environment"><span class="dot"></span> SYNTHETIC DEMO · V1.0</div></div>`;
   const label = state.meta.catalog[state.page]?.label || (state.page==='workbook'?'Excel planning':'Factory guide');
-  const section = ['orders','lots','operations'].includes(state.page) ? 'Production' : label;
-  $('#topbar').innerHTML = `<div class="breadcrumb">Plant 01 ${icon('chevron')} <strong>${esc(section)}</strong></div><div class="top-right"><span class="snapshot">${icon('clock')} Snapshot · 05 Oct 2026, 10:00 CEST</span><span class="dot"></span><span>Local MES</span><span class="avatar" title="Demo planner">PL</span></div>`;
+  const section = productionPages.includes(state.page) ? 'Production' : label;
+  $('#topbar').innerHTML = `<div class="breadcrumb">Plant 01 ${icon('chevron')} <strong>${esc(section)}</strong></div><div class="top-right"><button id="demo-clock" class="button text" title="Advance the demo clock">${icon('clock')} Snapshot · ${displayDate(m.factory.as_of)}</button><span class="dot"></span><span>Local MES</span><span class="avatar" title="Demo planner">PL</span></div>`;
   for (const button of document.querySelectorAll('[data-nav]')) button.addEventListener('click', () => navigate(button.dataset.nav));
   $('#reset-demo').addEventListener('click', resetDialog);
+  $('#demo-clock').addEventListener('click', details.clockDialog);
   // Keep parent navigation selected when a subordinate table is open.
-  const parent = {lots:'orders',operations:'orders',routings:'items',shifts:'personnel'}[state.page];
+  const parent = {lots:'orders',operations:'orders',routings:'items',item_routings:'items',routing_steps:'items',routing_modes:'items',routing_materials:'items',shifts:'personnel',absences:'personnel',confirmations:'orders',material_issues:'materials'}[state.page];
   if (parent) $(`[data-nav="${parent}"]`).classList.add('active');
 }
 async function reloadMeta() { state.meta = await api('/api/meta'); state.references = {}; }
@@ -60,12 +66,12 @@ async function render() {
   if (state.page === 'guide') return renderGuide();
   if (state.page === 'workbook') return renderWorkbook();
   const schema = state.meta.catalog[state.page];
-  const production = ['orders','lots','operations'].includes(state.page);
-  const title = production ? 'Production' : ['items','routings'].includes(state.page) ? 'Articles & workplans' : ['personnel','shifts'].includes(state.page) ? 'People & shifts' : schema.label;
+  const production = productionPages.includes(state.page);
+  const title = production ? 'Production' : masterPages.includes(state.page) ? 'Articles & workplans' : peoplePages.includes(state.page) ? 'People & shifts' : schema.label;
   const subtitle = production ? 'One view of every order, lot and operation on the shop floor.' : state.page==='machines' ? `Availability at ${displayDate(state.meta.factory.as_of)} · Local plant time. Open equipment to manage its unavailable periods.` : schema.description + '.';
-  let tabBar = production ? tabs([['orders','Customer orders'],['lots','Production lots'],['operations','Operations']]) : ['items','routings'].includes(state.page) ? tabs([['items','Articles'],['routings','Workplans']]) : ['personnel','shifts'].includes(state.page) ? tabs([['personnel','Personnel'],['shifts','Shift calendars']]) : '';
+  let tabBar = production ? tabs([['orders','Customer orders'],['lots','Production lots'],['operations','Operations'],['confirmations','Confirmations']]) : masterPages.includes(state.page) ? tabs([['items','Articles'],['routings','Workplans'],['item_routings','Article workplans']]) : peoplePages.includes(state.page) ? tabs([['personnel','Personnel'],['shifts','Shift calendars'],['absences','Absences']]) : ['materials','material_issues'].includes(state.page) ? tabs([['materials','Stock'],['material_issues','Material issues']]) : '';
   const filterField = schema.columns.find(col => col.key === 'status' || col.key === 'attendance');
-  const choices = state.exact ? [] : filterField?.choices || (state.page==='orders'||state.page==='lots' ? ['Released','In progress','Complete'] : state.page==='operations' ? ['Waiting','Running','Complete'] : []);
+  const choices = state.exact ? [] : filterField?.choices || (state.page==='orders'||state.page==='lots' ? ['Released','In progress','Complete'] : state.page==='operations' ? ['Waiting','Running','Complete','Skipped'] : []);
   $('#main').innerHTML = `<div class="page-title"><div><div class="eyebrow">${production?'OPERATIONS / OVERVIEW':'PLANT 01 / MASTER DATA'}</div><h1>${title}</h1><p class="subtitle">${subtitle}</p></div>${schema.create?`<button id="add-record" class="button primary">${icon('plus')} ${state.page==='orders'?'New order':'Add record'}</button>`:''}</div>
     ${production?stats():''}${tabBar}
     ${state.exact?`<div class="notice">${icon('info')} Showing ${esc(state.exact.value)}. <button id="clear-filter" class="button text">Show all</button></div>`:''}
@@ -76,7 +82,15 @@ async function render() {
     $('.page-title').insertAdjacentHTML('beforeend',`<button id="schedule-unavailability" class="button primary">${icon('plus')} Schedule unavailability</button>`);
     $('#schedule-unavailability').addEventListener('click',()=>unavailabilityDialog());
   }
-  $('#add-record')?.addEventListener('click', () => state.page==='downtime'?unavailabilityDialog():editDialog());
+  $('#add-record')?.addEventListener('click', () => state.page==='downtime'?unavailabilityDialog():editDialog(null,state.page,state.exact?{[state.exact.field]:state.exact.value}:{}));
+  if(state.exact?.field==='step_id') {
+    const step=(await api(`/api/tables/routing_steps?filter_field=id&filter_value=${encodeURIComponent(state.exact.value)}`)).rows[0];
+    if(step) {
+      $('.notice').insertAdjacentHTML('beforeend','<button id="back-step" class="button text">Back to step</button>');
+      $('#back-step').addEventListener('click',()=>editDialog(step,'routing_steps'));
+      if(await details.isLocked('routing_steps',step))$('#add-record')?.remove();
+    }
+  }
   $('#clear-filter')?.addEventListener('click', () => navigate(state.page));
   let timer;
   $('#search').addEventListener('input', event => {state.q=event.target.value;state.offset=0;clearTimeout(timer);timer=setTimeout(loadRows,180);});
@@ -93,12 +107,13 @@ function queryString() {
 }
 const tableColumns = {
   orders:['id','customer','item_id','quantity','due','priority','status'],
-  lots:['id','order_id','item_id','quantity','status','location'],
+  lots:['id','order_id','item_id','quantity','good_quantity','scrap_quantity','status','location'],
   operations:['id','lot_id','name','group','setup_minutes','run_minutes','status'],
   items:['id','name','variant','size','material','lot_size'],
+  routings:['id','name','family','revision','status'],
   machines:['id','name','group','capability','calendar','status'],
   personnel:['id','name','team','shift_id','attendance'],
-  materials:['id','name','stock','unit','reorder_point','location'],
+  materials:['id','name','stock','on_hand','unit','reorder_point','location'],
 };
 function cell(row, col) {
   const value = row[col.key];
@@ -135,7 +150,11 @@ async function loadRows() {
   } catch(error) { if($('#table')) $('#table').innerHTML=`<div class="connection-error">${esc(error.message)}</div>`; }
 }
 async function reference(entity) {
-  if (!state.references[entity]) state.references[entity] = (await api(`/api/tables/${entity}?limit=200`)).rows;
+  if (!state.references[entity]) {
+    const result=[]; let page;
+    do { page=await api(`/api/tables/${entity}?limit=200&offset=${result.length}`); result.push(...page.rows); } while(result.length<page.total);
+    state.references[entity]=result;
+  }
   return state.references[entity];
 }
 function openDrawer(title, body, footer) {
@@ -174,24 +193,26 @@ async function equipmentPeriods(row) {
 }
 async function editDialog(row = null, entity=state.page, initial={}) {
   const isNew=!row, schema=state.meta.catalog[entity];
-  let columns=schema.columns.filter(col=>!col.computed&&!(isNew&&col.key==='cancelled'));
+  let columns=schema.columns.filter(col=>!col.computed&&col.type!=='json'&&!(isNew&&col.key==='cancelled'));
   if(entity==='machines')columns=[...columns.filter(col=>col.key==='permanently_unavailable'),...columns.filter(col=>col.key!=='permanently_unavailable')];
-  if(isNew&&entity==='orders') columns=[...columns.filter(c=>c.key!=='status'),{key:'lot_size',label:'Pieces per lot',type:'integer',required:true,editable:true}];
-  await Promise.all(columns.filter(c=>c.ref).map(c=>reference(c.ref)));
+  if(isNew&&entity==='orders') columns=[...columns.filter(c=>!['status','good_quantity','scrap_quantity'].includes(c.key)),{key:'lot_size',label:'Pieces per lot',type:'integer',required:true,editable:true}];
+  const locked=await details.isLocked(entity,row);
+  if(isNew&&entity==='routings')columns=columns.filter(c=>c.key!=='status');
+  await Promise.all(columns.filter(c=>c.ref&&(isNew||c.editable)&&!locked).map(c=>reference(c.ref)));
   const input = col => {
-    const disabled=!isNew&&!col.editable;
-    let value=row?.[col.key] ?? initial[col.key] ?? (col.key==='lot_size'?20:col.key==='quantity'?100:col.key==='priority'?'Normal':'');
+    const disabled=locked||(!isNew&&!col.editable);
+    let value=row?.[col.key] ?? initial[col.key] ?? (col.key==='active'?true:col.key==='quality_status'?'Released':col.key==='lot_size'?20:col.key==='quantity'?100:col.key==='priority'?'Normal':'');
     if(col.type==='boolean')return `<label class="field wide checkbox-field"><input type="checkbox" name="${col.key}" ${value?'checked':''} ${disabled?'disabled':''}><span>${esc(col.label)}${col.key==='permanently_unavailable'?'<small>Use only when this equipment is out of service indefinitely. Dated periods remain in effect when unchecked.</small>':''}</span></label>`;
-    const options=col.ref?state.references[col.ref].map(r=>[r.id,`${r.id} · ${r.name||r.customer||r.id}`]):col.choices?.map(v=>[v,v]);
+    const options=col.ref&&!disabled?state.references[col.ref].map(r=>[r.id,`${r.id} · ${r.name||r.customer||r.id}`]):col.choices?.map(v=>[v,v]);
     let control;
     if(options&&!disabled) control=`<select name="${col.key}" ${col.required?'required':''}>${value?'':'<option value="">Choose…</option>'}${options.map(([id,label])=>`<option value="${esc(id)}" ${id===value?'selected':''}>${esc(label)}</option>`).join('')}</select>`;
-    else if(col.key==='note') control=`<textarea name="${col.key}">${esc(value)}</textarea>`;
+    else if(['note','instruction','hold_reason'].includes(col.key)) control=`<textarea name="${col.key}" ${disabled?'disabled':''}>${esc(value)}</textarea>`;
     else control=`<input name="${col.key}" value="${esc(value)}" ${disabled?'disabled':''} ${col.required?'required':''} type="${col.type==='datetime'?'datetime-local':col.type==='time'?'time':['integer','number'].includes(col.type)?'number':'text'}" ${['integer','number'].includes(col.type)?`min="0" step="${col.type==='integer'?'1':'any'}"`:''}>`;
-    return `<label class="field ${['name','steps','note'].includes(col.key)?'wide':''}"><span>${esc(col.label)}</span>${control}</label>`;
+    return `<label class="field ${['name','steps','note','instruction','hold_reason','output'].includes(col.key)?'wide':''}"><span>${esc(col.label)}</span>${control}</label>`;
   };
-  const editable=columns.some(c=>c.editable);
+  const editable=!locked&&columns.some(c=>c.editable);
   openDrawer(isNew?(entity==='orders'?'New customer order':`Add ${schema.label.toLowerCase()}`):esc(row.id),
-    `<form id="record-form"><div class="form-grid">${columns.map(input).join('')}</div></form>${entity==='orders'?`<div class="detail-callout">${isNew?'Saving creates the production lots and their complete work instructions. The existing Excel plan stays unchanged.':'Delivery and priority changes update the MES. Review the separate Excel plan after making changes.'}</div>`:''}${row&&entity==='orders'?'<div class="detail-actions"><button class="button" id="related-lots">View production lots '+icon('arrow')+'</button></div>':''}${row&&entity==='lots'?'<div id="operation-detail" class="detail-list"></div>':''}${row&&entity==='operations'?'<div class="detail-actions"><button class="button primary" id="book-progress">Record progress</button></div>':''}`,
+    `<form id="record-form"><div class="form-grid">${columns.map(input).join('')}</div></form>${locked?'<div class="detail-callout">Released revision · instructions are locked. Create a draft revision to make changes.</div>':''}${entity==='orders'?`<div class="detail-callout">${isNew?'Saving creates the production lots and their complete work instructions. The existing Excel plan stays unchanged.':'Delivery and priority changes update the MES. Review the separate Excel plan after making changes.'}</div>`:''}${row&&entity==='orders'?'<div class="detail-actions"><button class="button" id="related-lots">View production lots '+icon('arrow')+'</button></div>':''}${row&&entity==='lots'?'<div id="operation-detail" class="detail-list"></div>':''}${row&&entity==='operations'&&!['Complete','Skipped'].includes(row.status)?'<div class="detail-actions"><button class="button primary" id="book-progress">Record progress</button></div>':''}`,
     `<button class="button" id="cancel">Close</button>${editable||isNew?'<button class="button primary" id="save-record" type="submit" form="record-form">Save changes</button>':''}`);
   $('#related-lots')?.addEventListener('click',()=>navigate('lots',{field:'order_id',value:row.id}));
   $('#book-progress')?.addEventListener('click',()=>progressDialog(row));
@@ -205,6 +226,18 @@ async function editDialog(row = null, entity=state.page, initial={}) {
     if($('#operation-detail')) $('#operation-detail').innerHTML=`<h3>Material flow</h3><table><tbody>${data.rows.map(op=>`<tr><td>${op.sequence}</td><td>${esc(op.name)}</td><td>${badge(op.status)}</td></tr>`).join('')}</tbody></table><button id="lot-operations" class="button text">Open work instructions ${icon('arrow')}</button>`;
     $('#lot-operations')?.addEventListener('click',()=>navigate('operations',{field:'lot_id',value:row.id}));
   }
+  await details.enhance(entity,row);
+  if(isNew&&entity==='orders') {
+    await reference('item_routings');
+    const form=$('#record-form');
+    const selectWorkplans=()=>{
+      const article=state.references.items.find(i=>i.id===form.elements.item_id.value);
+      const allowed=state.references.item_routings.filter(r=>r.item_id===article?.id&&r.active);
+      form.elements.routing_id.innerHTML=allowed.map(r=>`<option value="${esc(r.routing_id)}" ${r.routing_id===article?.routing_id?'selected':''}>${esc(r.routing_id)}</option>`).join('');
+      if(article)form.elements.lot_size.value=article.lot_size;
+    };
+    form.elements.item_id.addEventListener('change',selectWorkplans);selectWorkplans();
+  }
   $('#record-form').addEventListener('submit',async event=>{
     event.preventDefault();const button=$('#save-record');button.disabled=true;
     try{
@@ -217,10 +250,12 @@ async function editDialog(row = null, entity=state.page, initial={}) {
   });
 }
 async function progressDialog(row) {
-  const machines=(await reference('machines')).filter(m=>m.group===row.group);
-  openDrawer(`Record progress · ${esc(row.id)}`,`<form id="progress-form"><p class="subtitle">${esc(row.name)}. Book cumulative good quantity. Previous operations must be complete.</p><div class="form-grid detail-list"><label class="field"><span>Good quantity</span><input name="completed_quantity" type="number" min="${row.completed_quantity}" step="1" required value="${row.completed_quantity}"></label><label class="field"><span>Actual resource</span><select name="resource_id">${machines.map(m=>`<option ${m.id===row.resource_id?'selected':''}>${m.id}</option>`).join('')}</select></label></div></form>`, '<button class="button" id="cancel">Cancel</button><button class="button primary" type="submit" form="progress-form">Book progress</button>');
+  const machines=(await reference('machines')).filter(m=>row.machine_options.some(o=>o.resource_id===m.id));
+  const skills=(await api('/api/skills')).rows;
+  const people=(await reference('personnel')).filter(p=>skills.some(s=>s.person_id===p.id&&s[row.skill]));
+  openDrawer(`Record progress · ${esc(row.id)}`,`<form id="progress-form"><p class="subtitle">${esc(row.name)}. Book cumulative good and scrap quantities. Scrap reduces the input for the next step. Enter a finish when all input is accounted for. Times use the demo clock.</p><div class="form-grid detail-list"><label class="field"><span>Good quantity</span><input name="completed_quantity" type="number" min="${row.completed_quantity}" step="1" required value="${row.completed_quantity}"></label><label class="field"><span>Actual resource</span><select name="resource_id">${machines.map(m=>`<option ${m.id===row.resource_id?'selected':''}>${m.id}</option>`).join('')}</select></label><label class="field"><span>Scrap quantity</span><input name="scrap_quantity" type="number" min="${row.scrap_quantity}" step="1" required value="${row.scrap_quantity}"></label><label class="field"><span>Operator · ${esc(row.skill)}</span><select name="person_id" required>${people.map(p=>`<option value="${p.id}" ${p.id===row.person_id?'selected':''}>${esc(p.name)} · ${p.id}</option>`).join('')}</select></label><label class="field"><span>Actual start</span><input name="actual_start" type="datetime-local" required value="${row.actual_start||state.meta.factory.as_of}"></label><label class="field"><span>Actual finish (when complete)</span><input name="actual_end" type="datetime-local" value="${row.actual_end}"></label><label class="field wide"><span>Scrap reason</span><textarea name="scrap_reason">${esc(row.scrap_reason)}</textarea></label></div></form>`, '<button class="button" id="cancel">Cancel</button><button class="button primary" type="submit" form="progress-form">Book progress</button>');
   $('#progress-form').addEventListener('submit',async event=>{
-    event.preventDefault();const data=Object.fromEntries(new FormData(event.target));data.completed_quantity=Number(data.completed_quantity);data.expected_version=row._version;
+    event.preventDefault();const data=Object.fromEntries(new FormData(event.target));data.completed_quantity=Number(data.completed_quantity);data.scrap_quantity=Number(data.scrap_quantity);data.expected_version=row._version;
     try{await api(`/api/progress/${row.id}/report`,{method:'POST',body:JSON.stringify(data)});closeDrawer();await reloadMeta();await render();notify('Production progress recorded.');}
     catch(error){$('#form-error').textContent=error.message;$('#form-error').hidden=false;}
   });
@@ -249,12 +284,12 @@ async function renderWorkbook() {
 function renderGuide() {
   $('#main').innerHTML=`<div class="page-title"><div><div class="eyebrow">THE DEMO / FACTORY GUIDE</div><h1>A familiar factory. A complex plan.</h1><p class="subtitle">Meet Northstar Valve Works, a deliberately fictional make-to-order manufacturer.</p></div><button class="button" id="guide-production">Open production ${icon('arrow')}</button></div>
     <div class="guide-intro"><div><h2>From metal blank to tested valve assembly.</h2><p>Northstar produces distributor, regulator and sensor assemblies for equipment makers. Orders share machining capacity, assembly benches and specialist people. The MES tracks what must be made and what has happened. The planner coordinates the next steps in Excel.</p></div><div class="factory-monogram">N</div></div>${stats()}
-    <div class="flow"><div class="flow-card"><span>01 / BODY MANUFACTURING</span><h3>Machine, deburr, wash</h3><p>Alternative CNC cells, changing fixtures and materials. The body becomes available to assembly after cleaning.</p></div>${icon('arrow')}<div class="flow-card"><span>02 / ASSEMBLY & QUALITY</span><h3>Assemble, calibrate, test</h3><p>Variant-specific routes, shared specialists and a qualified final test before shipment.</p></div></div>
+    <div class="flow"><div class="flow-card"><span>01 / BODY MANUFACTURING</span><h3>Machine, deburr, wash</h3><p>Combined machining or a separate roughing/drilling route, with explicit alternative CNC cells and component needs. The body becomes available to assembly after cleaning.</p></div>${icon('arrow')}<div class="flow-card"><span>02 / ASSEMBLY & QUALITY</span><h3>Assemble, calibrate, test</h3><p>Variant-specific routes, shared specialists and a qualified final test before shipment.</p></div></div>
     <h2>Three products, shared capacity</h2><div class="guide-grid">
     <div class="guide-card"><span class="badge green">D / DISTRIBUTOR</span><p>A machined body with seals, plugs and connectors. The shortest route still competes for the same people and equipment.</p><div class="route">Body manufacturing → Assembly → Leak test</div></div>
     <div class="guide-card"><span class="badge amber">R / REGULATOR</span><p>Control valves are installed and adjusted. Precision assembly and qualified functional testing become additional constraints.</p><div class="route">Body manufacturing → Assembly → Adjustment → Function test</div></div>
     <div class="guide-card"><span class="badge blue">S / SENSOR</span><p>Electronics add a specialist route. The lot returns to an assembly bench after calibration for final completion.</p><div class="route">Body manufacturing → Preassembly → Sensor installation → Calibration → Final assembly → Function test</div></div></div>
-    <div class="guide-note"><h3>The Monday morning handover</h3><p>The snapshot is fixed at 05 October 2026, 10:00, Europe/Berlin. Some work is already complete or running. A sensor delivery is confirmed for Wednesday, CNC-03 has a spindle inspection, and QA-03 has a calibration appointment. The first two hours of upcoming work are marked as fixed in Excel.</p><h3>Try a normal planning change</h3><p>Create an urgent order, move an inbound delivery, or add machine downtime. The MES retains the edit and flags the workbook baseline for review. Use Reset demo to return to the original situation.</p><h3>What the current baseline represents</h3><p>All names, quantities and times are synthetic. The Excel plan is a reproducible conventional baseline, not an APEX-optimized result. It uses fixed lots and setup allowances, whole-lot transfer, resource calendars, staffing and confirmed material supply. Sequence-dependent setup optimization and live Excel synchronization are future integration work.</p></div>`;
+    <div class="guide-note"><h3>The Monday morning handover</h3><p>The initial snapshot is 05 October 2026, 10:00, Europe/Berlin. Use the snapshot button to advance the demo clock. Some work is already complete or running. A sensor delivery is confirmed for Wednesday, CNC-03 has a spindle inspection, and QA-03 has a calibration appointment. The first two hours of upcoming work are marked as fixed in Excel.</p><h3>Try a normal planning change</h3><p>Copy a workplan into a draft revision, edit its steps and release it. Approve it for an article, then select it on a new order. Record good pieces, scrap and actual times, or put a lot on quality hold. Move an inbound delivery or add dated equipment and personnel blocks. The MES retains the edit and flags the workbook baseline for review. Use Reset demo to return to the original situation.</p><h3>What the current baseline represents</h3><p>All names, quantities and times are synthetic. The Excel plan is a reproducible conventional baseline, not an APEX-optimized result. It uses fixed lots and setup allowances, whole-lot transfer, resource calendars, staffing and confirmed material supply. Sequence-dependent setup optimization and live Excel synchronization are future integration work.</p></div>`;
   $('#guide-production').addEventListener('click',()=>navigate('orders'));
 }
 async function start() {

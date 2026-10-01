@@ -7,7 +7,8 @@ import sqlite3
 
 from .availability import availability_at, normalize_machine
 from .catalog import CATALOG
-from .seed import expand_order, refresh_progress
+from . import execution, workplans
+from .upgrade import install
 
 
 class Conflict(ValueError):
@@ -48,12 +49,17 @@ class Store:
     def all(db, entity):
         rows = [dict(json.loads(row["data"]), _version=row["version"])
                 for row in db.execute("SELECT data,version FROM records WHERE entity=? ORDER BY id", (entity,))]
-        if entity == "downtime":
+        if entity in ("downtime", "absences"):
             rows = [dict(row, cancelled=bool(row.get("cancelled", False))) for row in rows]
         if entity == "machines":
             at = Store.meta(db, "factory")["as_of"]
             periods = Store.all(db, "downtime")
             rows = [dict(row, **availability_at(row, periods, at)) for row in rows]
+        if entity == "routings":
+            rows = [dict(row, steps=" / ".join(s["name"] for s in workplans.steps_for(db, row["id"]))) for row in rows]
+        if entity == "materials":
+            stock = execution.balances(db, Store.meta(db, "factory")["as_of"])
+            rows = [dict(row, on_hand=stock[row["id"]]) for row in rows]
         return rows
 
     @staticmethod
@@ -73,6 +79,7 @@ class Store:
         with self.connect() as db:
             db.execute("BEGIN IMMEDIATE")
             if self.meta(db, "factory") and not reset:
+                install(self, db, data, existing=True)
                 return False
             db.execute("DELETE FROM records")
             db.execute("DELETE FROM metadata")
@@ -85,6 +92,7 @@ class Store:
             for key in ["factory", "qualifications", "plan"]:
                 self.put_meta(db, key, data[key])
             self.put_meta(db, "revision", 0)
+            install(self, db, data, existing=False)
             return True
 
     @staticmethod
@@ -100,7 +108,10 @@ class Store:
                 raise ValueError(f"{col['label']} is required")
             if value in (None, ""):
                 continue
-            if col["type"] == "boolean":
+            if col["type"] == "json":
+                if not isinstance(value, list):
+                    raise ValueError(f"{col['label']} must be a list")
+            elif col["type"] == "boolean":
                 if not isinstance(value, bool):
                     raise ValueError(f"{col['label']} must be true or false")
             elif col["type"] in ("number", "integer"):
@@ -124,15 +135,13 @@ class Store:
             if col["ref"] and not db.execute("SELECT 1 FROM records WHERE entity=? AND id=?", (col["ref"], value)).fetchone():
                 raise ValueError(f"Unknown reference for {col['label']}: {value}")
         if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,49}", data["id"]):
-            raise ValueError("ID must contain 1–50 letters, numbers, dots, hyphens or underscores")
-        if entity == "downtime" and data["end"] <= data["start"]:
+            raise ValueError("ID must contain 1-50 letters, numbers, dots, hyphens or underscores")
+        if entity in ("downtime", "absences") and data["end"] <= data["start"]:
             raise ValueError("The end must be after the start")
         if entity == "shifts" and not data["start"] < data["end"]:
             raise ValueError("Use a same-day shift with end after start")
         if entity == "shifts" and not data["start"] <= data["break_start"] <= data["break_end"] <= data["end"]:
             raise ValueError("The break must be inside the shift")
-        if entity == "items" and {"Distributor": "RT-D", "Regulator": "RT-R", "Sensor": "RT-S"}[data["variant"]] != data["routing_id"]:
-            raise ValueError("The workplan must match the product variant")
 
     def change(self, entity, payload, record_id=None):
         if entity not in CATALOG:
@@ -150,17 +159,33 @@ class Store:
                 if set(data) - fields:
                     raise ValueError("The request changes a read-only field")
                 result = json.loads(old["data"])
+                previous = result.copy()
                 result.update(data)
                 self.validate(db, entity, result)
+                workplans.guard_master_edit(db, entity, result, previous)
                 db.execute("UPDATE records SET data=?,version=version+1 WHERE entity=? AND id=?", (json.dumps(result), entity, record_id))
                 version = old["version"] + 1
             else:
                 if not CATALOG[entity]["create"]:
                     raise ValueError("Create this record through its owning workflow")
+                if entity == "routings":
+                    if data.get("status", "Draft") != "Draft":
+                        raise ValueError("New workplans start as Draft")
+                    data["status"] = "Draft"
+                if any(c["computed"] and c["key"] in data for c in CATALOG[entity]["columns"]):
+                    raise ValueError("Computed values cannot be supplied")
                 result = self.create_order(db, data) if entity == "orders" else data
                 self.validate(db, entity, result)
+                workplans.guard_master_edit(db, entity, result)
                 self.insert(db, entity, result)
+                if entity == "items":
+                    self.insert(db, "item_routings", dict(id=f"LINK-{self.meta(db, 'revision')+1}",
+                                item_id=result["id"], routing_id=result["routing_id"], active=True))
                 record_id, version = result["id"], 1
+            if entity in ("materials", "receipts"):
+                execution.check_stock(db)
+            if entity == "lots" and result.get("quality_status") == "Hold" and not result.get("hold_reason", "").strip():
+                raise ValueError("A quality hold needs a reason")
             revision = self.meta(db, "revision") + 1
             self.put_meta(db, "revision", revision)
             db.execute("INSERT INTO audit(at,entity,record_id,detail) VALUES (?,?,?,?)",
@@ -168,7 +193,7 @@ class Store:
             return dict(result, _version=version, _revision=revision)
 
     def create_order(self, db, data):
-        allowed = {"id", "customer", "item_id", "quantity", "due", "priority", "note", "lot_size"}
+        allowed = {"id", "customer", "item_id", "quantity", "due", "priority", "note", "lot_size", "routing_id"}
         if set(data) - allowed:
             raise ValueError("Unknown order field")
         row = db.execute("SELECT data FROM records WHERE entity='items' AND id=?", (data.get("item_id"),)).fetchone()
@@ -179,6 +204,7 @@ class Store:
         if isinstance(lot_size, bool) or not isinstance(lot_size, int) or not 1 <= lot_size <= 100:
             raise ValueError("Lot size must be a whole number between 1 and 100")
         data["status"] = "Released"
+        data.update(good_quantity=0, scrap_quantity=0)
         data.setdefault("note", "")
         self.validate(db, "orders", data)
         if data["quantity"] > 2000:
@@ -187,42 +213,62 @@ class Store:
         factory = self.meta(db, "factory")
         if data["due"] < factory["as_of"]:
             raise ValueError("A new order must be due at or after the demo snapshot")
-        lots, ops = expand_order(data, item, lot_size=lot_size, release=factory["as_of"], first_lot=start)
+        lots, ops = workplans.release_order(db, data, item, lot_size, factory["as_of"], start)
         for entity, rows in [("lots", lots), ("operations", ops)]:
             for row in rows:
                 self.insert(db, entity, row)
         return data
 
+    def record_action(self, db, entity, ident, payload):
+        self.put_meta(db, "revision", self.meta(db, "revision") + 1)
+        db.execute("INSERT INTO audit(at,entity,record_id,detail) VALUES (?,?,?,?)",
+                   (datetime.now().isoformat(timespec="seconds"), entity, ident, json.dumps(payload)))
+
+    def check_version(self, db, entity, ident, payload):
+        row = db.execute("SELECT version FROM records WHERE entity=? AND id=?", (entity, ident)).fetchone()
+        if row is None:
+            raise ValueError("Record not found")
+        if payload.get("expected_version") != row[0]:
+            raise Conflict("This record changed. Reload it before saving.")
+
     def report(self, operation_id, payload):
         with self.connect() as db:
             db.execute("BEGIN IMMEDIATE")
-            records = {entity: self.all(db, entity) for entity in ("operations", "lots", "orders")}
-            operation = next((op for op in records["operations"] if op["id"] == operation_id), None)
-            if operation is None:
-                raise ValueError("Operation not found")
-            if payload.get("expected_version") != operation["_version"]:
-                raise Conflict("This operation changed. Reload it before booking progress.")
-            lot = next(lot for lot in records["lots"] if lot["id"] == operation["lot_id"])
-            qty = payload.get("completed_quantity")
-            if isinstance(qty, bool) or not isinstance(qty, int) or not operation["completed_quantity"] <= qty <= lot["quantity"]:
-                raise ValueError("Good quantity must be a whole number between the booked and lot quantities")
-            if any(op["lot_id"] == lot["id"] and op["sequence"] < operation["sequence"] and op["status"] != "Complete" for op in records["operations"]):
-                raise ValueError("Complete the previous operation first")
-            from .seed import eligible
-            machine = next((m for m in self.all(db, "machines") if m["id"] == payload.get("resource_id")), None)
-            item = next(a for a in self.all(db, "items") if a["id"] == lot["item_id"])
-            if machine is None or not eligible(machine, item, operation) or machine["status"] != "Available":
-                raise ValueError("Select an available, eligible resource")
-            operation.update(completed_quantity=qty, status="Complete" if qty == lot["quantity"] else "Running", resource_id=machine["id"])
-            refresh_progress(records)
-            for entity, rows in records.items():
-                for record in rows:
-                    version = record.pop("_version")
-                    encoded = json.dumps(record)
-                    old = db.execute("SELECT data FROM records WHERE entity=? AND id=?", (entity, record["id"])).fetchone()[0]
-                    if old != encoded:
-                        db.execute("UPDATE records SET data=?,version=? WHERE entity=? AND id=?", (encoded, version+1, entity, record["id"]))
-            self.put_meta(db, "revision", self.meta(db, "revision")+1)
-            db.execute("INSERT INTO audit(at,entity,record_id,detail) VALUES (?,?,?,?)",
-                       (datetime.now().isoformat(timespec="seconds"), "operations", operation_id, json.dumps(payload)))
-            return {"saved": True}
+            self.check_version(db, "operations", operation_id, payload)
+            result = execution.report(self, db, operation_id, payload)
+            self.record_action(db, "operations", operation_id, payload)
+            return result
+
+    def routing_action(self, ident, action, payload):
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            self.check_version(db, "routings", ident, payload)
+            route = workplans.get(db, "routings", ident)
+            if action == "revise":
+                result = workplans.revise(self, db, route, payload)
+            elif action == "release":
+                if route["status"] != "Draft":
+                    raise ValueError("Only draft workplans can be released")
+                workplans.validate_route(db, ident)
+                route["status"] = "Released"
+                workplans.update(db, "routings", route)
+                result = route
+            else:
+                raise ValueError("Unknown workplan action")
+            self.record_action(db, "routings", ident, dict(action=action, **payload))
+            return result
+
+    def advance_clock(self, payload):
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            factory = self.meta(db, "factory")
+            if payload.get("expected_as_of") != factory["as_of"]:
+                raise Conflict("The demo clock changed. Reload before advancing it.")
+            value = payload.get("as_of")
+            execution.timestamp(value, "Snapshot")
+            if not factory["as_of"] < value <= "2026-12-31T23:59":
+                raise ValueError("Advance the demo clock forward within 2026")
+            factory["as_of"] = value
+            self.put_meta(db, "factory", factory)
+            self.record_action(db, "factory", "clock", payload)
+            return factory

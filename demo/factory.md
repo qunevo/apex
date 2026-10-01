@@ -18,19 +18,23 @@ All lots visit CNC machining, deburring and washing. The cleaned body is transfe
 | Regulator | Mechanical assembly, valve adjustment, final leak/function test |
 | Sensor | Mechanical preassembly, sensor installation, calibration, final assembly, final leak/function test |
 
-Sensor lots return to the shared assembly area after calibration. There is no reentrant machining, automatic batch formation, yield loss or quantity splitting during an operation in this seed. No quality step is optional.
+Sensor lots return to the shared assembly area after calibration. The initial baseline has no reentrant machining, automatic batch formation, yield loss or quantity splitting during an operation. Subsequent MES confirmations can record scrap and reduce downstream usable quantities. No quality step is optional.
+
+The MES also supplies a released alternative for each family: rough machining on CNC-03/05, then finish drilling and threading on CNC-04/06. The faster heavy-duty alternatives have different unit times. Deburring, washing and the family-specific downstream steps follow. This is a different workplan, whereas selecting CNC-03 versus CNC-05 is a machine choice within the same step. The original 600 lots retain the combined machining route; new orders can select either approved route.
+
+Workplan steps, per-machine rates and component requirements are editable in draft revisions. A release locks the revision. Articles approve one or more released routes. Every production release copies these facts into immutable lot instructions. Named intermediate outputs describe WIP state, not separately stocked semifinished articles.
 
 ## Equipment and people
 
 Six CNC cells form compact, universal and heavy-duty pairs. CNC-01/02 accept small and medium aluminium bodies; the other four accept every body in this initial case. Two deburring benches and two washers serve all lots. Eight assembly benches, two electronics benches, one calibration bench and three test benches support the second stage. QA-01 handles distributors only; QA-02/03 handle all variants.
 
-The equipment window is weekdays 06:00–22:00. Personnel work 06:00–14:00 or 14:00–22:00 with a half-hour break at 10:00 or 18:00. There are 24 named synthetic people: six in machining, twelve in assembly and six in quality. Qualifications overlap but each person remains one capacity-one resource. Excel owns the qualification matrix; MES owns attendance.
+The equipment window is weekdays 06:00–22:00. Personnel work 06:00–14:00 or 14:00–22:00 with a half-hour break at 10:00 or 18:00. There are 24 named synthetic people: six in machining, twelve in assembly and six in quality. Qualifications overlap but each person remains one capacity-one resource. Excel owns the qualification matrix; MES owns attendance, assigned shifts and dated personnel absences.
 
 The baseline assumes continuous personnel attendance for every operation except CNC machining, where the assigned person attends the setup phase only. CNC may continue across that person's break. Operations reserve the machine throughout their duration. The baseline does not split operations across shifts, change people inside an operation or infer unattended night operation.
 
 ## Materials and maintenance
 
-Each piece consumes one material-appropriate body blank and one seal kit. Regulator and sensor variants also require a valve kit; sensors require a sensor kit at installation. Opening stocks and confirmed receipts are provided in pieces. Supply is allocated conservatively in order-due-date order. It is not replenishment planning.
+Each piece consumes one material-appropriate body blank and one seal kit. Regulator and sensor variants also require a valve kit; sensors require a sensor kit at installation. Opening stocks and confirmed receipts are provided in pieces. Supply is allocated conservatively in order-due-date order. It is not replenishment planning. The MES attaches each component requirement to its consuming step and posts actual issues from confirmation deltas. Only received deliveries increase usable stock. Material reservations and purchase orders remain outside the mock.
 
 The initial sensor stock is deliberately limited. More sensor kits arrive Wednesday 07 October at 10:00. Seal kits arrive Tuesday; valve kits arrive Thursday. The seed includes a CNC-03 spindle inspection, a QA-03 reference instrument calibration and WS-02 bath service. The baseline respects these blocked intervals.
 
@@ -56,4 +60,4 @@ Editing a start or duration in Excel recalculates that row's finish and lateness
 
 The adapter will consume business records and the planner's decisions, preserve stable order/lot/operation IDs and translate units, calendars, eligibility and commitments into typed APEX inputs. It must distinguish proposed assignments from fixed decisions and preserve booked execution.
 
-Before adding sequence-dependent setups, fixtures, finite buffers, maximum waiting times, alternative complete routes or automatic wash batches, their exact occupancy and release contracts need to be specified and tested. The current mock supplies a realistic source environment; it does not claim those solver semantics are already integrated.
+Before adding sequence-dependent setups, fixtures, finite buffers, maximum waiting times, finite intermediate stock or automatic wash batches, their exact occupancy and release contracts need to be specified and tested. The current mock supplies a realistic source environment; it does not claim those solver semantics are already integrated.
