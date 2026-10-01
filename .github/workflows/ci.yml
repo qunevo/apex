@@ -96,6 +96,7 @@ jobs:
         run: |
           npm run test:mcp
           npm run test:http
+          npm run test:config
       - name: Viewer integration using the same release executable
         if: runner.os == 'Linux'
         run: |

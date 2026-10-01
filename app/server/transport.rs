@@ -28,7 +28,7 @@ fn options_schema() -> Value {
 
 pub fn tools() -> Value {
     let definitions=tool_names().into_iter().map(|name|{
-        let (description,required,properties)=match name{
+        let (description,required,mut properties)=match name{
             "material.prepare"=>("Peg existing stock, receipts and production to operation material requirements. Preserves free workplans and reallocates after each route selection; the returned allocation report is a preview for flexible routes. Use model.page/materials for actual saved allocations. Never creates orders. Select differing material modes first.",vec!["scenario_id","expected_revision"],json!({"scenario_id":{"type":"string"},"expected_revision":{"type":"integer","minimum":1},"options":{"type":"object","additionalProperties":false,"properties":{"route_choices":{"type":"object","additionalProperties":{"type":"string"}},"mode_choices":{"type":"object","additionalProperties":{"type":"string"}}}}})),
             "artifact.read"=>("Read a retained response by artifact ID and JSON pointer. Objects list fields; arrays are paginated; strings are bounded. Works for remote agents without filesystem access.",vec!["artifact_id"],json!({"artifact_id":{"type":"string"},"pointer":{"type":"string"},"offset":{"type":"integer","minimum":0},"limit":{"type":"integer","minimum":1,"maximum":200}})),
             "production.import"=>("Expand production orders into quantity-conserving lots, jobs, workplan choices and material flows. Supply a ProductionInput by file path or inline production object.",vec![],json!({"path":{"type":"string"},"production":{"type":"object"}})),
@@ -63,6 +63,7 @@ pub fn tools() -> Value {
             "scenario.compare"=>("Compare two immutable schedules: KPIs and changed task assignments.",vec!["baseline_id","candidate_id"],json!({"baseline_id":{"type":"string"},"candidate_id":{"type":"string"}})),
             _=>("Reserved solver boundary. Returns UNSUPPORTED_BACKEND until a backend is implemented.",vec![],json!({})),
         };
+        properties["customization"]=json!({"type":"string","description":"Enabled customization folder ID; omitted uses the configured default. Pass the same ID on follow-up calls."});
         let read_only=matches!(name,"queues.inspect"|"policy.inspect"|"schedule.explain_decision"|"artifact.read"|"model.page"|"task.inspect"|"capabilities"|"schema.get"|"import.status"|"diagnostics.page"|"scenario.get"|"tasks.page"|"schedule.validate"|"schedule.page"|"scenario.compare"|"solver.solve");
         json!({"name":name,"description":description,"inputSchema":{"type":"object","properties":properties,"required":required,"additionalProperties":false},"annotations":{"readOnlyHint":read_only,"destructiveHint":false,"openWorldHint":false}})
     }).collect::<Vec<_>>();
@@ -199,7 +200,7 @@ pub fn serve(service: &Service, port: u16) -> Result<(), Box<dyn std::error::Err
             (
                 200,
                 "text/html; charset=utf-8",
-                include_str!("../web/index.html").to_string(),
+                include_str!("../ui/index.html").to_string(),
             )
         } else if request.method() == &tiny_http::Method::Get && path == "/openapi.json" {
             (

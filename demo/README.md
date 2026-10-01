@@ -60,7 +60,7 @@ The browser workbook views are previews of the original seed, not a live spreads
 - `.local/`: ignored database, seed cache, working Excel copy, previews and test outputs.
 - `scripts/start.sh`: portable launcher, including Git Bash on Windows.
 
-No parent dependency is added to `app/`. This demo does not require or change the APEX executable, the bundled technical examples or frozen paper evidence. The APEX adapter/customization is a subsequent integration step.
+No parent dependency is added to `app/`. This demo does not require or change the APEX executable, the bundled technical examples or frozen paper evidence. The APEX package boundary is in `app/customization/demo/`; the live adapter remains a subsequent integration step.
 
 To regenerate after changing seed code, stop the server, run `python -B -m demo.mes.seed`, rebuild the source workbook with the authoring runtime, and then use **Reset demo** after restarting. This is an intentional maintainer operation; do not reset someone else's active demo.
 

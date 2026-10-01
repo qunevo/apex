@@ -14,6 +14,14 @@ The repository contains an independently usable application, contributor tooling
 
 ## Independent application
 
+Inside `app/`, `core/` owns algorithms, `server/` owns entry points and tool
+orchestration, `data/` owns existing file-backed state, and `ui/` owns the viewer.
+`skills/` holds general workflows; `customization/<id>/` groups each domain's
+adapter, model, skills, tests and optional views. The Cargo package and executable
+remain shared; no new service or parent dependency is introduced.
+See [server configuration](../../app/docs/server-configuration.md) for package
+allowlists, defaults and request-specific selection.
+
 `app/` owns its `Cargo.toml`, `Cargo.lock`, test-tooling manifests and release profile. There is no parent Cargo workspace or root lockfile. Enter `app/` before running Cargo, npm or product commands. Product tests stay next to the application they verify. The scheduler does not require Node.js or Python; those tools are used for development and integration tests.
 
 All compile-time assets and runtime setup helpers resolve inside the application. Deployment helpers locate the application relative to their own script, regardless of the caller's current directory. MCP setup can select a separate data workspace while retaining the binary in the application installation. Local `.apex` state, `.codex` settings, installed dependencies, generated reports and build output are excluded from distribution.

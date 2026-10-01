@@ -37,7 +37,7 @@ Start with the [documentation index](docs/README.md). The main references are:
 - [Migration audit](https://github.com/qunevo/apex/blob/main/dev/docs/migration-audit.md): v2 comparison, implemented coverage and remaining migration boundaries.
 - [Benchmark of 24 September 2026](https://github.com/qunevo/apex/blob/main/benchmark/README.md): frozen sources, scientific instances, results and standalone reproduction instructions in one ZIP.
 
-Runnable synthetic inputs include [production orders](examples/production-orders.json), [shift and material constraints](examples/shift-factory.json), [material chains](examples/chain-routing.json) and [dispatch policies](examples/dispatch-campaign.json). The [customization knowledge bundle](customizations/dummy_customer/KNOWLEDGE.md) describes the extension workflow.
+Runnable synthetic inputs include [production orders](examples/production-orders.json), [shift and material constraints](examples/shift-factory.json), [material chains](examples/chain-routing.json) and [dispatch policies](examples/dispatch-campaign.json). The [customization knowledge bundle](customization/dummy_customer/model/KNOWLEDGE.md) describes the extension workflow.
 
 The executable schema is `apex.v3.4`; canonical `apex.v3.1`, `apex.v3.2` and `apex.v3.3` inputs remain accepted by the same Rust runtime. Rust is the sole scheduling implementation; the [migration audit](https://github.com/qunevo/apex/blob/main/dev/docs/migration-audit.md) records the v2 source removal and historical comparisons. Tested coverage does not establish complete legacy parity, optimality or production readiness. Repository documentation and examples use English, and all fixtures are deliberately synthetic.
 
@@ -52,3 +52,9 @@ The [support guide](https://github.com/qunevo/apex/blob/main/SUPPORT.md), [Code 
 APEX is distributed under the [APEX Source Available License 1.1](LICENSE). The included license contains the complete public grant, eligibility and pricing rules. It is source available, not OSI-approved open source.
 
 See the [licensing overview](LICENSING.md) and [pricing and eligibility](docs/legal/pricing.md). There is no per-operation, per-user, per-site or per-run metering. Commercial and contributor agreements require separate acceptance; [the legal documentation](docs/legal/README.md) explains the published document roles. Third-party components retain their own licenses. [Publication preparation](https://github.com/qunevo/apex/blob/main/dev/docs/publication.md) records the release checks.
+
+## Application packages
+
+The application is organized into `core/`, `server/`, `data/`, `ui/`, `skills/`
+and `customization/`, with one executable. See [server configuration](docs/server-configuration.md)
+for an enabled-package list, default selection and per-request customization.

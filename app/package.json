@@ -9,6 +9,7 @@
   "scripts": {
     "test:mcp": "node tests/mcp-smoke.mjs",
     "test:http": "node tests/http-mcp.mjs",
-    "test:viewer": "node tests/viewer-smoke.mjs"
+    "test:viewer": "node tests/viewer-smoke.mjs",
+    "test:config": "node tests/server-config.mjs"
   }
 }

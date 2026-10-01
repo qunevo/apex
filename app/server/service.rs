@@ -1,20 +1,16 @@
-use crate::{compile, model::*, validate, xg};
-use serde::{Deserialize, Serialize};
+use super::config::Config;
+pub use crate::data::ToolResult;
+use crate::data::{FileStore, Import, SavedSchedule, Scenario, error, id};
+use crate::{compile, customization::Package, model::*, validate, xg};
+use serde::Serialize;
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 use std::{
-    fs::{self, File, OpenOptions},
-    io::{BufReader, BufWriter, Write},
+    collections::BTreeMap,
+    fs,
     path::{Path, PathBuf},
-    sync::atomic::{AtomicU64, Ordering},
-    time::{SystemTime, UNIX_EPOCH},
 };
 
-static COUNTER: AtomicU64 = AtomicU64::new(0);
-pub type ToolResult = Result<Value, Value>;
-fn error(code: &str, message: impl ToString) -> Value {
-    json!({"code":code,"message":message.to_string()})
-}
 fn hash(value: &Value) -> String {
     Sha256::digest(serde_json::to_vec(value).unwrap())
         .iter()
@@ -30,17 +26,6 @@ fn import_hash_preserves_sha256_hex_encoding() {
     );
 }
 
-fn id() -> String {
-    format!(
-        "a{:x}-{:x}-{:x}",
-        SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .unwrap()
-            .as_nanos(),
-        std::process::id(),
-        COUNTER.fetch_add(1, Ordering::Relaxed)
-    )
-}
 fn field<'a>(v: &'a Value, k: &str) -> Result<&'a str, Value> {
     v[k].as_str()
         .ok_or_else(|| error("ARGUMENT", format!("Missing string {k}")))
@@ -52,33 +37,75 @@ fn diagnostics(ds: Vec<Diagnostic>) -> Value {
     json!({"code":"INVALID_CANDIDATE_OR_INPUT","total":ds.len(),"diagnostics":ds.iter().take(100).collect::<Vec<_>>(),"truncated":ds.len()>100})
 }
 
-#[derive(Serialize, Deserialize)]
-struct Scenario {
-    revision: u64,
-    problem: Problem,
-    parent: Option<String>,
-}
-#[derive(Serialize, Deserialize)]
-struct SavedSchedule {
-    scenario_id: String,
-    revision: u64,
-    problem: Problem,
-    schedule: Schedule,
-}
-#[derive(Serialize, Deserialize)]
-struct Import {
-    problem: Problem,
-    expected_tasks: usize,
-    chunks: std::collections::BTreeMap<String, String>,
-    finalized: Option<String>,
-}
-
+#[derive(Clone)]
 pub struct Service {
     pub root: PathBuf,
     pub workspace: PathBuf,
     pub viewer_url: String,
+    package: Option<Package>,
+    default_package: Option<String>,
+    packages: BTreeMap<String, Service>,
 }
 impl Service {
+    /// Enable named packages without changing legacy unconfigured stores.
+    pub fn with_config(mut self, path: &Path) -> Result<Self, Box<dyn std::error::Error>> {
+        let config = Config::load(path)?;
+        for (id, package) in config.packages {
+            let root = self
+                .root
+                .join("customization")
+                .join(&id)
+                .join(&package.version);
+            let workspace = self.workspace.join("inputs").join(&id);
+            fs::create_dir_all(&workspace)?;
+            let mut scoped = Self::new(root, workspace)?;
+            if !scoped.root.starts_with(&self.root)
+                || !scoped.workspace.starts_with(&self.workspace)
+            {
+                return Err(
+                    "Customization state/input paths must remain inside the configured roots"
+                        .into(),
+                );
+            }
+            scoped.package = Some(package);
+            self.packages.insert(id, scoped);
+        }
+        self.default_package = Some(config.default);
+        Ok(self)
+    }
+
+    fn select(&self, args: &Value) -> Result<Self, Value> {
+        let requested = args
+            .get("customization")
+            .map(|value| {
+                value.as_str().ok_or_else(|| {
+                    error(
+                        "CUSTOMIZATION",
+                        "customization must be an enabled folder ID",
+                    )
+                })
+            })
+            .transpose()?;
+        if self.packages.is_empty() {
+            if requested.is_some() && requested != self.package.as_ref().map(|p| p.id.as_str()) {
+                return Err(error(
+                    "CUSTOMIZATION",
+                    "This server has no matching enabled customization",
+                ));
+            }
+            return Ok(self.clone());
+        }
+        let id = requested.or(self.default_package.as_deref()).unwrap();
+        let mut selected = self.packages.get(id).cloned().ok_or_else(|| {
+            error(
+                "CUSTOMIZATION",
+                "Customization is not enabled on this server",
+            )
+        })?;
+        selected.viewer_url = self.viewer_url.clone();
+        Ok(selected)
+    }
+
     pub fn new(
         root: impl AsRef<Path>,
         workspace: impl AsRef<Path>,
@@ -88,32 +115,28 @@ impl Service {
             root: root.as_ref().canonicalize()?,
             workspace: workspace.as_ref().canonicalize()?,
             viewer_url: "http://127.0.0.1:8765".into(),
+            package: None,
+            default_package: None,
+            packages: BTreeMap::new(),
         })
     }
-    fn path(&self, key: &str) -> Result<PathBuf, Value> {
-        if key.is_empty()
-            || key.len() > 120
-            || !key
-                .bytes()
-                .all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_')
-        {
-            return Err(error("ID", "Invalid artifact ID"));
+    fn store(&self) -> FileStore<'_> {
+        FileStore {
+            root: &self.root,
+            workspace: &self.workspace,
         }
-        Ok(self.root.join(format!("{key}.json")))
+    }
+    fn path(&self, key: &str) -> Result<PathBuf, Value> {
+        self.store().path(key)
     }
     fn read<T: serde::de::DeserializeOwned>(&self, key: &str) -> Result<T, Value> {
-        let bytes = fs::read(self.path(key)?).map_err(|e| error("NOT_FOUND", e))?;
-        serde_json::from_slice(&bytes).map_err(|e| error("ARTIFACT", e))
+        self.store().read(key)
     }
-    fn write<T: Serialize>(&self, key: &str, value: &T) -> Result<(), Value> {
-        let target = self.path(key)?;
-        let temp = self.root.join(format!("{}.tmp", id()));
-        let mut f =
-            BufWriter::with_capacity(65536, File::create(&temp).map_err(|e| error("STORE", e))?);
-        serde_json::to_writer(&mut f, value).map_err(|e| error("STORE", e))?;
-        f.flush().map_err(|e| error("STORE", e))?;
-        f.get_ref().sync_all().map_err(|e| error("STORE", e))?;
-        fs::rename(temp, target).map_err(|e| error("STORE", e))
+    fn write<T: serde::Serialize>(&self, key: &str, value: &T) -> Result<(), Value> {
+        self.store().write(key, value)
+    }
+    fn input_file(&self, path: &str) -> Result<Value, Value> {
+        self.store().input_file(path)
     }
     fn save(&self, p: Problem, parent: Option<String>) -> ToolResult {
         let key = id();
@@ -122,6 +145,7 @@ impl Service {
         self.write(
             &key,
             &Scenario {
+                customization_package: self.package.clone(),
                 revision: 1,
                 problem: p,
                 parent,
@@ -129,42 +153,39 @@ impl Service {
         )?;
         Ok(json!({"scenario_id":key,"revision":1,"tasks":tasks}))
     }
-    fn input_file(&self, path: &str) -> Result<Value, Value> {
-        let path = self
-            .workspace
-            .join(path)
-            .canonicalize()
-            .map_err(|e| error("FILE", e))?;
-        if !path.starts_with(&self.workspace) {
-            return Err(error(
-                "PATH",
-                "Input must be inside the configured workspace",
-            ));
-        }
-        let f = File::open(path).map_err(|e| error("FILE", e))?;
-        if f.metadata().map_err(|e| error("FILE", e))?.len() > 256 * 1024 * 1024 {
-            return Err(error("SIZE", "Use chunk import above 256 MiB"));
-        }
-        serde_json::from_reader(BufReader::with_capacity(65536, f)).map_err(|e| error("JSON", e))
-    }
     pub fn call(&self, name: &str, args: &Value) -> ToolResult {
-        let lock = OpenOptions::new()
-            .create(true)
-            .truncate(false)
-            .read(true)
-            .write(true)
-            .open(self.root.join("store.lock"))
-            .map_err(|e| error("STORE", e))?;
-        fs2::FileExt::lock_exclusive(&lock).map_err(|e| error("STORE", e))?;
-        self.dispatch(name, args)
+        let selected = self.select(args)?;
+        let _lock = selected.store().lock()?;
+        let mut value = selected.dispatch(name, args).map_err(|mut value| {
+            if let Some(package) = &selected.package {
+                value["customization_package"] = json!(package);
+            }
+            value
+        })?;
+        if value.is_object() {
+            if let Some(package) = &selected.package {
+                value["customization_package"] = json!(package);
+            }
+            if name == "capabilities" {
+                value["enabled_customizations"] = json!(self.packages.keys().collect::<Vec<_>>());
+                value["default_customization"] = json!(self.default_package);
+            }
+        }
+        Ok(value)
     }
-
     /// Keep unusually large records or metadata out of the language-model context.
     pub fn agent_response(&self, result: ToolResult) -> (Value, bool) {
         let (value, failed) = match result {
             Ok(v) => (v, false),
             Err(v) => (v, true),
         };
+        if let Some(id) = value
+            .get("customization_package")
+            .and_then(|p| p["id"].as_str())
+            && let Some(service) = self.packages.get(id)
+        {
+            return service.agent_response(if failed { Err(value) } else { Ok(value) });
+        }
         let bytes = serde_json::to_vec(&value).unwrap().len();
         if bytes <= 65_536 {
             return (value, failed);
@@ -174,7 +195,7 @@ impl Service {
             return (e, true);
         }
         (
-            json!({"artifact_id":key,"artifact_path":self.path(&key).unwrap(),"bytes":bytes,"total":value.get("total"),"message":"Response retained as a local artifact because it exceeds 64 KiB. Request a smaller page or read selected artifact fields using a local script."}),
+            json!({"customization_package":self.package,"artifact_id":key,"artifact_path":self.path(&key).unwrap(),"bytes":bytes,"total":value.get("total"),"message":"Response retained as a local artifact because it exceeds 64 KiB. Request a smaller page or read selected artifact fields using a local script."}),
             failed,
         )
     }
@@ -479,6 +500,7 @@ impl Service {
                 self.write(
                     &key,
                     &Import {
+                        customization_package: self.package.clone(),
                         problem: p,
                         expected_tasks: count,
                         chunks: Default::default(),
@@ -675,10 +697,11 @@ impl Service {
                 };
                 let schedule = result.map_err(diagnostics)?;
                 let schedule_id = id();
-                let response = json!({"schedule_id":schedule_id,"scenario_id":key,"revision":scenario.revision,"valid":true,"tasks":schedule.assignments.len(),"metrics":schedule.metrics,"score":schedule.score,"elapsed_ms":schedule.elapsed_ms,"evaluations":schedule.evaluations,"selected_strategy":schedule.strategy,"seed":schedule.seed,"dispatch_weights":schedule.dispatch_weights,"route_choices":schedule.route_choices,"search":schedule.search,"replay":schedule.replay,"viewer_url":format!("{}/?schedule={schedule_id}",self.viewer_url)});
+                let response = json!({"schedule_id":schedule_id,"scenario_id":key,"revision":scenario.revision,"valid":true,"tasks":schedule.assignments.len(),"metrics":schedule.metrics,"score":schedule.score,"elapsed_ms":schedule.elapsed_ms,"evaluations":schedule.evaluations,"selected_strategy":schedule.strategy,"seed":schedule.seed,"dispatch_weights":schedule.dispatch_weights,"route_choices":schedule.route_choices,"search":schedule.search,"replay":schedule.replay,"viewer_url":format!("{}/?schedule={schedule_id}{}",self.viewer_url,self.package.as_ref().map(|p| format!("&customization={}",p.id)).unwrap_or_default())});
                 self.write(
                     &schedule_id,
                     &SavedSchedule {
+                        customization_package: self.package.clone(),
                         scenario_id: key.into(),
                         revision: scenario.revision,
                         problem: scenario.problem,
