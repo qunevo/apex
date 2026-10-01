@@ -1,8 +1,24 @@
 # Executable data model: apex.v3.4
 
-This is the current APEX model reference. The contract is generated from Rust types in [model.rs](../core/model.rs) and [production.rs](../core/production.rs): [canonical problem schema](../schemas/apex.v3.4.json), [production schema](../schemas/production.v3.4.json) and [planning-options schema](../schemas/options.v3.4.json).
+This is the current APEX model reference. The schemas are generated from Rust types in [model.rs](../core/model.rs) and [production.rs](../core/production.rs).
 
 Canonical `apex.v3.1`, `apex.v3.2` and `apex.v3.3` inputs remain accepted by the current Rust runtime without historical JSON schema files. The removed `3.0-draft.1` design is not executable input. Input compatibility does not make old result artifacts version-neutral validation certificates; regenerate results when comparing changed metrics or search behavior. The [migration audit](https://github.com/qunevo/apex/blob/main/dev/docs/migration-audit.md) preserves the historical v2 comparison and its limits.
+
+## Schema roles and versions
+
+| Schema | Describes | Used by |
+| --- | --- | --- |
+| [Production orders and workplans](../schemas/production-orders.schema.json) | `ProductionInput`: shared problem settings, reusable workplans and order demands | `production.import` or `apex expand`, which generates concrete lots and operations |
+| [Scheduling problem](../schemas/scheduling-problem.schema.json) | `Problem`: resources, calendars, concrete operations, material, constraints and objectives | Direct scenario import or the result of production expansion, then the scheduling engine |
+| [Planning options](../schemas/planning-options.schema.json) | `Options`: search settings and requested choices for one run | Scheduling and improvement calls on a problem |
+
+Production input is optional: an adapter that already supplies concrete operations can import a complete scheduling problem directly. A production input document embeds its shared settings in `problem`; it does not require a second problem file. Expansion fills that problem with the generated work. See [quantities, workplans and orders](#quantities-workplans-and-orders) for the exact boundary.
+
+The **product version** identifies an application release and comes from the application's `Cargo.toml` / runtime version. The **data-format identifier** in `Problem.schema_version`, currently `apex.v3.4`, identifies the input contract. Several application releases can support the same format and older formats; a product release does not automatically change the format identifier. Production input uses its nested `problem.schema_version`. Planning options have no separate version field.
+
+Schema filenames describe their roles and have no version suffix because only the current snapshots are shipped. A release tag identifies the exact shipped schema contents; development builds additionally need their source revision. Renaming a schema file does not change the serialized format identifier. The three files do not define three independently versioned protocols.
+
+The runtime parses Rust types and performs semantic checks; it does not load these schema files when scheduling. Editors and integrations can use the files for structural validation. `apex schema` and the agent tool `schema.get` generate descriptions from the installed build's types. An agent can request a named definition through `schema.get` instead of loading all three schemas into context.
 
 ## Relationships and mapping
 
@@ -49,7 +65,9 @@ For each phase, required work is `work + task.quantity * work_per_unit`. Either 
 
 Canonical `consume`/`produce` values are already total quantities for that task. Setting `Task.quantity` does not multiply these maps again. By contrast, **workplan template** material values in `ProductionInput` are per unit and are scaled during expansion. Template task quantity is a multiplier on lot quantity. `$job` in a material key becomes a lot-specific key, preventing accidental sharing of internal work in progress across lots.
 
-`ProductionInput` contains an empty canonical problem header, reusable `workplans`, and `demands`. Each demand chooses permissible workplans and an optional `max_lot`. Expansion conserves the last lot's remainder, produces stable order/job/task identities, and keeps alternative workplans selectable. `predecessors` names supply orders and expands completion-before-start dependencies across their tasks; it is an all-order relationship, not automatic partial-lot pegging.
+`ProductionInput` contains a shared `problem` header, reusable `workplans`, and `demands`. The header carries the planning horizon/epoch, resources and their calendars, opening `inventory`, confirmed `receipts`, and applicable rules and objectives. Only the generated collections (`tasks`, `jobs`, `orders`, `routes` and `dependencies`) must be empty; expansion rejects pre-existing entries in them. The adapter supplies these shared facts once, and expansion retains them while adding concrete work. It does not merge two independently maintained scheduling problems or fetch missing calendars or material from external systems.
+
+Each demand chooses permissible workplans and an optional `max_lot`. Expansion conserves the last lot's remainder, produces stable order/job/task identities, and keeps alternative workplans selectable. `predecessors` names supply orders and expands completion-before-start dependencies across their tasks; it is an all-order relationship, not automatic partial-lot pegging.
 
 Use `production.import` directly, or:
 

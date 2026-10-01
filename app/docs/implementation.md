@@ -44,7 +44,7 @@ bash deploy/setup-mcp.sh
 
 ## Model and UI
 
-Read [the executable data model](data-model.md) for exact field and unit semantics, relationship choices, conditional DAGs, sequence penalties, material overrides, freeze policies and explicit boundaries. The workbench also exposes search limits, workers, goal editing, Pareto candidates and distinct freeze/lock markers. Regenerate schemas with `apex schema --out PATH` and `apex schema --model production --out PATH`.
+Read [the executable data model](data-model.md) for exact field and unit semantics, relationship choices, conditional DAGs, sequence penalties, material overrides, freeze policies and explicit boundaries. The workbench also exposes search limits, workers, goal editing, Pareto candidates and distinct freeze/lock markers. The [schema roles and versions](data-model.md#schema-roles-and-versions) distinguish production orders, scheduling problems and planning options. Use the [schema regeneration commands](architecture/README.md#change-map-for-coding-agents) to update their current snapshots.
 
 The workbench offers a production example, canonical/production JSON import, resource occupancy with separate work and reservations, task inspection, jobs/orders, alternative workplan selection, rules/locks, KPI comparisons and a structured resource-outage scenario form. The inspector distinguishes processing end, product readiness, selected mode and quantity. Route changes are actual model decisions followed by replanning. Views and individual tasks can be linked from an agent chat.
 

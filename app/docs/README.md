@@ -21,7 +21,7 @@ This index describes the runnable Rust implementation with executable schema **`
 
 ## Schemas and examples
 
-The current generated schemas cover the [canonical problem](../schemas/apex.v3.4.json), [production templates](../schemas/production.v3.4.json) and [planning options](../schemas/options.v3.4.json). Only these current snapshots are kept in the repository. The CLI and `schema.get` generate schemas from Rust types; acceptance of older canonical inputs is enforced by the runtime and does not depend on historical schema files.
+The current generated schemas cover the [scheduling problem](../schemas/scheduling-problem.schema.json), [production orders and workplans](../schemas/production-orders.schema.json) and [planning options](../schemas/planning-options.schema.json). The [schema roles and versions](data-model.md#schema-roles-and-versions) explain their place in the import/planning workflow and the distinction between application releases and data-format identifiers. Only the current snapshots are shipped; the CLI and `schema.get` generate schemas from the installed Rust types.
 
 | Synthetic example | Focus |
 | --- | --- |

@@ -163,12 +163,12 @@ cargo build --release
 When serialized types change, regenerate and review affected current schemas with the rebuilt binary:
 
 ```text
-target/release/apex schema --out schemas/apex.v3.4.json
-target/release/apex schema --model production --out schemas/production.v3.4.json
-target/release/apex schema --model options --out schemas/options.v3.4.json
+target/release/apex schema --out schemas/scheduling-problem.schema.json
+target/release/apex schema --model production --out schemas/production-orders.schema.json
+target/release/apex schema --model options --out schemas/planning-options.schema.json
 ```
 
-Use `target/release/apex.exe` on Windows. Keep only the current generated schema snapshots in `schemas/`; older input compatibility is a Rust runtime contract and does not require historical JSON schema files. Rebuild before MCP/browser verification; follow the [operating guide](../implementation.md) for relevant smoke commands. Generated reports and `.apex` artifacts stay local. Documentation-only edits need link, example and source-reference checks rather than scheduler benchmarks.
+Use `target/release/apex.exe` on Windows. Keep only the current generated schema snapshots under these role-based, versionless filenames; see [schema roles and versions](../data-model.md#schema-roles-and-versions). Older input compatibility is a Rust runtime contract and does not require historical JSON schema files. Rebuild before MCP/browser verification; follow the [operating guide](../implementation.md) for relevant smoke commands. Generated reports and `.apex` artifacts stay local. Documentation-only edits need link, example and source-reference checks rather than scheduler benchmarks.
 
 ## Current limits
 
