@@ -560,10 +560,10 @@ fn fractional_objectives_and_native_metrics_survive_json_persistence() {
     )
     .unwrap();
     p.customization = Some(CustomizationRef {
-        id: "dummy_customer".into(),
+        id: "demo".into(),
         version: "1".into(),
     });
-    for metric in ["dummy_priority_completion", "task_on_time_delivery"] {
+    for metric in ["demo_priority_completion", "task_on_time_delivery"] {
         p.objectives = vec![Objective {
             metric: metric.into(),
             maximize: metric.ends_with("delivery"),
@@ -582,7 +582,7 @@ fn fractional_objectives_and_native_metrics_survive_json_persistence() {
         old.metrics.retain(|id, _| {
             apex::metrics::ORIGINAL.contains(&id.as_str())
                 || id == metric
-                || id == "dummy_priority_completion"
+                || id == "demo_priority_completion"
         });
         assert!(validate(&p, &old).valid);
     }

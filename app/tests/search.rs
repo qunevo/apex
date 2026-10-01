@@ -353,11 +353,11 @@ fn every_search_preserves_start_resource_mode_and_consecutive_sequence_locks() {
 fn native_metric_contract_parallel_queues_and_independent_validation() {
     let mut p = demo::problem(15);
     p.customization = Some(CustomizationRef {
-        id: "dummy_customer".into(),
+        id: "demo".into(),
         version: "1".into(),
     });
     p.objectives = vec![Objective {
-        metric: "dummy_priority_completion".into(),
+        metric: "demo_priority_completion".into(),
         ..Default::default()
     }];
     let mut o = options();
@@ -365,11 +365,11 @@ fn native_metric_contract_parallel_queues_and_independent_validation() {
     o.strategy = "queues".into();
     let s = apex::xh::search(&p, &o).unwrap();
     assert!(validate::validate(&p, &s).valid);
-    assert_eq!(s.score[0], s.metrics["dummy_priority_completion"]);
+    assert_eq!(s.score[0], s.metrics["demo_priority_completion"]);
     let mut corrupt = s;
     corrupt
         .metrics
-        .insert("dummy_priority_completion".into(), -1.0);
+        .insert("demo_priority_completion".into(), -1.0);
     assert!(!validate::validate(&p, &corrupt).valid);
     p.customization = None;
     assert!(compile::compile(&p).is_err());

@@ -85,7 +85,7 @@ Nested conditional modes with their own pre/post or material overrides are rejec
 
 Transition tables match neighboring families on a primary resource and separately declare `penalty`, `previous_post` and `next_pre`. Required initial/final transitions and terminal cleanup remain enforced. `sequence_pattern` rules match a family suffix ending at the current task, allowing effects beyond one neighbor. `setup_penalty` is distinct from processing duration, transition work and mode cost.
 
-Native customization hooks receive the complete selected primary-resource sequence and can add activities and charges. They also provide model lowering, dispatch rank, extra objective metrics and hard result validation. Independent validation reconstructs the context, regenerates decorations and recomputes metrics. The linked `dummy_customer@1` policy is a synthetic example; unknown versions fail explicitly.
+Native customization hooks receive the complete selected primary-resource sequence and can add activities and charges. They also provide model lowering, dispatch rank, extra objective metrics and hard result validation. Independent validation reconstructs the context, regenerates decorations and recomputes metrics. The linked `demo@1` policy is a synthetic example; unknown versions fail explicitly.
 
 Markdown records the domain knowledge and counterexamples. It is not executable code. A coding agent can extend the Rust customization, registry, tests and optional UI, then rebuild. Existing typed attribute objectives automatically create a dispatch signal; arbitrary new objectives still need an explicit heuristic implementation and quality tests.
 

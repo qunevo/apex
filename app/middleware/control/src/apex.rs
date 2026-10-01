@@ -107,7 +107,7 @@ impl EngineAdapter for ApexEngine {
             declarations: Vec::new(),
             methods: METHODS.iter().map(|m| m.to_string()).collect(),
             extensions: vec![ComponentRef {
-                id: "dummy_customer".into(),
+                id: "demo".into(),
                 version: "1".into(),
             }],
         }

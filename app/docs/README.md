@@ -17,7 +17,7 @@ This index describes the runnable Rust implementation with executable schema **`
 | [Combined improvement](architecture/combined-improvement.md) | One shared budget for XH, XT and optional XE |
 | [Direct schedule evolution](direct-schedule-evolution.md) | Priority chromosomes, genetic operators and extension contracts |
 | [Declarative scheduling](architecture/declarative-scheduling.md) | Typed constraints, mandatory dispatch policies and explanations |
-| [Synthetic customization](../customization/dummy_customer/model/KNOWLEDGE.md) | Domain knowledge, native hooks and validation requirements |
+| [Synthetic customization](../customization/demo/model/KNOWLEDGE.md) | Domain knowledge, native hooks and validation requirements |
 
 ## Schemas and examples
 

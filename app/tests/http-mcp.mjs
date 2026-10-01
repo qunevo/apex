@@ -59,15 +59,15 @@ try {
   assert.equal((await call('schedule.validate',{schedule_id:candidate.schedule_id})).valid,true);
   results.push({case:'quantity-based order expansion, whole-route change, mode conditionals, comparison and validation',passed:true,baseline:baseline.metrics,candidate:candidate.metrics,removed_tasks:comparison.removed_count,fast_ms:baseline.elapsed_ms,xh_ms:candidate.elapsed_ms});
 
-  await call('scenario.patch',{scenario_id:fork.scenario_id,expected_revision:2,patches:[{kind:'customization',customization:{id:'dummy_customer',version:'1'}}]});
+  await call('scenario.patch',{scenario_id:fork.scenario_id,expected_revision:2,patches:[{kind:'customization',customization:{id:'demo',version:'1'}}]});
   const decorated=await call('schedule.hypersearch',{scenario_id:fork.scenario_id,options:{iterations:12,budget_ms:10000}});
-  assert.ok(decorated.metrics.dummy_priority_completion>0);
+  assert.ok(decorated.metrics.demo_priority_completion>0);
   assert.equal((await call('schedule.validate',{schedule_id:decorated.schedule_id})).valid,true);
   results.push({case:'versioned native sequence/objective extension through remote tools and independent revalidation',passed:true,metrics:decorated.metrics});
 
   const queues=await call('queues.inspect',{scenario_id:fork.scenario_id});
   assert.ok(queues.standard_queues.includes('deadline_interval_fit'));
-  assert.ok(queues.mapping.some(m=>m.objective.metric==='dummy_priority_completion'));
+  assert.ok(queues.mapping.some(m=>m.objective.metric==='demo_priority_completion'));
   const searchOptions={iterations:32,budget_ms:0,improve:{xe_share:0.3},xh:{population_size:8,generations:2,workers:3,selection:'pareto',mutation_rate:1,crossover_rate:1},xt:{workers:2,depth:3,branching:4}};
   const xh=await call('schedule.hypersearch',{scenario_id:fork.scenario_id,options:searchOptions});
   assert.equal(xh.search.algorithm,'XH');assert.equal(xh.search.generations,2);assert.equal(xh.search.evaluations,24);assert.equal(xh.search.stop_reason,'generation_limit');assert.ok(xh.search.mutations>0);assert.ok(xh.search.crossovers>0);

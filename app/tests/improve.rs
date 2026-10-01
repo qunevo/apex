@@ -184,7 +184,7 @@ fn native_customization_and_mandatory_filters_remain_active() {
         t.family = if i % 2 == 0 { "A" } else { "B" }.into();
     }
     p.customization = Some(CustomizationRef {
-        id: "dummy_customer".into(),
+        id: "demo".into(),
         version: "1".into(),
     });
     p.planning = serde_json::from_value(json!({"policies":[{"kind":"campaign","id":"a","resource":"M0","basis":"work","minimum":120,"on_no_match":"allow_switch"}]})).unwrap();

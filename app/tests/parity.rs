@@ -258,15 +258,15 @@ fn sequence_context_rules_and_registered_native_hooks() {
         penalty: 70.0,
     });
     p.customization = Some(CustomizationRef {
-        id: "dummy_customer".into(),
+        id: "demo".into(),
         version: "1".into(),
     });
     let s = xg::create(&p, &Options::default()).unwrap();
     assert_eq!(s.metrics["setup_penalty"], 170.0);
-    assert!(s.metrics.contains_key("dummy_priority_completion"));
+    assert!(s.metrics.contains_key("demo_priority_completion"));
     assert!(validate::validate(&p, &s).valid);
     let mut bad = s;
-    bad.metrics.insert("dummy_priority_completion".into(), 0.0);
+    bad.metrics.insert("demo_priority_completion".into(), 0.0);
     assert!(!validate::validate(&p, &bad).valid);
     p.customization.as_mut().unwrap().version = "missing".into();
     assert!(xg::create(&p, &Options::default()).is_err());

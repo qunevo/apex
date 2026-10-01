@@ -7,7 +7,7 @@ use crate::{
 pub struct Policy;
 impl Customization for Policy {
     fn id(&self) -> &str {
-        "dummy_customer"
+        "demo"
     }
     fn version(&self) -> &str {
         "1"
@@ -43,8 +43,8 @@ impl Customization for Policy {
     }
     fn queue_definitions(&self, _: &Problem) -> Vec<QueueDefinition> {
         vec![QueueDefinition {
-            id: "dummy:priority_completion".into(),
-            metric: "dummy_priority_completion".into(),
+            id: "demo:priority_completion".into(),
+            metric: "demo_priority_completion".into(),
             attribute: "urgency".into(),
             weight: 1.0,
             prefer_high: true,
@@ -52,13 +52,13 @@ impl Customization for Policy {
     }
     fn objectives(&self, _: &Problem) -> Vec<Objective> {
         vec![Objective {
-            metric: "dummy_priority_completion".into(),
+            metric: "demo_priority_completion".into(),
             priority: 200,
             ..Default::default()
         }]
     }
     fn queue_value(&self, id: &str, context: &crate::queues::Context<'_>) -> Option<f64> {
-        (id == "dummy:priority_completion").then(|| {
+        (id == "demo:priority_completion").then(|| {
             context.task.priority
                 / context
                     .mode
@@ -72,7 +72,7 @@ impl Customization for Policy {
     fn metrics(&self, p: &Problem, s: &Schedule) -> Result<Vec<Metric>, Vec<Diagnostic>> {
         let tasks: std::collections::HashMap<_, _> = p.tasks.iter().map(|t| (&t.id, t)).collect();
         Ok(vec![Metric {
-            id: "dummy_priority_completion".into(),
+            id: "demo_priority_completion".into(),
             value: s
                 .assignments
                 .iter()

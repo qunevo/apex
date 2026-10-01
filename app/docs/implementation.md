@@ -72,9 +72,9 @@ Repair currently reconstructs candidates in full under the changed model and loc
 
 ## Customization
 
-[The synthetic knowledge bundle](../customization/dummy_customer/model/KNOWLEDGE.md) documents the development contract. Existing typed attribute objectives create both an evaluation metric and a dispatch signal. Native `Customization` hooks cover model lowering, complete resource-sequence context, activity/penalty decoration, dispatch ranking, objective metrics and hard validation. Independent validation regenerates decorations and checks custom scores.
+[The synthetic knowledge bundle](../customization/demo/model/KNOWLEDGE.md) documents the development contract. Existing typed attribute objectives create both an evaluation metric and a dispatch signal. Native `Customization` hooks cover model lowering, complete resource-sequence context, activity/penalty decoration, dispatch ranking, objective metrics and hard validation. Independent validation regenerates decorations and checks custom scores.
 
-The linked `dummy_customer@1` example is selected by ID/version. New native logic requires source changes, registration, semantic/negative/corruption tests and a rebuild. Markdown captures requirements and counterexamples; it is not interpreted as a hard rule. Arbitrary objectives do not automatically yield effective heuristics without implementation and quality evaluation. A coding agent can perform that development workflow in the customer's checkout.
+The linked `demo@1` example is selected by ID/version. New native logic requires source changes, registration, semantic/negative/corruption tests and a rebuild. Markdown captures requirements and counterexamples; it is not interpreted as a hard rule. Arbitrary objectives do not automatically yield effective heuristics without implementation and quality evaluation. A coding agent can perform that development workflow in the customer's checkout.
 
 Mandatory candidate filtering is implemented in the shared dispatch path. Exact campaign/idle/urgency policies inspect prospective placements and retain replayable explanations. See the [current language contract](architecture/declarative-scheduling.md); the earlier audit describes the pre-0.4 gap.
 

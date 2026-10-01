@@ -24,7 +24,7 @@ The bundled [configuration](../apex.config.json) is:
 {
   "customization_root": "customization",
   "default_customization": "demo",
-  "enabled_customizations": ["demo", "dummy_customer"]
+  "enabled_customizations": ["demo"]
 }
 ```
 
@@ -55,9 +55,10 @@ default does not move existing data. A new manifest version starts a separate
 store; migrating old state requires an explicit future migration procedure.
 
 Native model selection is separate: `Problem.customization` still selects a
-compiled, versioned scheduling extension. Enabling the `dummy_customer` package
-does not silently impose its native policy on every problem. The `demo` package
-defines the integration boundary; its live MES/Excel adapter is still pending.
+compiled, versioned scheduling extension. Enabling the `demo` package
+does not impose its optional technical policy (`demo@1`) on every problem.
+The package also defines the factory integration boundary; its live MES/Excel
+adapter is still pending.
 Folders and Markdown never execute code or automatically install agent skills.
 
 The server remains a shared-trust workspace service. Package namespaces are

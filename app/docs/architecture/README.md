@@ -79,7 +79,7 @@ All module links below point into `core` unless stated otherwise.
 | Direct evolution (XE) | [xe.rs](../../core/xe.rs): schedule chromosomes and genetic operators. |
 | Shared search and portfolio | [search.rs](../../core/search.rs): budgets, workers, randomness, selection and reporting helpers. [improve.rs](../../core/improve.rs): shared-budget XH/XT/optional XE portfolio. |
 | Independent validation | [validate.rs](../../core/validate.rs): `validate`, `validate_active`, `validate_customized`; reconstructs expected semantics and checks output. Uses `policy::verify` for governed construction and [extensions.rs](../../core/extensions.rs) for native validation and metrics. |
-| Native customization | `rules::Customization` declares the contract. [extensions.rs](../../core/extensions.rs) registers, lowers and decorates models. [customizations/dummy_customer](../../customization/dummy_customer/model/KNOWLEDGE.md) is the linked synthetic example. |
+| Native customization | `rules::Customization` declares the contract. [extensions.rs](../../core/extensions.rs) registers, lowers and decorates models. [customization/demo](../../customization/demo/model/KNOWLEDGE.md) is the linked synthetic example. |
 | Agent API and viewer | [service.rs](../../middleware/control/compat.rs): `Service::call`, package routing and tool orchestration. [transport.rs](../../middleware/api/compat.rs): tool schemas, JSON-RPC, HTTP and OpenAPI. [ui/mcp-app/compat.html](../../ui/mcp-app/compat.html): embedded schedule viewer and optional development workbench. |
 
 ## One scheduling evaluation
@@ -160,7 +160,7 @@ execute code. [Data storage](../../middleware/data/files.rs) owns persistence. P
 and `Problem.customization` have different meanings: the latter selects native
 scheduling behavior. The demo package's live MES/Excel adapter is not implemented.
 
-`rules::Customization` covers typed lowering, sequence decorations, candidate filters/rank, Qs, objectives/metrics, validation and genetic proposals. Native implementations are deterministic, versioned, statically linked and `Send + Sync`. Registration is explicit in `extensions::registered`; `dummy_customer@1` is the current bundled implementation.
+`rules::Customization` covers typed lowering, sequence decorations, candidate filters/rank, Qs, objectives/metrics, validation and genetic proposals. Native implementations are deterministic, versioned, statically linked and `Send + Sync`. Registration is explicit in `extensions::registered`; `demo@1` is the current bundled implementation.
 
 Keep reusable physical semantics in the core and optional domain behavior in customization modules. New native code needs a build. Tool arguments, Markdown knowledge and `skills/` guide the agent; they do not execute plugins or enforce rules. Sequence hooks used by exact dispatch policies must support meaningful prefix decoration, with tests for every affected interaction.
 
