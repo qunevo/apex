@@ -8,11 +8,11 @@ license-file = "LICENSE"
 
 [lib]
 name = "apex"
-path = "src/lib.rs"
+path = "lib.rs"
 
 [[bin]]
 name = "apex"
-path = "src/main.rs"
+path = "server/main.rs"
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }

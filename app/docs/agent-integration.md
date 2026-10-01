@@ -2,6 +2,11 @@
 
 APEX exposes the same 32 tools through MCP stdio, MCP Streamable HTTP and a plain JSON HTTP API. The scheduler does not depend on a model provider. A chat host must support one of these tool transports, or supply a small bridge. A chat without tool access cannot invoke APEX merely by receiving its URL.
 
+One server can enable several customization packages through `--config FILE`
+or `APEX_CONFIG`. Every tool accepts an optional `customization` folder ID;
+omission uses the configured default. Carry that ID on subsequent calls.
+See [server configuration](server-configuration.md) for input and state scopes.
+
 ## Local MCP
 
 Configure the host to launch the release executable:

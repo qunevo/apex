@@ -257,3 +257,29 @@ td strong { color: var(--ink); font-weight: 500; }
   .drawer-head, .drawer-body, .drawer-footer { padding-left: 20px; padding-right: 20px; }
   .form-grid { grid-template-columns: 1fr; }
 }
+
+/* Language selection, typed filters and actual production drill-down. */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.language-switch select { padding: 7px 5px; border: 1px solid var(--line); border-radius: 5px; color: var(--primary); background: white; font-weight: 600; }
+.active-filters { display: flex; flex-wrap: wrap; gap: 7px; padding: 0 18px; }
+.active-filters:not(:empty) { padding-top: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.filter-chip { max-width: 420px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 7px 10px; border: 1px solid #c7d2fe; border-radius: 5px; background: var(--primary-soft); color: var(--primary); font-size: 12px; }
+th .column-filter { margin-left: 7px; padding: 3px 6px; border-radius: 3px; font-size: 15px; }
+.column-filter:hover, .column-filter.selected { background: #dbe4ff; color: var(--primary); }
+.filter-section { margin-top: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 6px; }
+.filter-section summary { cursor: pointer; font-weight: 500; color: var(--ink); }
+.filter-section[open] summary { margin-bottom: 14px; }
+.filter-section .field { margin-bottom: 10px; }
+.filter-values { max-height: 220px; overflow: auto; border-top: 1px solid var(--line); padding-top: 6px; }
+.filter-value { display: flex; align-items: center; gap: 9px; padding: 6px 3px; font-size: 13px; cursor: pointer; }
+.filter-value input { width: 16px; height: 16px; accent-color: var(--primary); }
+.filter-selection-actions { display: flex; gap: 10px; }
+.execution-summary { padding: 16px; margin-bottom: 22px; border: 1px solid #c7d2fe; border-radius: 7px; background: var(--primary-soft); }
+.execution-summary dl { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; }
+.execution-summary dd { margin: 0; }
+.execution-summary p { color: var(--muted); font-size: 12px; line-height: 1.6; }
+.execution-row { gap: 10px; }
+.execution-row > span:first-child { flex: 1; min-width: 0; }
+.execution-row > span:first-child span { line-height: 1.5; overflow-wrap: anywhere; }
+.execution-row .badge { flex-shrink: 0; }
+#order-execution { margin-top: 0; margin-bottom: 22px; }

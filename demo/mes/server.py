@@ -12,6 +12,7 @@ from urllib.parse import parse_qs, unquote, urlparse
 from .catalog import CATALOG
 from .seed import DEMO, generate
 from .store import Conflict, Store
+from .table_query import filter_rows
 
 WEB = Path(__file__).parent / "web"
 
@@ -93,14 +94,7 @@ class Handler(BaseHTTPRequestHandler):
                 raise ValueError("Unknown table")
             with store.connect() as db:
                 rows = store.all(db, entity)
-            search = query.get("q", "").casefold()
-            if search:
-                rows = [row for row in rows if any(search in str(value).casefold() for key, value in row.items() if not key.startswith("_"))]
-            field = query.get("filter_field")
-            if field:
-                if field not in {col["key"] for col in CATALOG[entity]["columns"]}:
-                    raise ValueError("Unknown filter field")
-                rows = [row for row in rows if str(row.get(field, "")) == query.get("filter_value", "")]
+            rows, facets = filter_rows(entity, rows, query)
             sort = query.get("sort", "id")
             if sort not in {col["key"] for col in CATALOG[entity]["columns"] if col["type"] != "json"}:
                 raise ValueError("Unknown sort field")
@@ -117,7 +111,7 @@ class Handler(BaseHTTPRequestHandler):
                 return
             limit = min(200, max(1, int(query.get("limit", 50))))
             offset = max(0, int(query.get("offset", 0)))
-            self.send(200, {"rows": rows[offset:offset+limit], "total": len(rows), "offset": offset, "limit": limit})
+            self.send(200, {"rows": rows[offset:offset+limit], "total": len(rows), "offset": offset, "limit": limit, **({"facets": facets} if query.get("facets") == "1" else {})})
             return
         if path == "/downloads/production-planning.xlsx":
             file = self.server.directory / "production-planning.xlsx"
@@ -129,6 +123,7 @@ class Handler(BaseHTTPRequestHandler):
             return
         allowed = {"/": ("index.html", "text/html; charset=utf-8"), "/app.js": ("app.js", "text/javascript"),
                    "/details.js": ("details.js", "text/javascript"),
+                   **{f"/{name}": (name, "text/javascript") for name in ("filters.js", "production.js", "i18n.js", "locales/en.js", "locales/de.js")},
                    "/showcase.js": ("showcase.js", "text/javascript"),
                    "/showcase.css": ("showcase.css", "text/css"),
                    "/assets/qunevo-logo.svg": ("assets/qunevo-logo.svg", "image/svg+xml"),

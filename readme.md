@@ -40,7 +40,7 @@ Start with the [documentation index](app/docs/README.md). The main references ar
 - [Migration audit](dev/docs/migration-audit.md): v2 comparison, implemented coverage and remaining migration boundaries.
 - [Benchmark of 24 September 2026](benchmark/README.md): frozen sources, scientific instances, results and standalone reproduction instructions in one ZIP.
 
-Runnable synthetic inputs include [production orders](app/examples/production-orders.json), [shift and material constraints](app/examples/shift-factory.json), [material chains](app/examples/chain-routing.json) and [dispatch policies](app/examples/dispatch-campaign.json). The [customization knowledge bundle](app/customizations/dummy_customer/KNOWLEDGE.md) describes the extension workflow.
+Runnable synthetic inputs include [production orders](app/examples/production-orders.json), [shift and material constraints](app/examples/shift-factory.json), [material chains](app/examples/chain-routing.json) and [dispatch policies](app/examples/dispatch-campaign.json). The [customization knowledge bundle](app/customization/dummy_customer/model/KNOWLEDGE.md) describes the extension workflow.
 
 The executable schema is `apex.v3.4`; canonical `apex.v3.1`, `apex.v3.2` and `apex.v3.3` inputs remain accepted by the same Rust runtime. Rust is the sole scheduling implementation; the [migration audit](dev/docs/migration-audit.md) records the v2 source removal and historical comparisons. Tested coverage does not establish complete legacy parity, optimality or production readiness. Repository documentation and examples use English, and all fixtures are deliberately synthetic.
 

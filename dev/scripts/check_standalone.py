@@ -36,7 +36,7 @@ def main():
     env = dict(os.environ)
     env.pop("CARGO_TARGET_DIR", None)
     # A local service's settings must not affect this independent smoke test.
-    for key in ("APEX_API_TOKEN", "APEX_PUBLIC_URL", "APEX_BIND"):
+    for key in ("APEX_API_TOKEN", "APEX_PUBLIC_URL", "APEX_BIND", "APEX_CONFIG"):
         env.pop(key, None)
     hidden = {"creationflags": subprocess.CREATE_NO_WINDOW} if os.name == "nt" else {}
     with tempfile.TemporaryDirectory(prefix="apex standalone ") as directory:

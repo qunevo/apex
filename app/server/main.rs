@@ -26,6 +26,12 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 .map(PathBuf::from)
                 .unwrap_or_else(|| workspace.join(".apex"));
             let mut service = Service::new(root, workspace)?;
+            let config = flag("--config")
+                .map(PathBuf::from)
+                .or_else(|| std::env::var_os("APEX_CONFIG").map(PathBuf::from));
+            if let Some(path) = config {
+                service = service.with_config(&path)?;
+            }
             let port = flag("--port").unwrap_or("8765").parse()?;
             service.viewer_url = std::env::var("APEX_PUBLIC_URL")
                 .unwrap_or_else(|_| format!("http://127.0.0.1:{port}"))
@@ -34,8 +40,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             match command {
                 "mcp" => {
                     if args.iter().any(|a| a == "--with-viewer") {
-                        let mut viewer = Service::new(&service.root, &service.workspace)?;
-                        viewer.viewer_url = service.viewer_url.clone();
+                        let viewer = service.clone();
                         std::thread::spawn(move || {
                             if let Err(e) = transport::serve(&viewer, port) {
                                 eprintln!("Viewer not started: {e}");
@@ -192,7 +197,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
         _ => println!(
-            "APEX Rust scheduler\n  apex demo --tasks 24 --out examples/demo.json\n  apex plan INPUT.json --out SCHEDULE.json  # XG\n  apex hypersearch INPUT.json --iterations 128 --workers 4 --out SCHEDULE.json  # XH\n  apex treesearch INPUT.json --options OPTIONS.json --out SCHEDULE.json  # XT\n  apex evolve INPUT.json --iterations 128 --out SCHEDULE.json  # XE\n  apex validate INPUT.json SCHEDULE.json\n  apex mcp [--workspace DIR] [--store DIR]\n  apex serve [--port 8765] [--workspace DIR]\n  apex tool NAME --args ARGUMENTS.json\n  apex bench --sizes 100,1000,10000 --out REPORT.json"
+            "APEX Rust scheduler\n  apex demo --tasks 24 --out examples/demo.json\n  apex plan INPUT.json --out SCHEDULE.json  # XG\n  apex hypersearch INPUT.json --iterations 128 --workers 4 --out SCHEDULE.json  # XH\n  apex treesearch INPUT.json --options OPTIONS.json --out SCHEDULE.json  # XT\n  apex evolve INPUT.json --iterations 128 --out SCHEDULE.json  # XE\n  apex validate INPUT.json SCHEDULE.json\n  apex mcp [--workspace DIR] [--store DIR] [--config FILE]\n  apex serve [--port 8765] [--workspace DIR] [--config FILE]\n  apex tool NAME --args ARGUMENTS.json [--config FILE]\n  apex bench --sizes 100,1000,10000 --out REPORT.json"
         ),
     }
     Ok(())

@@ -60,6 +60,17 @@ class Store:
         if entity == "materials":
             stock = execution.balances(db, Store.meta(db, "factory")["as_of"])
             rows = [dict(row, on_hand=stock[row["id"]]) for row in rows]
+        if entity == "operations":
+            orders = {r["id"]: r["order_id"] for r in execution.rows(db, "lots")}
+            rows = [dict(row, order_id=orders[row["lot_id"]]) for row in rows]
+        if entity == "lots":
+            active = {}
+            for op in sorted(execution.rows(db, "operations"), key=lambda r: r["sequence"]):
+                if op["status"] not in ("Complete", "Skipped"):
+                    active.setdefault(op["lot_id"], op)
+            rows = [dict(row, current_operation=active.get(row["id"], {}).get("name", ""),
+                         resource_id=active[row["id"]].get("resource_id", "")
+                         if active.get(row["id"], {}).get("status") == "Running" else "") for row in rows]
         return rows
 
     @staticmethod

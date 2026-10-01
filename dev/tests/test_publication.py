@@ -31,6 +31,15 @@ class PublicationTests(unittest.TestCase):
             self.assertIn({"code": "NON_DEMO_CUSTOMIZATION", "path": rejected.relative_to(self.root).as_posix()}, findings)
             self.assertFalse(any(item["path"] == allowed.relative_to(self.root).as_posix() for item in findings))
 
+    def test_current_package_layout_allows_only_bundled_synthetic_packages(self):
+        for name in ("demo", "dummy_customer", "private"):
+            path = self.root / "app/customization" / name / "model/KNOWLEDGE.md"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("Synthetic fixture.\n", encoding="utf-8")
+        findings = publication.scan(self.root)
+        self.assertEqual([f for f in findings if f["code"] == "NON_DEMO_CUSTOMIZATION"],
+                         [{"code": "NON_DEMO_CUSTOMIZATION", "path": "app/customization/private/model/KNOWLEDGE.md"}])
+
     def declare(self):
         digest = hashlib.sha256(self.archive.read_bytes()).hexdigest()
         manifest = {"source_archive": {"path": self.archive.name, "sha256": digest},

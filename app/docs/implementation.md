@@ -23,7 +23,7 @@ target/release/apex validate .apex/production-expanded.json .apex/xh.json
 target/release/apex serve --port 8765
 ```
 
-Create `.apex` before writing CLI artifacts. On Windows use `apex.exe`. Open `http://127.0.0.1:8765`. The executable embeds the frontend, so rebuild and restart after editing `web/index.html`; stop the owned process before replacing its executable on Windows.
+Create `.apex` before writing CLI artifacts. On Windows use `apex.exe`. Open `http://127.0.0.1:8765`. The executable embeds the frontend, so rebuild and restart after editing `ui/index.html`; stop the owned process before replacing its executable on Windows.
 
 ### Bash helpers
 
@@ -72,7 +72,7 @@ Repair currently reconstructs candidates in full under the changed model and loc
 
 ## Customization
 
-[The synthetic knowledge bundle](../customizations/dummy_customer/KNOWLEDGE.md) documents the development contract. Existing typed attribute objectives create both an evaluation metric and a dispatch signal. Native `Customization` hooks cover model lowering, complete resource-sequence context, activity/penalty decoration, dispatch ranking, objective metrics and hard validation. Independent validation regenerates decorations and checks custom scores.
+[The synthetic knowledge bundle](../customization/dummy_customer/model/KNOWLEDGE.md) documents the development contract. Existing typed attribute objectives create both an evaluation metric and a dispatch signal. Native `Customization` hooks cover model lowering, complete resource-sequence context, activity/penalty decoration, dispatch ranking, objective metrics and hard validation. Independent validation regenerates decorations and checks custom scores.
 
 The linked `dummy_customer@1` example is selected by ID/version. New native logic requires source changes, registration, semantic/negative/corruption tests and a rebuild. Markdown captures requirements and counterexamples; it is not interpreted as a hard rule. Arbitrary objectives do not automatically yield effective heuristics without implementation and quality evaluation. A coding agent can perform that development workflow in the customer's checkout.
 

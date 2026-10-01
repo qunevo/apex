@@ -1,6 +1,6 @@
 # Executable data model: apex.v3.4
 
-This is the current APEX model reference. The contract is generated from Rust types in [model.rs](../src/model.rs) and [production.rs](../src/production.rs): [canonical problem schema](../schemas/apex.v3.4.json), [production schema](../schemas/production.v3.4.json) and [planning-options schema](../schemas/options.v3.4.json).
+This is the current APEX model reference. The contract is generated from Rust types in [model.rs](../core/model.rs) and [production.rs](../core/production.rs): [canonical problem schema](../schemas/apex.v3.4.json), [production schema](../schemas/production.v3.4.json) and [planning-options schema](../schemas/options.v3.4.json).
 
 Canonical `apex.v3.1`, `apex.v3.2` and `apex.v3.3` inputs remain accepted by the current Rust runtime without historical JSON schema files. The removed `3.0-draft.1` design is not executable input. Input compatibility does not make old result artifacts version-neutral validation certificates; regenerate results when comparing changed metrics or search behavior. The [migration audit](https://github.com/qunevo/apex/blob/main/dev/docs/migration-audit.md) preserves the historical v2 comparison and its limits.
 

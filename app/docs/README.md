@@ -9,13 +9,14 @@ This index describes the runnable Rust implementation with executable schema **`
 | [Operating guide](implementation.md) | Build, run, verify and understand runtime limits |
 | [Agent workflows](agent-workflows.md) | Data intake, planner conversations and extension responsibilities |
 | [Agent integration](agent-integration.md) | MCP, HTTP, authentication, pagination and large imports |
+| [Server configuration](server-configuration.md) | Enabled packages, per-call selection and scoped state |
 | [Executable data model](data-model.md) | Units, routes, orders, conditional activities, locks, objectives and KPIs |
 | [Material preparation](material-dispatch.md) | Existing-supply allocation, flexible routes and material modes |
 | [Search and objectives](search-and-parity.md) | Q policies, XH, XT, replay and search limits |
 | [Combined improvement](architecture/combined-improvement.md) | One shared budget for XH, XT and optional XE |
 | [Direct schedule evolution](direct-schedule-evolution.md) | Priority chromosomes, genetic operators and extension contracts |
 | [Declarative scheduling](architecture/declarative-scheduling.md) | Typed constraints, mandatory dispatch policies and explanations |
-| [Synthetic customization](../customizations/dummy_customer/KNOWLEDGE.md) | Domain knowledge, native hooks and validation requirements |
+| [Synthetic customization](../customization/dummy_customer/model/KNOWLEDGE.md) | Domain knowledge, native hooks and validation requirements |
 
 ## Schemas and examples
 

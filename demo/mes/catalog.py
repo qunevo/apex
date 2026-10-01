@@ -34,9 +34,12 @@ CATALOG = {
         field("quality_status", "Quality status", choices=["Released", "Hold"], required=False),
         field("hold_reason", "Quality hold reason", required=False),
         field("status", "Status", editable=False), field("location", "Current location", editable=False),
+        field("current_operation", "Current / next operation", editable=False, required=False, computed=True),
+        field("resource_id", "Running on", editable=False, required=False, computed=True),
         field("note", "Shopfloor note", required=False),
     ], create=False),
     "operations": table("Operations", "Work instructions and booked progress; sequencing is owned in Excel", [
+        field("order_id", "Order", ref="orders", editable=False, required=False, computed=True),
         field("lot_id", "Lot", ref="lots", editable=False),
         field("sequence", "Step", "integer", editable=False), field("name", "Operation", editable=False),
         field("group", "Resource group", editable=False), field("skill", "Qualification", editable=False),
