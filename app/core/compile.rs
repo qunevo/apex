@@ -75,13 +75,6 @@ pub fn compile(p: &Problem) -> Result<Compiled<'_>, Vec<Diagnostic>> {
         errors.append(&mut e);
     }
     let mut emit = |code: &str, id: &str, msg: &str| errors.push(Diagnostic::new(code, id, msg));
-    if !["apex.v3.1", "apex.v3.2", "apex.v3.3", "apex.v3.4"].contains(&p.schema_version.as_str()) {
-        emit(
-            "SCHEMA_VERSION",
-            &p.id,
-            "Expected executable apex.v3.1 through apex.v3.4",
-        );
-    }
     if p.horizon <= 0 || p.horizon > 1_000_000_000_000 {
         emit(
             "HORIZON",

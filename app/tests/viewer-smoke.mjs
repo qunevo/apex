@@ -90,7 +90,7 @@ try {
   const locksUrl=page.url();await page.reload();await done();assert.ok(await page.locator('.freeze-zone').count()>0);
 
   const mode={id:'standard',primary:'M0',phases:[{id:'work',work:100,interruption:'calendar_resumable',requirements:[{resource:'M0',retain:true}]}]};
-  const runningProblem={schema_version:'apex.v3.3',id:'synthetic-running-block-ui',horizon:1000,resources:[{id:'M0',calendar:[{start:0,end:1000}]}],tasks:['RUN','NEXT','FREE'].map(id=>({id,modes:[mode]})),locks:[{kind:'order',resource:'M0',tasks:['RUN','NEXT'],consecutive:true}]};
+  const runningProblem={id:'synthetic-running-block-ui',horizon:1000,resources:[{id:'M0',calendar:[{start:0,end:1000}]}],tasks:['RUN','NEXT','FREE'].map(id=>({id,modes:[mode]})),locks:[{kind:'order',resource:'M0',tasks:['RUN','NEXT'],consecutive:true}]};
   runningProblem.tasks[0].execution={mode:'standard',as_of:30,actual:{id:'actual',task:'RUN',role:'actual',mode:'standard',start:0,end:30,segments:[{phase:'work',start:0,end:30,work:30}],reservations:[{resource:'M0',start:0,end:30,amount:1}]},remaining_work:{work:70}};
   async function invoke(name,arguments_){const response=await fetch(new URL('/api/tool',sharedUrl),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,arguments:arguments_})});const value=await response.json();assert.ok(response.ok,JSON.stringify(value));return value;}
   const runningInput=await invoke('problem.import',{problem:runningProblem});const runningPlan=await invoke('schedule.treesearch',{scenario_id:runningInput.scenario_id,options:{iterations:12,budget_ms:0,xt:{workers:2,depth:3}}});

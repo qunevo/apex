@@ -150,7 +150,7 @@ fn conditional_commitments_conflicts_corruption_and_parallel_search() {
 fn post_choices_and_governed_prefixes_use_the_same_conditional_genes() {
     let mut p = fixture();
     p.tasks[0].post = std::mem::take(&mut p.tasks[0].pre);
-    p.planning=serde_json::from_value(json!({"version":"apex.planning.v1","policies":[{"kind":"idle_gap","id":"gap","resource":"M0","maximum":1000,"fallback_to_smallest":false}]})).unwrap();
+    p.planning=serde_json::from_value(json!({"policies":[{"kind":"idle_gap","id":"gap","resource":"M0","maximum":1000,"fallback_to_smallest":false}]})).unwrap();
     let o = prefix(&p);
     let s = apex::xt::search(&p, &o).unwrap();
     assert_eq!(s.metrics["makespan"], 100.0);

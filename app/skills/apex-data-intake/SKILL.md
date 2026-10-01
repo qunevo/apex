@@ -11,6 +11,8 @@ Act as an optional source adapter. A dedicated connector is not required when av
 
 Read `AGENTS.md` at the application root and `docs/data-model.md`, then query `capabilities` and only the relevant `schema.get` definitions. Tool names here are APEX names; hosts may prefix them.
 
+Use the current schemas from that tool installation. They ship with the main application release and have no independent version fields. Do not add format-version markers or assume historical input compatibility; keep the reported tool version with the external mapping record.
+
 ## Produce a traceable snapshot
 
 - Inspect headers, a bounded sample, counts and units. Resolve stable IDs, relationships, timezone/epoch and quantity units. Record source references in task `source` fields; keep real source data and credentials outside distribution files.

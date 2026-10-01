@@ -1,26 +1,15 @@
-//! Versioned, bounded scheduling vocabulary. No expressions or executable input.
+//! Bounded scheduling vocabulary shipped with the engine. No expressions or executable input.
 use crate::model::*;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 
-#[derive(JsonSchema, Clone, Debug, Serialize, Deserialize)]
+#[derive(JsonSchema, Clone, Debug, Default, Serialize, Deserialize)]
 #[serde(default, deny_unknown_fields)]
 pub struct PlanningModel {
-    pub version: String,
     pub constraints: Vec<Constraint>,
     pub policies: Vec<crate::policy::Policy>,
     pub objectives: Vec<CompletionObjective>,
-}
-impl Default for PlanningModel {
-    fn default() -> Self {
-        Self {
-            version: "apex.planning.v1".into(),
-            constraints: vec![],
-            policies: vec![],
-            objectives: vec![],
-        }
-    }
 }
 /// Empty fields are wildcards; populated fields are ANDed, values within a field ORed.
 #[derive(JsonSchema, Clone, Debug, Default, Serialize, Deserialize)]
@@ -76,13 +65,6 @@ pub fn needs_lowering(p: &Problem) -> bool {
     !p.planning.constraints.is_empty() || !p.planning.objectives.is_empty()
 }
 pub fn check(p: &Problem, errors: &mut Vec<Diagnostic>) {
-    if p.planning.version != "apex.planning.v1" {
-        errors.push(Diagnostic::new(
-            "PLANNING_VERSION",
-            &p.id,
-            "Expected apex.planning.v1",
-        ));
-    }
     let mut ids = HashSet::new();
     let mut fail = |id: &str, message| errors.push(Diagnostic::new("PLANNING_MODEL", id, message));
     for rule in &p.planning.constraints {

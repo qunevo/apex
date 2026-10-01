@@ -1,6 +1,6 @@
 # Current architecture
 
-This is the implementation map for agents changing APEX. Read it after [repository conventions](../../AGENTS.md), then follow the source and test links below. The executable input is `apex.v3.4`; canonical v3.1–v3.3 inputs use the same Rust implementation. There is no separate legacy scheduler in this checkout.
+This is the implementation map for agents changing APEX. Read it after [repository conventions](../../AGENTS.md), then follow the source and test links below. The current scheduling problem and planning vocabulary ship with the application release and have no separate schema versions. There is no separate legacy scheduler in this checkout.
 
 Use the [data model](../data-model.md) for field semantics, the [operating guide](../implementation.md) for commands, and the [migration audit](https://github.com/qunevo/apex/blob/main/dev/docs/migration-audit.md) for historical v2 evidence. This directory documents implemented behavior.
 
@@ -168,7 +168,7 @@ target/release/apex schema --model production --out schemas/production-orders.sc
 target/release/apex schema --model options --out schemas/planning-options.schema.json
 ```
 
-Use `target/release/apex.exe` on Windows. Keep only the current generated schema snapshots under these role-based, versionless filenames; see [schema roles and versions](../data-model.md#schema-roles-and-versions). Older input compatibility is a Rust runtime contract and does not require historical JSON schema files. Rebuild before MCP/browser verification; follow the [operating guide](../implementation.md) for relevant smoke commands. Generated reports and `.apex` artifacts stay local. Documentation-only edits need link, example and source-reference checks rather than scheduler benchmarks.
+Use `target/release/apex.exe` on Windows. Keep only the current generated schema snapshots under these role-based, versionless filenames; see [schema roles and tool releases](../data-model.md#schema-roles-and-tool-releases). The installed tool accepts its current input contract; do not keep historical schema snapshots or add format-version dispatch. Rebuild before MCP/browser verification; follow the [operating guide](../implementation.md) for relevant smoke commands. Generated reports and `.apex` artifacts stay local. Documentation-only edits need link, example and source-reference checks rather than scheduler benchmarks.
 
 ## Current limits
 

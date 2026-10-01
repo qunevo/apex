@@ -27,7 +27,9 @@ try {
   assert.equal(Object.keys(specification.paths).length,32);
   const plain=await fetch(`${base}/api/tools/capabilities`,{method:'POST',headers:{...headers,'Content-Type':'application/json'},body:'{}'});
   const capabilities=await plain.json();
-  assert.equal(capabilities.schema,'apex.v3.4');
+  assert.equal(capabilities.schema,'scheduling-problem');
+  assert.equal(capabilities.accepted_schemas,undefined);
+  assert.equal(capabilities.version,specification.info.version);
   await client.connect(new StreamableHTTPClientTransport(new URL(`${base}/mcp`),{requestInit:{headers}}));
   assert.equal((await client.listTools()).tools.length,32);
   const schema=await call('schema.get',{model:'production'});assert.ok(schema.root.properties.demands);

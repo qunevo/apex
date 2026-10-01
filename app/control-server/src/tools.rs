@@ -20,7 +20,7 @@ fn id_arg(name: &str, description: &str) -> Value {
     json!({"type":"object","properties":{name:{"type":"string","format":"uuid","description":description}},"required":[name],"additionalProperties":false})
 }
 
-const CONTENT: &str = "Scenario content: {facts: <engine facts model, e.g. an apex.v3.4 problem>, intent: {declarations: [{id, kind, target, parameters, note}]}}. Declarations the engine cannot represent are rejected.";
+const CONTENT: &str = "Scenario content: {facts: <engine facts model, e.g. an APEX scheduling problem>, intent: {declarations: [{id, kind, target, parameters, note}]}}. Declarations the engine cannot represent are rejected.";
 
 pub fn catalog() -> Vec<Tool> {
     let scenario = || id_arg("scenario_id", "Scenario ID");

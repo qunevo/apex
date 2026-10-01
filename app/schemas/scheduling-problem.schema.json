@@ -101,8 +101,7 @@
       "default": {
         "constraints": [],
         "objectives": [],
-        "policies": [],
-        "version": "apex.planning.v1"
+        "policies": []
       }
     },
     "queue_definitions": {
@@ -149,10 +148,6 @@
       "items": {
         "$ref": "#/$defs/Rule"
       }
-    },
-    "schema_version": {
-      "type": "string",
-      "default": "apex.v3.4"
     },
     "tasks": {
       "type": "array",
@@ -935,10 +930,6 @@
           "items": {
             "$ref": "#/$defs/Policy"
           }
-        },
-        "version": {
-          "type": "string",
-          "default": "apex.planning.v1"
         }
       },
       "additionalProperties": false

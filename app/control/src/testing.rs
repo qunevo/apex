@@ -23,7 +23,7 @@ impl EngineAdapter for FakeEngine {
                 id: "fake".into(),
                 version: "1".into(),
             },
-            model: "fake.v1".into(),
+            model: "fake".into(),
             declarations: vec!["pin".into()],
             methods: vec!["sequence".into()],
             extensions: Vec::new(),

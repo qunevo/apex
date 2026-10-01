@@ -1,6 +1,6 @@
 # Combined improvement
 
-Current APEX portfolio contract. The executable input is `apex.v3.4`; `Options.improve` controls the shared search budget. Read the [architecture map](README.md) for module boundaries and [direct evolution](../direct-schedule-evolution.md) for the GA contract.
+Current APEX portfolio contract. The scheduling input contract ships with the application release; `Options.improve` controls the shared search budget. Read the [architecture map](README.md) for module boundaries and [direct evolution](../direct-schedule-evolution.md) for the GA contract.
 
 ## Planner-facing contract
 
