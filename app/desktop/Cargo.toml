@@ -1,0 +1,20 @@
+[package]
+name = "apex-desktop"
+description = "APEX desktop display client: follows the control platform and renders its state"
+version = "0.1.0"
+edition.workspace = true
+publish = false
+license-file = "../LICENSE"
+
+[dependencies]
+apex-control = { path = "../control" }
+chrono.workspace = true
+gpui-kit = "0.7"
+serde.workspace = true
+serde_json.workspace = true
+ureq = { version = "3", features = ["json"] }
+futures-channel = "0.3"
+futures-util = { version = "0.3", default-features = false, features = ["std"] }
+
+[lints]
+workspace = true
