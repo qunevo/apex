@@ -1,0 +1,32 @@
+[package]
+name = "apex-control-server"
+description = "HTTP, MCP and event-stream server with background workers for the APEX control platform"
+version = "0.1.0"
+edition.workspace = true
+publish = false
+license-file = "../../LICENSE"
+
+[[bin]]
+name = "apex-control"
+path = "src/main.rs"
+
+[dependencies]
+apex-control = { path = "../control", features = ["apex"] }
+apex-control-postgres = { path = "../data" }
+axum = "0.8"
+chrono.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+tokio.workspace = true
+tokio-stream = { version = "0.1", features = ["sync"] }
+uuid.workspace = true
+
+[dev-dependencies]
+apex-control = { path = "../control", features = ["testing"] }
+apex-engine = { path = "../../core" }
+http-body-util = "0.1"
+tower = { version = "0.5", features = ["util"] }
+
+[lints]
+workspace = true

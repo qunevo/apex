@@ -13,11 +13,11 @@ usable on its own.
 | Crate | Directory | Responsibility |
 | --- | --- | --- |
 | `apex-engine` | `core/` | Scheduling model, algorithms, evaluation and independent validation. No I/O. |
-| `apex-control` | `control/` | Tenants, actors and roles, scenarios with immutable revisions, planning intent, runs, result provenance, approval and publication. Defines the `Store` and `EngineAdapter` contracts; includes an in-memory store. No database, transport or engine dependency. |
-| `apex-engine-adapter` | `engine-adapter/` | `EngineAdapter` for `apex-engine`. Other engines implement the same trait. |
-| `apex-control-postgres` | `control-postgres/` | PostgreSQL store with embedded migrations, tenant row-level security and a worker claim function. |
-| `apex-control-server` | `control-server/` | `apex-control` executable: HTTP API, MCP endpoint, change events and background workers. |
-| `apex-desktop` | `desktop/` | GPUI Kit display client. Excluded from default workspace members; build it with `cargo build -p apex-desktop`. |
+| `apex-control` | `middleware/control/` | Tenants, roles, scenarios, immutable revisions, runs, approval and publication. Defines `Store` and `EngineAdapter`; no database or transport dependency. The optional `apex` feature supplies the built-in engine implementation in `src/apex.rs`. |
+| `apex-control-postgres` | `middleware/data/` | PostgreSQL store with embedded migrations, tenant row-level security and a worker claim function. `files.rs` retains the separate compatibility file store. |
+| `apex-control-server` | `middleware/api/` | `apex-control` executable: HTTP, MCP, UI resources, events and background workers. The existing `apex` CLI/transport also lives here and retains its public commands. |
+| MCP App assets | `ui/mcp-app/` | Read-only chat view served as an MCP UI resource; `compat.html` preserves old file-backed viewer links. |
+| `apex-desktop` | `ui/desktop/` | GPUI Kit display client. Excluded from default workspace members; build it with `cargo build -p apex-desktop`. |
 
 ## Concepts
 
@@ -67,6 +67,18 @@ target/release/apex-control serve --database postgres://postgres:apex@127.0.0.1:
 
 Settings can also come from `APEX_CONTROL_AUTH`, `APEX_CONTROL_DATABASE_URL`,
 `APEX_CONTROL_BIND` (default `127.0.0.1:8780`) and `APEX_CONTROL_WORKERS` (default 2).
+`--config FILE` or `APEX_CONFIG` enables customization packages using the same
+[manifest contract](server-configuration.md) as the compatibility CLI.
+
+Select a package by optional top-level `customization` on `scenarios.create`
+(or `POST /v1/scenarios`); omission uses the configured default. The server pins
+the package ID and version in revision content, its hash and result provenance.
+Revisions keep that package even when the server default changes. A new package
+or version requires a new scenario. New revisions, runs and worker claims reject
+an unavailable package version; historical reads and result decisions remain
+available under the same tenant permissions. Configuration is loaded at startup.
+Without configuration, explicit package selection is rejected and ordinary
+unconfigured scenarios retain their previous behavior.
 
 Tenant isolation is enforced by every operation and, in PostgreSQL, by forced
 row-level security. Row-level security is effective when the server connects as a
@@ -113,6 +125,23 @@ Errors use `{code, message, diagnostics}` with `UNAUTHORIZED` (401), `FORBIDDEN`
 
 Events name what changed (`scenario`, `run` or `result`, with IDs); clients then read
 current state through the API. A `resync` event means the client missed events.
+
+## MCP App
+
+`results.get` advertises `ui://apex/plan.html` via `_meta.ui.resourceUri`. The
+authenticated MCP endpoint implements `resources/list` and `resources/read` with
+`text/html;profile=mcp-app`. The embedded page receives tool results, renders
+resource lanes, operation filters, metrics, validation and provenance, and can
+refresh the same result through the host's `tools/call` bridge. The page stores
+no tokens and makes no direct network requests. Hosts without MCP Apps support
+still receive normal text and structured tool results.
+
+The bridge follows the [MCP Apps protocol](https://modelcontextprotocol.io/extensions/apps/overview).
+Protocol behavior is tested in an opaque browser sandbox with a simulated host;
+individual chat host integrations still require deployment verification.
+The view uses the same `ScheduleView` as desktop; it is an overview of main
+operations, not the full activity/reservation model. The compatibility viewer
+keeps its detailed activity views until these are exposed by the control view.
 
 ## Desktop display client
 

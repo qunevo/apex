@@ -1,0 +1,28 @@
+[package]
+name = "apex-control"
+description = "APEX control platform: tenants, versioned scenarios, runs, results and publication"
+version = "0.1.0"
+edition.workspace = true
+publish = false
+license-file = "../../LICENSE"
+
+[dependencies]
+apex-engine = { path = "../../core", optional = true }
+async-trait.workspace = true
+chrono.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+thiserror.workspace = true
+uuid.workspace = true
+
+[features]
+apex = ["dep:apex-engine"]
+# Shared fake engine and store conformance checks for store implementations.
+testing = []
+
+[dev-dependencies]
+tokio.workspace = true
+
+[lints]
+workspace = true

@@ -55,7 +55,7 @@ See the [licensing overview](LICENSING.md) and [pricing and eligibility](docs/le
 
 ## Application packages
 
-The application is organized into `core/`, `server/`, `data/`, `ui/`, `skills/`
+The application is organized into `core/`, `middleware/`, `ui/`, `skills/`
 and `customization/`, with one executable. See [server configuration](docs/server-configuration.md)
 for an enabled-package list, default selection and per-request customization.
 

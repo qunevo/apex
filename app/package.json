@@ -10,6 +10,8 @@
     "test:mcp": "node tests/mcp-smoke.mjs",
     "test:http": "node tests/http-mcp.mjs",
     "test:viewer": "node tests/viewer-smoke.mjs",
-    "test:config": "node tests/server-config.mjs"
+    "test:config": "node tests/server-config.mjs",
+    "test:mcp-app": "node tests/mcp-app.mjs",
+    "test:control": "node tests/control-mcp.mjs"
   }
 }

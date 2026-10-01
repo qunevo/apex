@@ -23,7 +23,7 @@ target/release/apex validate .apex/production-expanded.json .apex/xh.json
 target/release/apex serve --port 8765
 ```
 
-Create `.apex` before writing CLI artifacts. On Windows use `apex.exe`. Open `http://127.0.0.1:8765`. The executable embeds the frontend, so rebuild and restart after editing `ui/index.html`; stop the owned process before replacing its executable on Windows.
+Create `.apex` before writing CLI artifacts. On Windows use `apex.exe`. Open `http://127.0.0.1:8765`. The executable embeds the frontend, so rebuild and restart after editing `ui/mcp-app/compat.html`; stop the owned process before replacing its executable on Windows.
 
 ### Bash helpers
 

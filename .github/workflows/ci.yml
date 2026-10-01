@@ -102,6 +102,8 @@ jobs:
           npm run test:mcp
           npm run test:http
           npm run test:config
+          npm run test:mcp-app
+          npm run test:control
       - name: Viewer integration using the same release executable
         if: runner.os == 'Linux'
         run: |

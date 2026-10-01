@@ -14,13 +14,13 @@ The repository contains an independently usable application, contributor tooling
 
 ## Independent application
 
-Inside `app/`, `core/` owns algorithms, `server/` owns entry points and tool
-orchestration, `data/` owns existing file-backed state, and `ui/` owns the viewer.
+Inside `app/`, `core/` owns algorithms. `middleware/` groups API entry points,
+control operations and data persistence. `ui/` contains the MCP App and desktop.
 `skills/` holds general workflows; `customization/<id>/` groups each domain's
 adapter, model, skills, tests and optional views. `app/Cargo.toml` is also the
 workspace root for the `apex-engine` crate in `core/` and the control-platform
-crates (`control/`, `engine-adapter/`, `control-postgres/`, `control-server/`,
-`desktop/`); see [control platform](../../app/docs/control-platform.md). The
+crates (`middleware/control/`, `middleware/data/`, `middleware/api/`,
+`ui/desktop/`); see [control platform](../../app/docs/control-platform.md). The
 desktop client is not a default member, so ordinary builds do not need GPUI.
 See [server configuration](../../app/docs/server-configuration.md) for package
 allowlists, defaults and request-specific selection.

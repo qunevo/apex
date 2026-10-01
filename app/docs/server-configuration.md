@@ -1,8 +1,12 @@
 # Server configuration and customization packages
 
-One APEX executable serves MCP/HTTP and the embedded viewer. Core algorithms
-remain independent of transport and persistent state. Use the explicit
-configuration file to host several installed packages:
+The central `apex-control` service and the compatibility `apex` executable use
+the same configuration file and package manifests. Both accept `--config FILE`
+or `APEX_CONFIG`. Core algorithms remain independent of transport and persistent
+state. For the central service, run `apex-control serve --config apex.config.json`;
+see [control platform](control-platform.md) for scenario-bound selection and
+PostgreSQL storage. The rest of this page documents the file-backed compatibility
+interface:
 
 ```bash
 apex serve --config /opt/apex/apex.config.json --workspace /var/lib/apex
@@ -59,5 +63,6 @@ Folders and Markdown never execute code or automatically install agent skills.
 The server remains a shared-trust workspace service. Package namespaces are
 not per-user authorization or tenant isolation: clients with server access can
 select any enabled package. Use the existing authenticated HTTP deployment
-contract. Active-plan lifecycle, database storage and MCP Apps UI embedding
-remain future work.
+contract. The central `apex-control` service supplies active-plan lifecycle,
+database storage, tenant authorization and MCP Apps resources. Its UUID-based
+records are separate; file artifacts are not migrated automatically.
