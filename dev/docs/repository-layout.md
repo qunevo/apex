@@ -27,7 +27,7 @@ allowlists, defaults and request-specific selection.
 
 `app/` owns its Cargo workspace, `Cargo.lock`, test-tooling manifests and release profile. There is no parent Cargo workspace or root lockfile. Enter `app/` before running Cargo, npm or product commands. Product tests stay next to the application they verify. The scheduler does not require Node.js or Python; those tools are used for development and integration tests.
 
-All compile-time assets and runtime setup helpers resolve inside the application. Deployment helpers locate the application relative to their own script, regardless of the caller's current directory. MCP setup can select a separate data workspace while retaining the binary in the application installation. Local `.apex` state, `.codex` settings, installed dependencies, generated reports and build output are excluded from distribution.
+All compile-time assets and runtime helpers resolve inside the application. `app/scripts/` contains the build helper and the Docker container entrypoint. The build helper locates the application relative to its own script, regardless of the caller's current directory. Local MCP clients configure the executable and data workspace directly; see [agent integration](../../app/docs/agent-integration.md#local-mcp). Local `.apex` state, `.codex` settings, installed dependencies, generated reports and build output are excluded from distribution.
 
 The root [LICENSE](../../LICENSE) is canonical. [app/LICENSE](../../app/LICENSE) is its byte-identical distribution copy. Keep both synchronized when the canonical license changes; `check_standalone.py` rejects drift. Product documentation links to the local copy. Links from product documentation to contribution processes and historical evidence are optional online references, not build or runtime dependencies.
 
@@ -56,7 +56,7 @@ From the repository root:
 
 ```bash
 cd app
-bash deploy/build.sh
+bash scripts/build.sh
 npm ci --ignore-scripts
 npm run test:mcp
 npm run test:http
@@ -66,6 +66,6 @@ python -B dev/scripts/build_wiki.py
 python -B dev/scripts/check_standalone.py
 ```
 
-The standalone check exports only Git source files under `app/` to a fresh temporary directory with spaces in its path, outside the checkout. It checks licensing, builds with the lockfile, expands a production example, runs all five scheduling methods, independently validates the results, and exercises embedded HTTP assets and MCP setup. It removes the temporary copy on completion. CI requires this check in addition to the Rust and integration checks.
+The standalone check exports only Git source files under `app/` to a fresh temporary directory with spaces in its path, outside the checkout. It checks licensing and Bash syntax, builds with the lockfile, expands a production example, runs all five scheduling methods, independently validates the results, and exercises embedded HTTP assets with a separate data workspace. It removes the temporary copy on completion. CI requires this check in addition to the Rust and integration checks.
 
 Copy or archive source files, not a developer's working directory containing local data. A binary release is a separately assembled artifact with the application, applicable product skills, startup instructions and license; public executable distribution follows the existing licensing terms.

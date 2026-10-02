@@ -17,7 +17,7 @@ COPY --from=build /source/target/release/apex-control /usr/local/bin/apex-contro
 COPY customization ./customization
 COPY skills ./skills
 COPY LICENSE LICENSING.md ./
-COPY --chmod=755 deploy/container.sh /usr/local/bin/apex-container
+COPY --chmod=755 scripts/container.sh /usr/local/bin/apex-container
 ENV APEX_CONTROL_AUTH=/var/lib/apex/identity/auth.json \
     APEX_CONTROL_BIND=0.0.0.0:8780
 USER apex
