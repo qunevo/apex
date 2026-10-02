@@ -15,8 +15,8 @@ apex serve --config /opt/apex/apex.config.json --workspace /var/lib/apex
 The same `--config` option works with `mcp` (including `--with-viewer`) and
 `tool`. `APEX_CONFIG` is the environment equivalent; an explicit flag wins.
 Without either, the existing flat workspace/store behavior is unchanged.
-`deploy/setup-mcp.sh` preserves its existing default; pass `--config` in the
-generated entry's `args` when package routing is wanted.
+For a [local MCP client](agent-integration.md#local-mcp), add `--config` and its
+file path to the executable's `args` when package routing is wanted.
 
 The base container stack leaves `APEX_CONFIG` empty. An optional package-specific [configuration](../customization/demo/apex.config.json) illustrates selecting the bundled synthetic package:
 

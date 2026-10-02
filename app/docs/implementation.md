@@ -31,20 +31,17 @@ Create `.apex` before writing CLI artifacts. On Windows use `apex.exe`. Open `ht
 
 ### Bash helpers
 
-The repository helpers use Bash on Linux/macOS or Git Bash on Windows; PowerShell is not required. They resolve the checkout from their own location, so they also work when invoked from another directory.
+The [build helper](../scripts/build.sh) uses Bash on Linux/macOS or Git Bash on Windows. It resolves the application from its own location, so it also works when invoked from another directory.
 
 ```bash
-bash deploy/build.sh
-bash deploy/start-viewer.sh
-# Optional port (default: 8765):
-bash deploy/start-viewer.sh 8766
-# Configure this checkout for a local MCP client:
-bash deploy/setup-mcp.sh
+bash scripts/build.sh
 ```
 
-[build.sh](../deploy/build.sh) runs formatting, linting, tests and the release build in order, stopping on failure. It finds Cargo on `PATH`, then under `CARGO_HOME` or `$HOME/.cargo`. [start-viewer.sh](../deploy/start-viewer.sh) selects the platform's release executable and runs the server in the foreground; use Ctrl+C to stop it.
+The helper runs formatting, linting, tests and the release build in order, stopping on failure. It finds Cargo on `PATH`, then under `CARGO_HOME` or `$HOME/.cargo`.
 
-[setup-mcp.sh](../deploy/setup-mcp.sh) appends the APEX entry to the ignored `.codex/config.toml`, preserves other settings and leaves an existing APEX entry unchanged. It accepts an optional data workspace path: `bash deploy/setup-mcp.sh /path/to/workspace`. The executable always comes from this application installation; the workspace must already exist. Under Git Bash it writes native Windows paths for the MCP host. Build for the environment that runs the client: Git Bash uses the Windows binary; WSL uses a Linux binary and Linux paths for a client running inside WSL.
+The [container entrypoint](../scripts/container.sh) handles initialization, migrations, server startup and connection details inside the Docker image; Compose invokes it automatically. See [containers](containers.md) for the current deployment workflow.
+
+For the file-backed compatibility server, run `target/release/apex serve --port 8765 --workspace /path/to/workspace` directly and stop it with Ctrl+C. Configure a local stdio client using the command and arguments in [agent integration](agent-integration.md#local-mcp).
 
 ## Model and UI
 
