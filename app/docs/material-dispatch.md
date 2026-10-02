@@ -1,6 +1,6 @@
 # Material preparation: scheduling, not MRP
 
-APEX separates quantity/lot expansion, material allocation and finite-capacity scheduling. The `material.prepare` tool allocates **existing** usable stock, confirmed receipts and outputs of supplied production operations. It never generates procurement proposals, forecasts, replenishment quantities or missing manufacturing orders.
+APEX separates quantity/lot expansion, material allocation and finite-capacity scheduling; see the [overall planning workflow](data-model.md#from-source-data-to-a-schedule). The `material.prepare` tool allocates **existing** usable stock, confirmed receipts and outputs of supplied production operations. It never creates lots or generates procurement proposals, forecasts, replenishment quantities or missing manufacturing orders.
 
 ## Mapping
 
@@ -16,13 +16,21 @@ Production expansion preserves resources, calendars, opening stock and confirmed
 
 1. Import canonical tasks or expand production templates.
 2. Leave route and differing-material main-mode alternatives free, or supply `options.route_choices` and `options.mode_choices` to pin them. Fixed and started choices cannot be overridden.
-3. Call `material.prepare` with `scenario_id`, `expected_revision` and optional `options`.
+3. Call `material.prepare` with `scenario_id`, `expected_revision` and optional `options`. These use the narrower `DispatchOptions` contract (route/mode selections), not the full planning-options schema.
 4. The result gives a **new scenario**, allocation count, added dependency count and `report_id`. For flexible routes or material modes, this report is a preview; inspect `allocation_preview` and `preview_diagnostics`, then page actual saved allocations through `model.page` / `materials`. The original revision is unchanged. Page `artifact.read` with `pointer: "/allocations"` to inspect consumer, item, quantity, stock/receipt/producer source, receipt index and timing.
 5. Use `schedule.create` or `schedule.improve` on the prepared scenario; validate and compare as usual. Flexible models reallocate supply after each actual route and material-mode selection, while material-identical machine modes retain their resource choices. New internal tokens ensure another dispatch order cannot steal a quantity reserved to a particular consumer.
 
-When all routes and material-mode decisions are fixed, preparation produces a materialized snapshot in ordinary canonical JSON: physical material maps plus internal `@apex/pegging/…` balances and precedence edges. Both decoder and independent validator enforce them. These internal names are not new physical items. Preparing an already prepared scenario is rejected. Material/routing edits to a materialized snapshot require preparing the **original** input again; never manually edit the internal tokens. Flexible models carry `material_policy: "reallocate_routes"` and reallocate during evaluation after typed scenario changes. Goals and calendars may be varied on either kind of prepared scenario.
+## When allocation runs
 
-With `material_policy: "reallocate_routes"`, allocation runs after the actual route and material-mode choices are resolved for an evaluation, before time placement. It is therefore repeated for evaluated alternatives, rather than fixing the preparation preview for every candidate. Without this policy or explicit preparation, the normal decoder still enforces material balances and availability as it places operations in dispatch order, and the validator checks the result independently. Skipping preparation does not disable material constraints; it omits the separate consumer-specific allocation step. General engine readiness/preparation checks do not themselves invoke `material.prepare`.
+| Material path | When allocation happens | What scheduling enforces |
+| --- | --- | --- |
+| No explicit preparation and no `material_policy` | There is no separate consumer-specific allocation pass. | The normal decoder checks material balances and availability as it places operations in dispatch order; independent validation checks the result. |
+| Preparation with all routes and material-relevant mode choices fixed | `material.prepare` assigns supply and creates a materialized problem with internal allocation tokens and precedence edges. | Those allocations bind the prepared snapshot and are enforced during scheduling and validation. |
+| Flexible routes or modes with different material requirements | Preparation keeps alternatives open and sets `material_policy: "reallocate_routes"`. Its initial report is a preview. | Allocation runs again after actual route/material-mode choices are resolved for each evaluation, before placement. Saved schedules carry their actual allocation report. |
+
+This is the same for expanded production orders and directly imported operations. Simply importing either input does not enable the separate allocator. A problem carrying `material_policy: "reallocate_routes"` activates allocation during evaluation; general engine readiness checks alone do not. Skipping separate preparation does not disable material constraints.
+
+Materialized snapshots retain physical material maps and add internal `@apex/pegging/…` balances and precedence edges; those tokens are not new physical items. Preparing an already prepared scenario is rejected. Material/routing edits to a materialized snapshot require preparing the **original** input again; never manually edit the internal tokens. Flexible models reallocate during evaluation after typed scenario changes. Goals and calendars may be varied on either kind of prepared scenario.
 
 ## Policy and limits
 
