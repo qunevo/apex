@@ -13,6 +13,7 @@ from .catalog import CATALOG
 from .seed import DEMO, generate
 from .store import Conflict, Store
 from .table_query import filter_rows
+from .workbook import reset_demo
 
 WEB = Path(__file__).parent / "web"
 
@@ -160,11 +161,8 @@ class Handler(BaseHTTPRequestHandler):
             if path == "/api/reset" and self.command == "POST":
                 if payload.get("confirmation") != "RESET DEMO":
                     raise ValueError("Reset requires the exact confirmation text")
-                self.server.store.seed(self.server.seed, reset=True)
-                source = DEMO / "planning/production-planning.xlsx"
-                if source.exists():
-                    shutil.copyfile(source, self.server.directory / "production-planning.xlsx")
-                result = {"reset": True}
+                result = reset_demo(self.server.store, self.server.seed, self.server.directory,
+                                    DEMO / "planning/production-planning.xlsx")
             elif len(parts) == 4 and parts[:2] == ["api", "progress"] and parts[3] == "report" and self.command == "POST":
                 result = self.server.store.report(parts[2], payload)
             elif len(parts) == 4 and parts[:2] == ["api", "workplans"] and self.command == "POST":

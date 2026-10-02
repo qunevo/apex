@@ -1,5 +1,13 @@
 // UI templates and known synthetic labels. Custom source prose remains unchanged.
 export default {
+  "Download a copy": "Kopie herunterladen",
+  "Edit the shared workbook opened by the demo starter and save in Excel. Both containers see that file. A downloaded copy is separate.": "Bearbeite die vom Demo-Starter geöffnete gemeinsame Arbeitsmappe und speichere in Excel. Beide Container sehen diese Datei. Eine heruntergeladene Kopie ist davon getrennt.",
+  "Close the shared workbook in Excel before resetting. Reopen it afterward to use the restored file.": "Schließe die gemeinsame Arbeitsmappe vor dem Zurücksetzen in Excel. Öffne sie danach erneut, um die wiederhergestellte Datei zu verwenden.",
+  "MES and shared Excel workbook restored. Reopen the workbook in Excel.": "MES und gemeinsame Excel-Arbeitsmappe zurückgesetzt. Öffne die Arbeitsmappe erneut in Excel.",
+  "Close the shared Excel workbook before resetting the demo, then try again.": "Schließe die gemeinsame Excel-Arbeitsmappe und versuche das Zurücksetzen erneut.",
+  "The workbook baseline is unavailable or the working file is unsafe. The demo was not reset.": "Die ursprüngliche Arbeitsmappe fehlt oder die Arbeitsdatei ist unsicher. Die Demo wurde nicht zurückgesetzt.",
+  "Could not reset the shared workbook and MES. Close Excel and check that the working directory is writable, then try again.": "Gemeinsame Arbeitsmappe und MES konnten nicht zurückgesetzt werden. Schließe Excel und prüfe die Schreibrechte des Arbeitsordners. Versuche es danach erneut.",
+  "Reset failed and workbook recovery could not finish. Close Excel and restore any .workbook-reset- backup before continuing.": "Das Zurücksetzen und die Wiederherstellung der Arbeitsmappe konnten nicht abgeschlossen werden. Schließe Excel und stelle eine vorhandene .workbook-reset- Sicherung vor dem Fortfahren wieder her.",
   "& planner decisions": "& Planungsentscheidungen",
   "(Empty)": "(Leer)",
   ". Book cumulative good and scrap quantities. Scrap reduces the input for the next step. Enter a finish when all input is accounted for. Times use the demo clock.": ". Erfasse kumulierte Gut- und Ausschussmengen. Ausschuss reduziert die Eingangsmenge des nächsten Schritts. Trage das Ende ein, sobald die gesamte Eingangsmenge verbucht ist. Es gilt die Demo-Uhr.",

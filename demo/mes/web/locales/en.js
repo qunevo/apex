@@ -1,5 +1,13 @@
 // UI templates and known synthetic labels. Custom source prose remains unchanged.
 export default {
+  "Download a copy": "Download a copy",
+  "Edit the shared workbook opened by the demo starter and save in Excel. Both containers see that file. A downloaded copy is separate.": "Edit the shared workbook opened by the demo starter and save in Excel. Both containers see that file. A downloaded copy is separate.",
+  "Close the shared workbook in Excel before resetting. Reopen it afterward to use the restored file.": "Close the shared workbook in Excel before resetting. Reopen it afterward to use the restored file.",
+  "MES and shared Excel workbook restored. Reopen the workbook in Excel.": "MES and shared Excel workbook restored. Reopen the workbook in Excel.",
+  "Close the shared Excel workbook before resetting the demo, then try again.": "Close the shared Excel workbook before resetting the demo, then try again.",
+  "The workbook baseline is unavailable or the working file is unsafe. The demo was not reset.": "The workbook baseline is unavailable or the working file is unsafe. The demo was not reset.",
+  "Could not reset the shared workbook and MES. Close Excel and check that the working directory is writable, then try again.": "Could not reset the shared workbook and MES. Close Excel and check that the working directory is writable, then try again.",
+  "Reset failed and workbook recovery could not finish. Close Excel and restore any .workbook-reset- backup before continuing.": "Reset failed and workbook recovery could not finish. Close Excel and restore any .workbook-reset- backup before continuing.",
   "& planner decisions": "& planner decisions",
   "(Empty)": "(Empty)",
   ". Book cumulative good and scrap quantities. Scrap reduces the input for the next step. Enter a finish when all input is accounted for. Times use the demo clock.": ". Book cumulative good and scrap quantities. Scrap reduces the input for the next step. Enter a finish when all input is accounted for. Times use the demo clock.",

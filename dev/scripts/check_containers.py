@@ -2,6 +2,7 @@
 
 import argparse
 import hashlib
+from html import unescape
 import json
 import os
 from pathlib import Path
@@ -143,6 +144,15 @@ def verify(directory, kind, image, build):
         if kind == "demo":
             meta = request(mes + "/api/meta")
             assert meta["counts"]["orders"] == 120 and meta["workbook_available"]
+            bash = shutil.which("bash")
+            assert bash, "Bash is required to verify the demo launcher"
+            launched = run([bash, (cwd / "scripts/start-demo.sh").as_posix(), "--no-build", "--no-open"],
+                           {**env, "COMPOSE_PROJECT_NAME": project}, cwd)
+            assert token not in launched and "Demo ready" in launched
+            page = unescape((cwd / ".local/start.html").read_text(encoding="utf-8"))
+            assert origin + "/mcp" in page and mes in page and token in page
+            assert tokens[1] not in page
+            assert not (cwd / ".local/container/start.html").exists()
             machine = request(mes + "/api/tables/machines?limit=1")["rows"][0]
             request(mes + "/api/tables/machines/" + machine["id"],
                     {"expected_version": machine["_version"], "data": {"name": "Container persistence check"}}, method="PATCH")
@@ -170,6 +180,28 @@ def verify(directory, kind, image, build):
             rows = request(mes + "/api/tables/machines?limit=100")["rows"]
             assert next(row for row in rows if row["id"] == machine["id"])["name"] == "Container persistence check"
             assert hashlib.sha256(request(mes + "/downloads/production-planning.xlsx")).hexdigest() == digest
+            lock = workbook.with_name("~$" + workbook.name)
+            lock.write_text("Synthetic Excel owner file", encoding="utf-8")
+            try:
+                request(mes + "/api/reset", {"confirmation": "RESET DEMO"})
+            except HTTPError as error:
+                assert error.code == 409
+            else:
+                raise AssertionError("Reset accepted a workbook open in Excel")
+            finally:
+                lock.unlink()
+            assert hashlib.sha256(workbook.read_bytes()).hexdigest() == digest
+            reset = request(mes + "/api/reset", {"confirmation": "RESET DEMO"})
+            assert reset == {"reset": True, "workbook_reset": True}
+            baseline = hashlib.sha256((directory / "demo/planning/production-planning.xlsx").read_bytes()).hexdigest()
+            assert hashlib.sha256(workbook.read_bytes()).hexdigest() == baseline
+            assert hashlib.sha256(request(mes + "/downloads/production-planning.xlsx")).hexdigest() == baseline
+            assert compose("exec", "-T", "apex", "sha256sum", "/sources/demo/production-planning.xlsx").split()[0] == baseline
+            rows = request(mes + "/api/tables/machines?limit=100")["rows"]
+            assert next(row for row in rows if row["id"] == machine["id"])["name"] == machine["name"]
+            assert compose("exec", "-T", "apex", "apex-container", "access") == access
+            assert tool("results.get", {"result_id": result_id})["validation"]["valid"]
+            print("demo: local launcher, private setup page and shared workbook reset passed", flush=True)
         print(f"{kind}: startup, authenticated planning, MCP App, database role and retained state passed", flush=True)
     finally:
         # Only this script's uniquely named disposable project is removed.

@@ -9,7 +9,17 @@ MES and planning workbook.
 
 ## Start the complete showcase
 
-Install Docker with Linux containers and Docker Compose 2.20.3 or newer. From this directory:
+Install Docker with Linux containers and Docker Compose 2.20.3 or newer. From the repository root, run the local starter in Bash (Git Bash on Windows):
+
+```bash
+bash demo/scripts/start-demo.sh
+```
+
+It builds and starts the containers in the background, waits for readiness, then opens the shared working workbook in the host's spreadsheet application and a simple English setup page in the browser. No second terminal or manual token lookup is needed. On the page, choose **Open MES** or **Copy setup instructions** for a local chat agent. The instructions include the existing MCP connection, MES address and host workbook path; the client may need to reconnect to load newly configured tools. The generated `.local/start.html` contains the agent token: keep it private. It is ignored by Git and is outside the directory shared with the containers.
+
+The starter can be run again without resetting edits. Use `--no-build` to reuse existing images or `--no-open` for a terminal-only start. It respects Compose environment settings and `.env`, including configured host ports. If the browser or spreadsheet application cannot open automatically, it prints the paths for manual opening. The host needs Docker and Bash; no host Python or Node installation is required.
+
+Direct Compose startup remains available from this directory, without automatically opening host applications:
 
 ```bash
 docker compose up --build
@@ -46,12 +56,12 @@ The first start generates the synthetic data and conventional planning baseline,
 ## Explore
 
 1. Open **Production**. Search and filter 120 customer orders, 600 lots and 3,800 operations. An order shows its running operations with actual machines, operators and start times. Open an operation directly, or choose **View production lots** and follow the clickable material flow.
-2. Open **Excel planning** and download the actual `.xlsx` file. Review the dispatch sequence, machine/person assignments, fixed decisions and qualification matrix.
+2. Edit the shared workbook opened by the starter, or open `.local/container/production-planning.xlsx` directly, and save changes in Excel. **Excel planning > Download a copy** exports a separate file; editing that download does not change the shared workbook. Review the dispatch sequence, machine/person assignments, fixed decisions and qualification matrix.
 3. Add an urgent order, select an approved workplan, enter total quantity and pieces per lot. Saving releases its lots and frozen instructions together, including a remainder lot. Existing Excel assignments are unchanged.
 4. Open **Articles & workplans > Workplans**. Compare combined machining with the separate roughing/drilling route. Create a draft revision, open a step, and edit its machine alternatives, times or component requirements. **Check & release** locks that revision. Approve it under **Article workplans** before selecting it on an order.
 5. Open an operation to inspect its released alternatives and components. **Record progress** captures cumulative good/scrap quantities, operator, machine and actual start/finish. A scrap reason is required. The preceding step must be complete; only its good pieces can proceed. Confirmation history and material issues remain visible in separate tables.
 6. Edit an inbound delivery, schedule equipment unavailability or a personnel absence, or place a production lot on **Quality hold** with a reason. The snapshot button advances the demo clock; it does not automatically execute the plan.
-7. Use **Reset demo**, entering the displayed confirmation text, to restore the original MES and local workbook copy. Separately downloaded Excel files are unaffected.
+7. Close the shared workbook in Excel, then use **Reset demo**, entering the displayed confirmation text, to restore the original MES and shared workbook even after prolonged use or container recreation. Reopen the workbook afterward. Do not save an old open copy over the restored file. If the workbook is open or cannot be replaced, the reset is rejected and MES changes are rolled back. Separately downloaded Excel files, APEX scenarios and access tokens are unaffected.
 
 Use **DE / EN** in the top-right header to switch the entire interface, including the showcase, forms and validation messages. The browser remembers the selection; the initial language follows the browser language. UI templates and known synthetic display labels live in `mes/web/locales/en.js` and `de.js`. IDs, API enum values, customer/person names, custom source prose and the Excel/CSV source files stay unchanged. Language changes never write to the MES database.
 
@@ -81,6 +91,7 @@ The browser workbook views are previews of the original seed, not a live spreads
 - `planning/build-workbook.mjs`: maintainer authoring recipe using `@oai/artifact-tool` from the Codex bundled runtime. It reads `.local/seed.json`; that runtime is not required to run the MES or open the supplied Excel file.
 - `.local/`: ignored database, seed cache, working Excel copy, previews and test outputs.
 - `scripts/start.sh`: portable launcher, including Git Bash on Windows.
+- `scripts/start-demo.sh`: complete Compose startup with a private local onboarding page and shared workbook opening.
 
 No parent dependency is added to `app/`. The container showcase composes the existing APEX server; the MES-only Python start still runs independently. Frozen paper evidence is unchanged. The APEX package boundary is in `app/customization/demo/`; the live adapter remains a subsequent integration step.
 
@@ -104,7 +115,7 @@ The same API backs the browser and a future adapter; Compose also makes it avail
 | `GET /api/plan`, `GET /api/skills` | Original Excel seed data with source and current MES revisions |
 | `GET /api/audit` | Latest 50 persisted changes |
 | `GET /downloads/production-planning.xlsx` | Local working copy of the source workbook |
-| `POST /api/reset` | `{ "confirmation": "RESET DEMO" }`; demo-owned local state only |
+| `POST /api/reset` | `{ "confirmation": "RESET DEMO" }`; restores MES and shared workbook, returns `reset` and `workbook_reset`; HTTP 409 when Excel is open or the workbook cannot be restored |
 
 `filters` is an object keyed by a non-JSON catalog field. Text fields accept `{"contains":"OEM", "values":["OEM 01","OEM 02"]}`; numeric fields accept `{"min":25,"max":100}`; datetime fields accept calendar dates such as `{"min":"2026-10-07","max":"2026-10-07"}`. Empty bounds and an empty selection impose no restriction. Unknown fields/operators, invalid dates, non-finite numeric bounds and reversed ranges return HTTP 400. `facets=1` returns distinct values across the complete parent scope, independently of pagination and active column filters. Operation rows expose a computed `order_id`; lot rows expose computed `current_operation` and `resource_id` (running only). These read-only projections do not change stored records or revisions.
 

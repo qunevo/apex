@@ -44,10 +44,16 @@ image and host workbook mount. No application deployment file refers to the
 parent demo. The desktop remains an optional native client.
 See the [container contract](../../app/docs/containers.md).
 
+The optional `demo/scripts/start-demo.sh` starts the showcase and opens its shared
+host workbook plus a private local setup page. MES reset restores the workbook
+and MES baseline together; it preserves the APEX data and identity volumes. See
+the [demo workflow](../../demo/README.md) for Excel locking and recovery behavior.
+
 Run `python -B dev/scripts/check_containers.py` with a Linux Docker engine to
 verify both deployments in temporary source exports. It builds the app with no
 parent demo present, plans through MCP, checks the UI resource and database role,
 then recreates services to verify credentials, plans and MES/Excel persistence.
+The demo check also exercises the local starter and workbook reset after reuse.
 The test only removes its uniquely named projects and temporary files.
 
 ## Verification

@@ -86,7 +86,7 @@ class Store:
     def insert(db, entity, row):
         db.execute("INSERT INTO records(entity,id,data) VALUES (?,?,?)", (entity, row["id"], json.dumps(row)))
 
-    def seed(self, data, reset=False):
+    def seed(self, data, reset=False, before_commit=None):
         with self.connect() as db:
             db.execute("BEGIN IMMEDIATE")
             if self.meta(db, "factory") and not reset:
@@ -104,6 +104,8 @@ class Store:
                 self.put_meta(db, key, data[key])
             self.put_meta(db, "revision", 0)
             install(self, db, data, existing=False)
+            if before_commit is not None:
+                before_commit()
             return True
 
     @staticmethod
