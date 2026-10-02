@@ -6,6 +6,8 @@ This guide describes the current input contract. Historical input formats are no
 
 ## Schema roles and tool releases
 
+For the complete import-to-schedule flow, including direct operations, lot creation and optional material preparation, start with the [schema workflow guide](../schemas/README.md).
+
 | Schema | Describes | Used by |
 | --- | --- | --- |
 | [Production orders and workplans](../schemas/production-orders.schema.json) | `ProductionInput`: shared problem settings, reusable workplans and order demands | `production.import` or `apex expand`, which generates concrete lots and operations |
