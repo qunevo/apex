@@ -4,7 +4,6 @@ use std::collections::BTreeMap;
 
 fn problem(count: usize) -> Problem {
     let mut p = demo::problem(count);
-    p.schema_version = "apex.v3.2".into();
     for (i, t) in p.tasks.iter_mut().enumerate() {
         t.id = format!("T{i}");
         t.modes = vec![demo::mode("M0", 10.0)];

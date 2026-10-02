@@ -23,7 +23,7 @@ usable on its own.
 
 - **Scenario and revision.** A scenario names a planning problem for one engine. Every
   edit appends an immutable revision containing facts (the engine's model, e.g. an
-  `apex.v3.4` problem) and planning intent (declarations). Revising requires the
+  APEX scheduling problem) and planning intent (declarations). Revising requires the
   current `expected_revision`; a stale value fails with `CONFLICT`.
 - **Planning intent.** Declarations are kept separate from imported facts. The engine
   adapter lists the declaration kinds it can represent; others are rejected with

@@ -14,7 +14,7 @@ use std::{
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct EngineDescriptor {
     pub engine: ComponentRef,
-    /// Identifier of the facts model, e.g. a schema version.
+    /// Stable name of the facts model; its contract ships with the engine version.
     pub model: String,
     /// Planning-intent declaration kinds this engine can represent.
     pub declarations: Vec<String>,

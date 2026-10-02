@@ -4,7 +4,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2] / "app"
 base = json.loads((ROOT / "tests/fixtures/shift-factory.json").read_text(encoding="utf-8"))
-base.update(schema_version="apex.v3.2", id="synthetic-route-factory", tasks=[], dependencies=[],
+base.update(id="synthetic-route-factory", tasks=[], dependencies=[],
             transitions=[], locks=[], rules=[], inventory={"RAW": 100}, receipts=[], objectives=[])
 
 

@@ -41,7 +41,6 @@ pub fn problem(count: usize) -> Problem {
         })
         .collect();
     Problem {
-        schema_version: "apex.v3.1".into(),
         id: "synthetic-factory".into(),
         horizon,
         epoch: Some("2026-09-24T06:00:00Z".into()),

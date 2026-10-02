@@ -9,7 +9,7 @@ Scope the affected feature or documentation area first. Compare the claims to ex
 
 Read the relevant architecture change-map row and [documentation maintenance](../../docs/documentation-maintenance.md). Build a compact claim-to-evidence list for material mismatches. Fix clear drift within the requested scope. Ask focused questions about ambiguous intended behavior; continue independent link and naming repairs meanwhile.
 
-Use one canonical source per contract, short indexes and relative links. Keep current product-version literals out of living guides; use Cargo/runtime-derived version displays. Preserve meaningful historical versions, schema/protocol identifiers and compatibility explanations. Product guidance must remain usable within the standalone `app/` distribution; contributor-only material belongs under `dev/`.
+Use one canonical source per contract, short indexes and relative links. Keep current product-version literals out of living guides; use Cargo/runtime-derived version displays. Preserve meaningful historical evidence and external protocol identifiers. Application data schemas ship with the main tool release; remove stale claims of independent schema versions or historical-format compatibility. Product guidance must remain usable within the standalone `app/` distribution; contributor-only material belongs under `dev/`.
 
 Update nearby examples, architecture maps, skill references and the explicit wiki allowlist when relevant. Run `python -B dev/scripts/check_docs.py`, `python -B dev/scripts/build_wiki.py` and affected documentation tests. For changed command examples, exercise a small synthetic case where practical; link checks alone cannot establish semantic accuracy. Mark unverified claims instead of presenting them as tested.
 

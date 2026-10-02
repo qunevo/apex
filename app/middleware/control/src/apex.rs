@@ -1,4 +1,4 @@
-//! `EngineAdapter` for the APEX scheduling engine. Facts are an `apex.v3.x`
+//! `EngineAdapter` for the APEX scheduling engine. Facts are a scheduling
 //! problem; run options select a method and carry engine `Options`.
 use crate::{
     ComponentRef, Diagnostic, ScenarioContent, ScheduleView, ValidationReport, ViewOperation,
@@ -102,7 +102,7 @@ impl EngineAdapter for ApexEngine {
                 id: ENGINE_ID.into(),
                 version: apex_engine::VERSION.into(),
             },
-            model: "apex.v3.4".into(),
+            model: model::PROBLEM_MODEL.into(),
             // Planning intent is not compiled yet; commitments live in the facts.
             declarations: Vec::new(),
             methods: METHODS.iter().map(|m| m.to_string()).collect(),

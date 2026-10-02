@@ -19,6 +19,22 @@ fn call(s: &Service, n: &str, a: Value) -> Value {
     s.call(n, &a).unwrap_or_else(|e| panic!("{n}: {e}"))
 }
 #[test]
+fn discovery_and_saved_scenarios_use_the_tool_release_contract() {
+    let s = service();
+    let capabilities = call(&s, "capabilities", json!({}));
+    assert_eq!(capabilities["version"], env!("CARGO_PKG_VERSION"));
+    assert_eq!(capabilities["schema"], "scheduling-problem");
+    assert!(capabilities.get("accepted_schemas").is_none());
+    let imported = call(&s, "problem.import", json!({"problem": demo::problem(1)}));
+    let args = json!({"scenario_id": imported["scenario_id"]});
+    let saved = call(&s, "scenario.get", args.clone());
+    assert_eq!(saved["schema"], "scheduling-problem");
+    assert!(saved["planning"].get("version").is_none());
+    let policy = call(&s, "policy.inspect", args);
+    assert_eq!(policy["language"], "planning");
+    fs::remove_dir_all(s.root).unwrap();
+}
+#[test]
 fn material_routes_urgency_conditionals_and_kpis_are_available_to_agents() {
     let s = service();
     let p: Value = serde_json::from_str(include_str!("fixtures/chain-routing.json")).unwrap();

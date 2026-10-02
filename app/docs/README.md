@@ -1,6 +1,6 @@
 # APEX documentation
 
-This index describes the runnable Rust implementation with executable schema **`apex.v3.4`**. Canonical v3.1, v3.2 and v3.3 inputs remain accepted. Runtime capabilities and generated schemas are authoritative for the installed build; the migration audit records the scope of historical v2 comparisons.
+This index describes the runnable Rust implementation and its current, unversioned input schemas, which ship with the application release. Runtime capabilities and generated schemas are authoritative for the installed build; the migration audit records the scope of historical v2 comparisons.
 
 ## Use and integrate APEX
 
@@ -22,7 +22,7 @@ This index describes the runnable Rust implementation with executable schema **`
 
 ## Schemas and demo
 
-The current generated schemas cover the [canonical problem](../schemas/apex.v3.4.json), [production templates](../schemas/production.v3.4.json) and [planning options](../schemas/options.v3.4.json). Only these current snapshots are kept in the repository. The CLI and `schema.get` generate schemas from Rust types; acceptance of older canonical inputs is enforced by the runtime and does not depend on historical schema files.
+The current generated schemas cover the [scheduling problem](../schemas/scheduling-problem.schema.json), [production orders and workplans](../schemas/production-orders.schema.json) and [planning options](../schemas/planning-options.schema.json). The [schema roles and tool releases](data-model.md#schema-roles-and-tool-releases) explain their place in the import/planning workflow and how the schema contract follows the application release. Only the current snapshots are shipped; the CLI and `schema.get` generate schemas from the installed Rust types.
 
 The [factory showcase](https://github.com/qunevo/apex/tree/main/demo) presents the MES/Excel workflow. Its [customization package](../customization/demo/model/KNOWLEDGE.md) defines the application integration boundary and optional technical policies. The live factory adapter is still pending. Small synthetic inputs used to verify individual engine capabilities remain [test fixtures](../tests/fixtures).
 
@@ -40,4 +40,4 @@ Read the [contribution guide](https://github.com/qunevo/apex/blob/main/CONTRIBUT
 - [Publication preparation](https://github.com/qunevo/apex/blob/main/dev/docs/publication.md) lists release checks.
 - [Wiki publication](https://github.com/qunevo/apex/blob/main/dev/docs/wiki-publication.md) explains how reviewed documentation is published automatically.
 
-The [data-model reference](data-model.md) covers the current format and accepted canonical input versions. The removed v2 source and execution harnesses cannot be run from this checkout; see [migration audit](https://github.com/qunevo/apex/blob/main/dev/docs/migration-audit.md).
+The [data-model reference](data-model.md) covers the current scheduling problem and its input contract. The removed v2 source and execution harnesses cannot be run from this checkout; see [migration audit](https://github.com/qunevo/apex/blob/main/dev/docs/migration-audit.md).

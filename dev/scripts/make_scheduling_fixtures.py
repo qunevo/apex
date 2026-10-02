@@ -71,7 +71,7 @@ def generate():
                                    if following == "__end__" else []),
                     next_pre=([conditional("setup", machine, 60)]
                               if following != "__end__" and previous != following else [])))
-    problem = dict(schema_version="apex.v3.1", id="synthetic-shift-factory",
+    problem = dict(id="synthetic-shift-factory",
                    epoch="2026-09-24T06:00:00Z", horizon=14400, resources=resources,
                    tasks=tasks, dependencies=dependencies, locks=[],
                    transitions=transitions, inventory={"RAW": 8}, receipts=[],

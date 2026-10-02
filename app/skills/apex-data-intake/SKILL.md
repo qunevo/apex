@@ -15,6 +15,10 @@ For the central Compose server, query `engines.list` and use the shipped canonic
 
 The import, material-preparation and paging tool names below apply only to the compatibility catalog. When it advertises `capabilities`, query it and only the relevant `schema.get` definitions before using those operations. The mapping and source-ownership requirements apply to both catalogs.
 
+Use the current schemas from that tool installation. They ship with the main application release and have no independent version fields. Do not add format-version markers or assume historical input compatibility; keep the reported tool version with the external mapping record.
+
+Keep customer mappings in `customization/<id>/adapter`. If intake requires base application changes, follow the [extension boundary and approval workflow](../apex-extension/SKILL.md#customization-boundary-and-approval) before editing outside the package.
+
 ## Produce a traceable snapshot
 
 - Inspect headers, a bounded sample, counts and units. Resolve stable IDs, relationships, timezone/epoch and quantity units. Record source references in task `source` fields; keep real source data and credentials outside distribution files.

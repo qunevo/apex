@@ -1,6 +1,6 @@
 # Declarative scheduling
 
-Current APEX contract. The executable input version is `apex.v3.4`; canonical v3.1–v3.3 inputs remain accepted. `planning.version` is `apex.planning.v1`. This is a bounded typed vocabulary, not an expression interpreter or general mathematical solver. The [architecture map](README.md) explains the modules and shared evaluation flow.
+Current APEX contract. The planning vocabulary ships with the application release and has no separate version field. This is a bounded typed vocabulary, not an expression interpreter or general mathematical solver. The [architecture map](README.md) explains the modules and shared evaluation flow.
 
 ## Three contracts
 
@@ -47,7 +47,6 @@ The automatic Q divides the coefficient by estimated work and conditional work. 
 ```json
 {
   "planning": {
-    "version": "apex.planning.v1",
     "constraints": [
       {"kind":"eligible_resources","id":"coating-cell","select":{"stages":["coat"]},"resources":["COAT-1","COAT-2"]}
     ],

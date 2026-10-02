@@ -3,11 +3,9 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
 pub type Time = i64;
+pub const PROBLEM_MODEL: &str = "scheduling-problem";
 fn one() -> f64 {
     1.0
-}
-fn version() -> String {
-    "apex.v3.4".into()
 }
 fn default_stage() -> String {
     "default".into()
@@ -18,8 +16,6 @@ fn default_stage() -> String {
 pub struct Problem {
     #[serde(default)]
     pub planning: crate::language::PlanningModel,
-    #[serde(default = "version")]
-    pub schema_version: String,
     pub id: String,
     pub horizon: Time,
     #[serde(default)]

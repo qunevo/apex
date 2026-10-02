@@ -60,7 +60,7 @@ The portable repository skills under `skills/` cover data intake, planning and c
 
 ## Suggested agent workflow
 
-1. `capabilities` and `schema.get`: discover supported semantics. Request a named definition rather than the entire schema.
+1. `capabilities` and `schema.get`: discover the tool version and its current input contract. Schemas ship with the application release and have no separate format-version fields. Request a named definition rather than the entire schema.
 2. Import a canonical problem with `problem.import`, or orders and workplan templates with `production.import`.
 3. When existing supply needs allocation, use `material.prepare` to create a separate prepared scenario and page its report. See [the material contract](material-dispatch.md). Inspect diagnostics; missing processing work is an error, never silently replaced with zero. Preserve source references and record explicit estimates in `assumptions`.
 4. `schedule.create` produces a quickly constructed, independently validated plan. `queues.inspect` exposes goal/proxy mapping. `schedule.improve` combines XH and XT, with an optional XE, under one total budget. Pass `schedule_id` only for an incumbent from the same scenario identity and revision. Individual XH/XT tools remain available for diagnostics; `schedule.evolve` refines a same-revision saved plan with its own requested budget. Search exposes phases, improvement curves and replay metadata; see [search settings](search-and-parity.md).

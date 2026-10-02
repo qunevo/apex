@@ -1,6 +1,6 @@
 # Current architecture
 
-This is the implementation map for agents changing APEX. Read it after [repository conventions](../../AGENTS.md), then follow the source and test links below. The executable input is `apex.v3.4`; canonical v3.1â€“v3.3 inputs use the same Rust implementation. There is no separate legacy scheduler in this checkout.
+This is the implementation map for agents changing APEX. Read it after [repository conventions](../../AGENTS.md), then follow the source and test links below. The current scheduling problem and planning vocabulary ship with the application release and have no separate schema versions. There is no separate legacy scheduler in this checkout.
 
 Use the [data model](../data-model.md) for field semantics, the [operating guide](../implementation.md) for commands, and the [migration audit](https://github.com/qunevo/apex/blob/main/dev/docs/migration-audit.md) for historical v2 evidence. This directory documents implemented behavior.
 
@@ -196,12 +196,12 @@ cargo build --release
 When serialized types change, regenerate and review affected current schemas with the rebuilt binary:
 
 ```text
-target/release/apex schema --out schemas/apex.v3.4.json
-target/release/apex schema --model production --out schemas/production.v3.4.json
-target/release/apex schema --model options --out schemas/options.v3.4.json
+target/release/apex schema --out schemas/scheduling-problem.schema.json
+target/release/apex schema --model production --out schemas/production-orders.schema.json
+target/release/apex schema --model options --out schemas/planning-options.schema.json
 ```
 
-Use `target/release/apex.exe` on Windows. Keep only the current generated schema snapshots in `schemas/`; older input compatibility is a Rust runtime contract and does not require historical JSON schema files. Rebuild before MCP/browser verification; follow the [operating guide](../implementation.md) for relevant smoke commands. Generated reports and `.apex` artifacts stay local. Documentation-only edits need link, example and source-reference checks rather than scheduler benchmarks.
+Use `target/release/apex.exe` on Windows. Keep only the current generated schema snapshots under these role-based, versionless filenames; see [schema roles and tool releases](../data-model.md#schema-roles-and-tool-releases). The installed tool accepts its current input contract; do not keep historical schema snapshots or add format-version dispatch. Rebuild before MCP/browser verification; follow the [operating guide](../implementation.md) for relevant smoke commands. Generated reports and `.apex` artifacts stay local. Documentation-only edits need link, example and source-reference checks rather than scheduler benchmarks.
 
 ## Current limits
 
@@ -209,4 +209,4 @@ Use `target/release/apex.exe` on Windows. Keep only the current generated schema
 - Exact policy probes use a specialized independent-task fast path or reconstruct `prefix + candidate`. There is no general transactional rollback or incremental cross-resource repair engine.
 - The `apex` service uses a local file store and serialized tool calls. Tenants, durable runs, approval and publication belong to the separate [control platform](../control-platform.md).
 - There is no external solver backend, stochastic simulator, general simultaneous batch formation, arbitrary plugin hot-loading, automatic Q-formula generation or automatic operator synthesis.
-- Supported input versions share one runtime; passing current tests does not establish complete v2 parity. Keep measured comparisons in the [migration audit](https://github.com/qunevo/apex/blob/main/dev/docs/migration-audit.md) and separate benchmark workstream.
+- Passing current tests does not establish complete v2 parity. Keep measured comparisons in the [migration audit](https://github.com/qunevo/apex/blob/main/dev/docs/migration-audit.md) and separate benchmark workstream.

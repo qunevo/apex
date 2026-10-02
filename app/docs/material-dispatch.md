@@ -12,6 +12,8 @@ APEX separates quantity/lot expansion, material allocation and finite-capacity s
 
 ## Tool workflow
 
+Production expansion preserves resources, calendars, opening stock and confirmed receipts from the input's shared problem header and scales the workplan material maps to operation totals; see [production input](data-model.md#quantities-workplans-and-orders). Neither `production.import` nor `apex expand` automatically invokes `material.prepare`. The explicit preparation step runs after concrete operations exist and before scheduling. It allocates supply to consumers; calendar-aware placement happens during scheduling.
+
 1. Import canonical tasks or expand production templates.
 2. Leave route and differing-material main-mode alternatives free, or supply `options.route_choices` and `options.mode_choices` to pin them. Fixed and started choices cannot be overridden.
 3. Call `material.prepare` with `scenario_id`, `expected_revision` and optional `options`.
@@ -19,6 +21,8 @@ APEX separates quantity/lot expansion, material allocation and finite-capacity s
 5. Use `schedule.create` or `schedule.improve` on the prepared scenario; validate and compare as usual. Flexible models reallocate supply after each actual route and material-mode selection, while material-identical machine modes retain their resource choices. New internal tokens ensure another dispatch order cannot steal a quantity reserved to a particular consumer.
 
 When all routes and material-mode decisions are fixed, preparation produces a materialized snapshot in ordinary canonical JSON: physical material maps plus internal `@apex/pegging/…` balances and precedence edges. Both decoder and independent validator enforce them. These internal names are not new physical items. Preparing an already prepared scenario is rejected. Material/routing edits to a materialized snapshot require preparing the **original** input again; never manually edit the internal tokens. Flexible models carry `material_policy: "reallocate_routes"` and reallocate during evaluation after typed scenario changes. Goals and calendars may be varied on either kind of prepared scenario.
+
+With `material_policy: "reallocate_routes"`, allocation runs after the actual route and material-mode choices are resolved for an evaluation, before time placement. It is therefore repeated for evaluated alternatives, rather than fixing the preparation preview for every candidate. Without this policy or explicit preparation, the normal decoder still enforces material balances and availability as it places operations in dispatch order, and the validator checks the result independently. Skipping preparation does not disable material constraints; it omits the separate consumer-specific allocation step. General engine readiness/preparation checks do not themselves invoke `material.prepare`.
 
 ## Policy and limits
 
