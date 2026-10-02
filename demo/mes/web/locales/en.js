@@ -643,7 +643,7 @@ export default {
   "Use a same-day shift with end after start": "Use a same-day shift with end after start",
   "Use a workplan ID of at most 24 characters": "Use a workplan ID of at most 24 characters",
   "Use only when this equipment is out of service indefinitely. Dated periods remain in effect when unchecked.": "Use only when this equipment is out of service indefinitely. Dated periods remain in effect when unchecked.",
-  "Use the loopback address printed by the demo server": "Use the loopback address printed by the demo server",
+  "Use a configured demo server address": "Use a configured demo server address",
   "Validate the resulting schedule.": "Validate the resulting schedule.",
   "Valve adjustment": "Valve adjustment",
   "Valve adjustment complete": "Valve adjustment complete",

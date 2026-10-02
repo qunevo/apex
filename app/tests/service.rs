@@ -37,7 +37,7 @@ fn discovery_and_saved_scenarios_use_the_tool_release_contract() {
 #[test]
 fn material_routes_urgency_conditionals_and_kpis_are_available_to_agents() {
     let s = service();
-    let p: Value = serde_json::from_str(include_str!("../examples/chain-routing.json")).unwrap();
+    let p: Value = serde_json::from_str(include_str!("fixtures/chain-routing.json")).unwrap();
     let source = call(&s, "problem.import", json!({"problem":p}));
     let prepared = call(
         &s,

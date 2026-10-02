@@ -8,8 +8,10 @@ use serde_json::{Value, json};
 
 #[test]
 fn current_production_input_roundtrips_and_produces_a_valid_schedule() {
-    let input: ProductionInput =
-        serde_json::from_str(include_str!("../examples/production-orders.json")).unwrap();
+    let input: ProductionInput = serde_json::from_str(include_str!(
+        "../customization/demo/model/production-orders.json"
+    ))
+    .unwrap();
     let expanded = expand(input).unwrap();
     let encoded = serde_json::to_value(expanded).unwrap();
     assert!(encoded.get("schema_version").is_none());

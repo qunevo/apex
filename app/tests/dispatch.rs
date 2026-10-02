@@ -498,14 +498,14 @@ fn registered_native_metrics_and_sequence_decorations_compose_with_exact_policie
         max_lag: None,
     }];
     p.customization = Some(CustomizationRef {
-        id: "dummy_customer".into(),
+        id: "demo".into(),
         version: "1".into(),
     });
     campaign(&mut p, "productive_time", 20.0);
     let s = xg::create(&p, &o()).unwrap();
     assert_eq!(seq(&s), vec!["T0", "T1", "T2"]);
     assert_eq!(s.metrics["setup_penalty"], 100.0);
-    assert!(s.metrics.contains_key("dummy_priority_completion"));
+    assert!(s.metrics.contains_key("demo_priority_completion"));
     assert!(validate::validate(&p, &s).valid);
 }
 struct TimedFilter;

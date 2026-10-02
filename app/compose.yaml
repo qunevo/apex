@@ -1,0 +1,66 @@
+name: apex
+
+services:
+  setup:
+    image: ${APEX_IMAGE:-apex-local:dev}
+    pull_policy: never
+    command: ["setup"]
+    volumes:
+      - apex-state:/var/lib/apex
+      - bootstrap:/run/apex-bootstrap
+
+  postgres:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_DB: apex
+      POSTGRES_PASSWORD_FILE: /run/apex-bootstrap/postgres-password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - bootstrap:/run/apex-bootstrap:ro
+    depends_on:
+      setup:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d apex"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+
+  migrate:
+    image: ${APEX_IMAGE:-apex-local:dev}
+    pull_policy: never
+    command: ["migrate"]
+    volumes:
+      - bootstrap:/run/apex-bootstrap:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  apex:
+    image: ${APEX_IMAGE:-apex-local:dev}
+    build:
+      context: .
+    environment:
+      APEX_CONTROL_WORKERS: ${APEX_CONTROL_WORKERS:-2}
+      APEX_CONFIG: ${APEX_CONFIG:-}
+      APEX_CONNECT_URL: ${APEX_CONNECT_URL:-http://127.0.0.1:${APEX_HTTP_PORT:-8780}/mcp}
+      APEX_SHOW_ACCESS: ${APEX_SHOW_ACCESS:-0}
+    ports:
+      - "127.0.0.1:${APEX_HTTP_PORT:-8780}:8780"
+    volumes:
+      - apex-state:/var/lib/apex
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:8780/health"]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+volumes:
+  apex-state:
+  bootstrap:
+  postgres-data:

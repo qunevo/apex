@@ -643,7 +643,7 @@ export default {
   "Use a same-day shift with end after start": "Verwende eine Schicht innerhalb eines Tages, deren Ende nach dem Beginn liegt",
   "Use a workplan ID of at most 24 characters": "Verwende eine Arbeitsplan-ID mit höchstens 24 Zeichen",
   "Use only when this equipment is out of service indefinitely. Dated periods remain in effect when unchecked.": "Nur verwenden, wenn diese Anlage auf unbestimmte Zeit außer Betrieb ist. Zeitlich begrenzte Sperren bleiben beim Deaktivieren bestehen.",
-  "Use the loopback address printed by the demo server": "Verwende die vom Demo-Server ausgegebene lokale Adresse",
+  "Use a configured demo server address": "Verwende eine konfigurierte Adresse des Demo-Servers",
   "Validate the resulting schedule.": "Den resultierenden Plan validieren.",
   "Valve adjustment": "Ventileinstellung",
   "Valve adjustment complete": "Ventileinstellung abgeschlossen",

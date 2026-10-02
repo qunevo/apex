@@ -72,7 +72,7 @@ Each demand chooses permissible workplans and an optional `max_lot`. Expansion c
 Use `production.import` directly, or:
 
 ```text
-apex expand examples/production-orders.json --out .apex/production-expanded.json
+apex expand customization/demo/model/production-orders.json --out .apex/production-expanded.json
 apex plan .apex/production-expanded.json --out .apex/production-schedule.json
 ```
 
@@ -103,7 +103,7 @@ Nested conditional modes with their own pre/post or material overrides are rejec
 
 Transition tables match neighboring families on a primary resource and separately declare `penalty`, `previous_post` and `next_pre`. Required initial/final transitions and terminal cleanup remain enforced. `sequence_pattern` rules match a family suffix ending at the current task, allowing effects beyond one neighbor. `setup_penalty` is distinct from processing duration, transition work and mode cost.
 
-Native customization hooks receive the complete selected primary-resource sequence and can add activities and charges. They also provide model lowering, dispatch rank, extra objective metrics and hard result validation. Independent validation reconstructs the context, regenerates decorations and recomputes metrics. The linked `dummy_customer@1` policy is a synthetic example; unknown versions fail explicitly.
+Native customization hooks receive the complete selected primary-resource sequence and can add activities and charges. They also provide model lowering, dispatch rank, extra objective metrics and hard result validation. Independent validation reconstructs the context, regenerates decorations and recomputes metrics. The linked `demo@1` policy is a synthetic example; unknown versions fail explicitly.
 
 Markdown records the domain knowledge and counterexamples. It is not executable code. A coding agent can extend the Rust customization, registry, tests and optional UI, then rebuild. Existing typed attribute objectives automatically create a dispatch signal; arbitrary new objectives still need an explicit heuristic implementation and quality tests.
 
@@ -192,7 +192,7 @@ Schedules carry `metric_version: 1`. Validation requires the expanded KPI set an
 
 ## Reproduce a chat-first scenario
 
-1. Import [the synthetic chain model](../examples/chain-routing.json) with `problem.import`.
+1. Import [the synthetic chain model](../tests/fixtures/chain-routing.json) with `problem.import`.
 2. Call `material.prepare` and retain the returned scenario ID. Routes remain free.
 3. Use `schedule.create` or `schedule.improve` with a bounded budget.
 4. Inspect `PRODUCE-FAST`: its business due date is 800, while the downstream order produces derived due 75 / priority 9.

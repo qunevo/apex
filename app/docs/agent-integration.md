@@ -1,6 +1,8 @@
 # Agent integration
 
-APEX exposes the same 32 tools through MCP stdio, MCP Streamable HTTP and a plain JSON HTTP API. The scheduler does not depend on a model provider. A chat host must support one of these tool transports, or supply a small bridge. A chat without tool access cannot invoke APEX merely by receiving its URL.
+For the central server started by Docker Compose, use the authenticated HTTP MCP endpoint and the scenario/run/result tools in [control platform](control-platform.md#agents-mcp). Read [containers](containers.md#connect-a-chat) for access tokens. Its MCP App resource is shown by supporting chat hosts.
+
+This page documents the separate compatibility `apex` executable. It exposes the same 32 tools through MCP stdio, MCP Streamable HTTP and a plain JSON HTTP API. The scheduler does not depend on a model provider. A chat host must support one of these tool transports, or supply a small bridge. A chat without tool access cannot invoke APEX merely by receiving its URL.
 
 One server can enable several customization packages through `--config FILE`
 or `APEX_CONFIG`. Every tool accepts an optional `customization` folder ID;
@@ -20,7 +22,7 @@ Configure the host to launch the release executable:
 
 Use `apex.exe` on Windows. This is a command/arguments example; the surrounding configuration format belongs to the host. `--with-viewer` also starts the browser workbench on port 8765. An occupied viewer port does not terminate stdio tools. Select another `--port` if necessary.
 
-For the existing Codex project setup, `bash deploy/setup-mcp.sh` writes the ignored project configuration. Run it in Bash, or Git Bash for a native Windows host, after building the release executable. It preserves other settings and leaves an existing APEX entry unchanged. Restart the host's MCP connection after changing the executable. See the [Bash helper guide](implementation.md#bash-helpers) and [configuration template](../examples/codex-mcp.toml).
+For the existing Codex project setup, `bash deploy/setup-mcp.sh` writes the ignored project configuration. Run it in Bash, or Git Bash for a native Windows host, after building the release executable. It preserves other settings and leaves an existing APEX entry unchanged. Restart the host's MCP connection after changing the executable. See the [Bash helper guide](implementation.md#bash-helpers) and [configuration template](../deploy/codex-mcp.toml).
 
 ## HTTP MCP and function tools
 

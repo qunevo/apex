@@ -30,5 +30,5 @@ pub mod xt;
 pub(crate) mod placement;
 
 // The bundled synthetic customization is statically registered by `extensions`.
-#[path = "../customization/dummy_customer/model/policy.rs"]
-pub mod dummy_customer;
+#[path = "../customization/demo/model/policy.rs"]
+pub mod demo_policy;

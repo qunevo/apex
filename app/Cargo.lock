@@ -191,6 +191,7 @@ checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
 name = "apex-control"
 version = "0.1.0"
 dependencies = [
+ "apex-engine",
  "async-trait",
  "chrono",
  "serde",
@@ -222,7 +223,6 @@ dependencies = [
  "apex-control",
  "apex-control-postgres",
  "apex-engine",
- "apex-engine-adapter",
  "axum",
  "chrono",
  "http-body-util",
@@ -260,20 +260,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "apex-engine-adapter"
-version = "0.1.0"
-dependencies = [
- "apex-control",
- "apex-engine",
- "serde",
- "serde_json",
- "tokio",
-]
-
-[[package]]
 name = "apex-scheduler"
 version = "1.0.0"
 dependencies = [
+ "apex-control",
  "apex-engine",
  "fs2",
  "schemars",

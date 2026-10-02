@@ -27,7 +27,7 @@ try {
   await page.locator('#objective').click(); await done();
   await page.locator('#validate').click(); await done();
   assert.match(await page.locator('#inspector').textContent(), /"valid": true/);
-  await page.locator('#file').setInputFiles(path.join(root, 'examples/shift-factory.json')); await done();
+  await page.locator('#file').setInputFiles(path.join(root, 'tests/fixtures/shift-factory.json')); await done();
   await page.locator('#create').click(); await done();
   assert.ok(await page.locator('#chart svg rect.pre').count() > 0);
   assert.ok(await page.locator('#chart svg rect.post').count() > 0);

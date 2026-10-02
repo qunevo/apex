@@ -1,12 +1,12 @@
 # Customization packages
 
 Each folder groups one synthetic or privately installed domain package. The
-bundled packages are `demo` (the factory integration boundary) and
-`dummy_customer` (the existing native scheduling extension example).
+bundled package is `demo`, containing the factory integration boundary and an
+optional native scheduling extension example in `model/`.
 
 `package.json` contains a stable `id` matching the folder and a version token.
 The server configuration explicitly enables folder IDs and selects a default;
-placing another folder here does not activate it. See
+placing another folder here does not activate it. The base container stack leaves package selection unconfigured; an optional package-specific configuration is bundled inside `demo/`. See
 [server configuration](../docs/server-configuration.md).
 
 - `adapter/`: source extraction and repeatable mapping.

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>APEX Plan</title>
+  <style>/* APEX_APP_STYLE */</style>
+</head>
+<body>
+  <header><div><span class="brand">APEX</span><h1>Production plan</h1></div><button id="refresh" disabled>Refresh result</button></header>
+  <p id="message" role="status">Connecting to the chat host…</p>
+  <main hidden>
+    <section class="summary" aria-label="Result summary"><strong id="status"></strong><span id="revision"></span><span id="validation"></span><span id="package"></span></section>
+    <div id="metrics" aria-label="Plan metrics"></div>
+    <div class="filters"><label>Find an operation <input id="search" type="search" placeholder="ID or label"></label><label>Resource <select id="resource"><option value="">All resources</option></select></label><span id="count"></span></div>
+    <p id="timebase"></p>
+    <div id="chart" aria-label="Resource schedule"></div>
+    <details><summary>Operations and provenance</summary><p id="identity"></p><div class="table-scroll"><table><thead><tr><th>Operation</th><th>Resource</th><th>Start</th><th>End</th></tr></thead><tbody id="operations"></tbody></table></div></details>
+  </main>
+  <footer>Planning results from the APEX server · read-only view</footer>
+  <script>/* APEX_APP_BRIDGE */</script>
+  <script>/* APEX_APP_VIEW */</script>
+</body>
+</html>

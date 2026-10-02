@@ -463,11 +463,14 @@ fn mandatory_policy_sees_candidate_beyond_window_under_direct_priorities() {
 #[test]
 fn xe_checks_rich_synthetic_shift_route_material_and_conditional_fixtures() {
     let mut models: Vec<Problem> = vec![
-        serde_json::from_str(include_str!("../examples/shift-factory.json")).unwrap(),
-        serde_json::from_str(include_str!("../examples/chain-routing.json")).unwrap(),
-        serde_json::from_str(include_str!("../examples/dispatch-campaign.json")).unwrap(),
+        serde_json::from_str(include_str!("fixtures/shift-factory.json")).unwrap(),
+        serde_json::from_str(include_str!("fixtures/chain-routing.json")).unwrap(),
+        serde_json::from_str(include_str!("fixtures/dispatch-campaign.json")).unwrap(),
         apex::production::expand(
-            serde_json::from_str(include_str!("../examples/production-orders.json")).unwrap(),
+            serde_json::from_str(include_str!(
+                "../customization/demo/model/production-orders.json"
+            ))
+            .unwrap(),
         )
         .unwrap(),
     ];
