@@ -62,7 +62,9 @@ is needed to implement or verify this extension.
   Linux open commands, quoted paths, configured Compose ports and clear startup
   failures. Use Docker and existing container runtimes for any rendering helper;
   do not require a new host Python/Node installation or background host service.
-  Leave `scripts/start.sh` as the existing MES-only launcher.
+  Keep `scripts/start-demo.sh` as the single demo launcher. The user approved
+  removing the redundant MES-only launcher; direct Python startup remains
+  documented for development.
 - Add a small maintained English HTML template and rendering helper in `demo/`.
   Retrieve the existing agent connection once after readiness and render a local
   ignored page outside the directory shared with the MES. Escape all dynamic

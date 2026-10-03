@@ -46,17 +46,17 @@ The standalone app and this showcase use different Compose projects but the same
 
 The MES container listens on its internal network interface but publishes only a host loopback port. Exact allowed Host values include the internal service and configured local port; cross-origin browser requests remain rejected. Desktop remains an optional separate client.
 
-## MES-only Python start
+## MES development without Docker
 
 Requires Python 3.10 or newer. The MES uses only the Python standard library; no package installation, scheduler build, database service or account is required.
 
 From the repository root:
 
 ```bash
-bash demo/scripts/start.sh
+python -B -m demo.mes.server
 ```
 
-Or run `python -B -m demo.mes.server`. Open **http://127.0.0.1:8788**. Use `--port 8789` for a different local port. The native start binds to loopback by default. Stop it with Ctrl+C.
+Open **http://127.0.0.1:8788**. Use `--port 8789` for a different local port. The native start binds to loopback by default. Stop it with Ctrl+C. For the complete demo with APEX, setup page and shared Excel opening, use `scripts/start-demo.sh`.
 
 The first start generates the synthetic data and conventional planning baseline, then creates `demo/.local/mes.sqlite`. Initial generation can take about a minute depending on the host. Later starts reuse the local database. The reviewed [Excel baseline](planning/production-planning.xlsx) is copied to the local working directory and can be downloaded from **Excel planning** in the MES.
 
@@ -97,8 +97,7 @@ The browser workbook views are previews of the original seed, not a live spreads
 - `planning/production-planning.xlsx`: intentionally versioned, entirely synthetic source fixture representing the planner's starting workbook.
 - `planning/build-workbook.mjs`: maintainer authoring recipe using `@oai/artifact-tool` from the Codex bundled runtime. It reads `.local/seed.json`; that runtime is not required to run the MES or open the supplied Excel file.
 - `.local/`: ignored database, seed cache, working Excel copy, previews and test outputs.
-- `scripts/start.sh`: portable launcher, including Git Bash on Windows.
-- `scripts/start-demo.sh`: complete Compose startup with a private local onboarding page and shared workbook opening.
+- `scripts/start-demo.sh`: the demo launcher, including Git Bash on Windows; offers resume or reinitialization, then opens the private local setup page and shared workbook.
 
 No parent dependency is added to `app/`. The container showcase composes the existing APEX server; the MES-only Python start still runs independently. Frozen paper evidence is unchanged. The APEX package boundary is in `app/customization/demo/`; the live adapter remains a subsequent integration step.
 
