@@ -1,5 +1,18 @@
 // UI templates and known synthetic labels. Custom source prose remains unchanged.
 export default {
+  "Open in Excel": "Open in Excel",
+  "Open and save the shared working file. Both containers see your saved changes. MES data and the Excel plan are not synchronized automatically.": "Open and save the shared working file. Both containers see your saved changes. MES data and the Excel plan are not synchronized automatically.",
+  "The desktop opener is unavailable. Run the demo starter again without --no-open.": "The desktop opener is unavailable. Run the demo starter again without --no-open.",
+  "Shared workbook:": "Shared workbook:",
+  "Opening the shared workbook…": "Opening the shared workbook…",
+  "The shared workbook was sent to your spreadsheet application.": "The shared workbook was sent to your spreadsheet application.",
+  "Could not open the spreadsheet application. Open the shared workbook path manually.": "Could not open the spreadsheet application. Open the shared workbook path manually.",
+  "Opening is taking longer than expected. Check your spreadsheet application before trying again.": "Opening is taking longer than expected. Check your spreadsheet application before trying again.",
+  "An Excel open request was just sent. Please wait a moment.": "An Excel open request was just sent. Please wait a moment.",
+  "The desktop opener directory is unsafe.": "The desktop opener directory is unsafe.",
+  "The desktop opener file is unsafe.": "The desktop opener file is unsafe.",
+  "Workbook open does not accept a path or command.": "Workbook open does not accept a path or command.",
+  "Invalid workbook open request": "Invalid workbook open request",
   "Download a copy": "Download a copy",
   "Edit the shared workbook opened by the demo starter and save in Excel. Both containers see that file. A downloaded copy is separate.": "Edit the shared workbook opened by the demo starter and save in Excel. Both containers see that file. A downloaded copy is separate.",
   "Close the shared workbook in Excel before resetting. Reopen it afterward to use the restored file.": "Close the shared workbook in Excel before resetting. Reopen it afterward to use the restored file.",

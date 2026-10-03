@@ -14,6 +14,15 @@ refresh the setup page. Exercise retained state, reset, failed reset and retaine
 credentials in a disposable Compose project. No reset of the user's active demo
 is needed to implement or verify this extension.
 
+Approved reopening extension: replace the MES workbook download with **Open in
+Excel**. The local starter manages a background helper that opens the fixed
+shared workbook through the host file association. MES requests cannot specify
+paths or commands. Heartbeats and session generations detect stopped or replaced
+helpers. Show failures and the host path in the MES. No automatic MES/Excel
+synchronization, new network listener, registry handler or host Python/Node
+dependency is added. Test repeat opening, stale helpers, request boundaries and
+Windows background launch, plus the existing container reset/persistence checks.
+
 ## Current behavior
 
 - `demo/compose.yaml` mounts `.local/container/` into the MES at `/var/lib/demo`.
@@ -61,7 +70,8 @@ is needed to implement or verify this extension.
 - Add the Bash launcher under `demo/scripts/`, with Windows/Git Bash, macOS and
   Linux open commands, quoted paths, configured Compose ports and clear startup
   failures. Use Docker and existing container runtimes for any rendering helper;
-  do not require a new host Python/Node installation or background host service.
+  do not require a new host Python/Node installation. The approved desktop opener
+  uses a local Bash helper managed automatically by the starter.
   Keep `scripts/start-demo.sh` as the single demo launcher. The user approved
   removing the redundant MES-only launcher; direct Python startup remains
   documented for development.
@@ -72,9 +82,10 @@ is needed to implement or verify this extension.
   database credentials or viewer token into the page. Refresh it on every start.
   Do not expose an unauthenticated token-discovery endpoint in the APEX server.
 - Keep the workbook's current host path and directory mount. In the MES, label
-  the download explicitly as **Download a copy** and explain how to use the
-  shared working file. Keep the original-seed preview clearly identified; do
-  not imply that it reflects saved workbook edits. Update both MES locales.
+  the workbook action as **Open in Excel** and reopen the shared working file
+  through the local helper. Remove the copy-download action and endpoint. Keep
+  the original-seed preview clearly identified; do not imply that it reflects
+  saved workbook edits. Update both MES locales.
 - Update `demo/README.md` and relevant startup guidance. Keep direct Compose
   startup supported; only the local launcher opens host applications. No
   application-to-parent dependency, scheduler change, automatic MES import,
@@ -104,7 +115,7 @@ is needed to implement or verify this extension.
 
 ## Verification evidence
 
-- 50 MES/onboarding tests passed, including repeated HTTP reset, open-workbook
+- 54 MES/onboarding tests passed, including repeated HTTP reset, open-workbook
   rejection, failed replacement, database rollback, retained recovery backups
   and cleanup failures. Launcher checks cover paths with spaces, custom ports,
   retained edits, private page permissions and mocked successful/failed Windows,
@@ -124,21 +135,24 @@ is needed to implement or verify this extension.
   list, restores MES/Excel, refreshes the page and retains both access tokens.
   The retained agent token can create a new scenario in the fresh database.
 - A Chromium browser check passed for setup copy controls/fallback, narrow-screen
-  layout, the MES copy-download label and reset instructions.
-- Desktop Excel open/save was attempted but remains unverified: Windows UI
-  automation reported unavailable cached elements and missing foreground process
-  metadata; recovery found no targetable Excel window. No real Excel save is
-  claimed. Windows association dispatch is covered by a mock, and actual shared
-  file visibility/reset is covered in Docker. macOS/Linux desktop apps were not
+  layout and reset instructions. A later check exercised the MES **Open in Excel**
+  button through the actual Windows background helper and confirmed the separate
+  synthetic test workbook appeared in Excel. The download link and endpoint were
+  removed. Helper tests cover repeated requests, fixed-file handling, stale
+  sessions, rate limits, cross-origin rejection and retirement on starter reuse.
+- No actual Excel save is claimed; shared file visibility/reset is verified in
+  Docker. The user stopped Computer Use with Escape during cleanup of the test
+  workbook, and further UI actions were stopped. The owned helper/container and
+  local test server were stopped separately. macOS/Linux desktop apps were not
   available for an interactive check.
 
-## Alternative if opening from the browser becomes required
+## Alternative for remotely hosted workbooks
 
 An **Open in Excel** Office URI can launch desktop Excel for an HTTP document,
 but saving back requires a server-side authoring protocol such as WebDAV,
 including file-lock handling. A download URL alone is insufficient. This adds a
-service and Office integration testing that the selected local-file workflow
-does not need. Do not silently introduce it into this implementation.
+service and Office integration testing. The user selected the local desktop
+helper with the existing shared file instead; no WebDAV service was added.
 
 References: [Docker bind mounts](https://docs.docker.com/engine/storage/bind-mounts/),
 [Office URI schemes](https://learn.microsoft.com/en-us/office/client-developer/office-uri-schemes),

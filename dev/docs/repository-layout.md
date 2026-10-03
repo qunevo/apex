@@ -50,6 +50,10 @@ reinitialization; the latter also recreates the planning database while retainin
 access tokens. MES reset restores the workbook and MES baseline together; it
 preserves the APEX data and identity volumes. See
 the [demo workflow](../../demo/README.md) for Excel locking and recovery behavior.
+The starter also manages a local desktop helper for the MES **Open in Excel**
+button. The helper opens only the fixed shared workbook; requests and heartbeat
+files stay under the demo's ignored working directory. It adds no network listener
+or application dependency and does not synchronize MES records with Excel.
 
 Run `python -B dev/scripts/check_containers.py` with a Linux Docker engine to
 verify both deployments in temporary source exports. It builds the app with no

@@ -160,7 +160,7 @@ def verify(directory, kind, image, build):
             with zipfile.ZipFile(workbook, "a") as archive:
                 archive.comment = b"Container persistence check"
             digest = hashlib.sha256(workbook.read_bytes()).hexdigest()
-            assert hashlib.sha256(request(mes + "/downloads/production-planning.xlsx")).hexdigest() == digest
+            assert compose("exec", "-T", "mes", "sha256sum", "/var/lib/demo/production-planning.xlsx").split()[0] == digest
             mounted = compose("exec", "-T", "apex", "sha256sum", "/sources/demo/production-planning.xlsx")
             assert mounted.split()[0] == digest
             compose("exec", "-T", "apex", "curl", "--fail", "--silent", "http://mes:8788/api/meta")
@@ -179,7 +179,7 @@ def verify(directory, kind, image, build):
         if kind == "demo":
             rows = request(mes + "/api/tables/machines?limit=100")["rows"]
             assert next(row for row in rows if row["id"] == machine["id"])["name"] == "Container persistence check"
-            assert hashlib.sha256(request(mes + "/downloads/production-planning.xlsx")).hexdigest() == digest
+            assert compose("exec", "-T", "mes", "sha256sum", "/var/lib/demo/production-planning.xlsx").split()[0] == digest
             lock = workbook.with_name("~$" + workbook.name)
             lock.write_text("Synthetic Excel owner file", encoding="utf-8")
             try:
@@ -195,7 +195,7 @@ def verify(directory, kind, image, build):
             assert reset == {"reset": True, "workbook_reset": True}
             baseline = hashlib.sha256((directory / "demo/planning/production-planning.xlsx").read_bytes()).hexdigest()
             assert hashlib.sha256(workbook.read_bytes()).hexdigest() == baseline
-            assert hashlib.sha256(request(mes + "/downloads/production-planning.xlsx")).hexdigest() == baseline
+            assert compose("exec", "-T", "mes", "sha256sum", "/var/lib/demo/production-planning.xlsx").split()[0] == baseline
             assert compose("exec", "-T", "apex", "sha256sum", "/sources/demo/production-planning.xlsx").split()[0] == baseline
             rows = request(mes + "/api/tables/machines?limit=100")["rows"]
             assert next(row for row in rows if row["id"] == machine["id"])["name"] == machine["name"]

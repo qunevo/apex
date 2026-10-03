@@ -101,6 +101,32 @@ case "$(uname -s)" in
     MINGW*|MSYS*|CYGWIN*) native_workbook=$(/usr/bin/cygpath -m "$workbook") ;;
 esac
 
+start_workbook_opener() (
+    export APEX_DEMO_BRIDGE_DIR="$demo_root/.local/container/.desktop"
+    export APEX_DEMO_WORKBOOK="$workbook"
+    export APEX_DEMO_OPENER_SESSION APEX_DEMO_MES_CONTAINER
+    APEX_DEMO_OPENER_SESSION=$(compose exec -T mes python -B -m demo.mes.desktop --host-path "$native_workbook")
+    APEX_DEMO_MES_CONTAINER=$(compose ps -q mes)
+    [[ "$APEX_DEMO_OPENER_SESSION" =~ ^[a-f0-9]{32}$ && "$APEX_DEMO_MES_CONTAINER" =~ ^[a-f0-9]+$ ]] || exit 1
+    case "$(uname -s)" in
+        MINGW*|MSYS*|CYGWIN*)
+            export APEX_DEMO_OPENER_SCRIPT APEX_DEMO_BASH_PATH APEX_DEMO_OPENER_LOG APEX_DEMO_OPENER_ERROR
+            APEX_DEMO_BRIDGE_DIR=$(/usr/bin/cygpath -m "$APEX_DEMO_BRIDGE_DIR")
+            APEX_DEMO_WORKBOOK=$native_workbook
+            APEX_DEMO_OPENER_SCRIPT=$(/usr/bin/cygpath -m "$demo_root/scripts/workbook-opener.sh")
+            APEX_DEMO_BASH_PATH=$(/usr/bin/cygpath -w /usr/bin/bash.exe)
+            APEX_DEMO_OPENER_LOG=$(/usr/bin/cygpath -w "$demo_root/.local/desktop-opener-$APEX_DEMO_OPENER_SESSION.log")
+            APEX_DEMO_OPENER_ERROR=$(/usr/bin/cygpath -w "$demo_root/.local/desktop-opener-$APEX_DEMO_OPENER_SESSION.err")
+            powershell.exe -NoProfile -NonInteractive -Command \
+                '$ErrorActionPreference = "Stop"; Start-Process -WindowStyle Hidden -FilePath $env:APEX_DEMO_BASH_PATH -ArgumentList @("--noprofile", "--norc", ([char]34 + $env:APEX_DEMO_OPENER_SCRIPT + [char]34)) -RedirectStandardOutput $env:APEX_DEMO_OPENER_LOG -RedirectStandardError $env:APEX_DEMO_OPENER_ERROR'
+            ;;
+        *) nohup "$BASH" "$demo_root/scripts/workbook-opener.sh" > "$demo_root/.local/desktop-opener-$APEX_DEMO_OPENER_SESSION.log" 2>&1 < /dev/null & ;;
+    esac
+)
+if "$open_files"; then
+    start_workbook_opener || printf '%s\n' 'Could not start the desktop opener. You can still open the shared workbook manually.' >&2
+fi
+
 # The page contains local connection credentials. It is outside the shared mount.
 umask 077
 page="$demo_root/.local/start.html"
@@ -117,7 +143,7 @@ open_file() {
         MINGW*|MSYS*|CYGWIN*)
             APEX_DEMO_OPEN_PATH=$(/usr/bin/cygpath -w "$1") \
                 powershell.exe -NoProfile -NonInteractive -Command \
-                '$ErrorActionPreference = "Stop"; Start-Process -FilePath $env:APEX_DEMO_OPEN_PATH'
+                '$ErrorActionPreference = "Stop"; Start-Process -WindowStyle Normal -FilePath $env:APEX_DEMO_OPEN_PATH'
             ;;
         Darwin*) open "$1" ;;
         *) xdg-open "$1" ;;

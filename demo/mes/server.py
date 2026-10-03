@@ -14,6 +14,7 @@ from .seed import DEMO, generate
 from .store import Conflict, Store
 from .table_query import filter_rows
 from .workbook import reset_demo
+from . import desktop
 
 WEB = Path(__file__).parent / "web"
 
@@ -74,6 +75,12 @@ class Handler(BaseHTTPRequestHandler):
         path = unquote(parsed.path)
         query = {key: value[0] for key, value in parse_qs(parsed.query).items()}
         store = self.server.store
+        if path == "/api/workbook":
+            self.send(200, desktop.state(self.server.directory))
+            return
+        if path == "/api/workbook/open":
+            self.send(200, desktop.request_status(self.server.directory, query.get("request_id", "")))
+            return
         if path == "/api/meta":
             with store.connect() as db:
                 counts = {key: db.execute("SELECT COUNT(*) FROM records WHERE entity=?", (key,)).fetchone()[0] for key in CATALOG}
@@ -116,14 +123,6 @@ class Handler(BaseHTTPRequestHandler):
             offset = max(0, int(query.get("offset", 0)))
             self.send(200, {"rows": rows[offset:offset+limit], "total": len(rows), "offset": offset, "limit": limit, **({"facets": facets} if query.get("facets") == "1" else {})})
             return
-        if path == "/downloads/production-planning.xlsx":
-            file = self.server.directory / "production-planning.xlsx"
-            if not file.exists():
-                self.send(404, {"error": "Planning workbook has not been installed"})
-            else:
-                self.send(200, file.read_bytes(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                          {"Content-Disposition": 'attachment; filename="Northstar-production-planning.xlsx"'})
-            return
         allowed = {"/": ("index.html", "text/html; charset=utf-8"), "/app.js": ("app.js", "text/javascript"),
                    "/details.js": ("details.js", "text/javascript"),
                    **{f"/{name}": (name, "text/javascript") for name in ("filters.js", "production.js", "i18n.js", "locales/en.js", "locales/de.js")},
@@ -158,7 +157,9 @@ class Handler(BaseHTTPRequestHandler):
                 raise ValueError("Request body must be an object")
             path = urlparse(self.path).path
             parts = path.strip("/").split("/")
-            if path == "/api/reset" and self.command == "POST":
+            if path == "/api/workbook/open" and self.command == "POST":
+                result = desktop.request_open(self.server.directory, payload)
+            elif path == "/api/reset" and self.command == "POST":
                 if payload.get("confirmation") != "RESET DEMO":
                     raise ValueError("Reset requires the exact confirmation text")
                 result = reset_demo(self.server.store, self.server.seed, self.server.directory,

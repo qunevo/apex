@@ -53,10 +53,12 @@ docker() {
     case "$1" in
         up) [[ "$*" == 'up --no-build -d --wait --wait-timeout 240' ]] ;;
         port) printf '%s\\n' '127.0.0.1:18788' ;;
+        ps) printf '%s\\n' abc123 ;;
         exec)
             case "$3" in
                 apex) printf 'MCP URL: http://127.0.0.1:18780/mcp\\nHTTP header value: Bearer apx_%064d\\n' 0 ;;
                 mes)
+                    if [[ "$*" == *demo.mes.desktop* ]]; then printf '%032d\\n' 0; return; fi
                     [[ "$*" == *'--mes-url http://127.0.0.1:18788 --workbook '* ]]
                     # Stub only rendering: verify private transport over stdin.
                     IFS= read -r line; [[ "$line" == 'MCP URL: http://127.0.0.1:18780/mcp' ]]
@@ -69,9 +71,10 @@ docker() {
 }
 open() { printf '%s\\n' "$1" >> "$OPEN_LOG"; return "$OPEN_RESULT"; }
 xdg-open() { open "$@"; }
-powershell.exe() { open "$APEX_DEMO_OPEN_PATH"; }
+powershell.exe() { if [[ "$*" == *'-WindowStyle Hidden'* ]]; then return 0; fi; open "$APEX_DEMO_OPEN_PATH"; }
+nohup() { return 0; }
 uname() { printf '%s\\n' "$TEST_SYSTEM"; }
-export -f docker open xdg-open powershell.exe uname
+export -f docker open xdg-open powershell.exe uname nohup
 bash "$(dirname "$0")/demo/scripts/start-demo.sh" --no-build "$@"
 ''', encoding="utf-8", newline="\n")
             environment = dict(os.environ, TEST_SYSTEM="Linux", OPEN_LOG=(root / "opened.txt").as_posix(), OPEN_RESULT="0")

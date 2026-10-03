@@ -65,10 +65,10 @@ class WorkbookResetTests(unittest.TestCase):
                 self.assertEqual(self.workbook.read_bytes(), self.baseline.read_bytes())
                 self.assertNotEqual(self.machine()["name"], "Edited machine")
                 conn = HTTPConnection("127.0.0.1", server.server_port)
-                conn.request("GET", "/downloads/production-planning.xlsx")
+                conn.request("GET", "/api/workbook")
                 response = conn.getresponse()
                 self.assertEqual(response.status, 200)
-                self.assertEqual(response.read(), self.baseline.read_bytes())
+                self.assertTrue(json.loads(response.read())["available"])
                 conn.close()
         finally:
             server.shutdown()

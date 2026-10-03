@@ -1,5 +1,18 @@
 // UI templates and known synthetic labels. Custom source prose remains unchanged.
 export default {
+  "Open in Excel": "In Excel öffnen",
+  "Open and save the shared working file. Both containers see your saved changes. MES data and the Excel plan are not synchronized automatically.": "Öffne und speichere die gemeinsame Arbeitsdatei. Beide Container sehen deine gespeicherten Änderungen. MES-Daten und Excel-Plan werden nicht automatisch synchronisiert.",
+  "The desktop opener is unavailable. Run the demo starter again without --no-open.": "Der lokale Öffnungshelfer ist nicht verfügbar. Starte den Demo-Starter erneut ohne --no-open.",
+  "Shared workbook:": "Gemeinsame Arbeitsmappe:",
+  "Opening the shared workbook…": "Gemeinsame Arbeitsmappe wird geöffnet…",
+  "The shared workbook was sent to your spreadsheet application.": "Die gemeinsame Arbeitsmappe wurde an dein Tabellenprogramm übergeben.",
+  "Could not open the spreadsheet application. Open the shared workbook path manually.": "Das Tabellenprogramm konnte nicht geöffnet werden. Öffne den angezeigten Pfad der gemeinsamen Arbeitsmappe manuell.",
+  "Opening is taking longer than expected. Check your spreadsheet application before trying again.": "Das Öffnen dauert länger als erwartet. Prüfe dein Tabellenprogramm vor einem erneuten Versuch.",
+  "An Excel open request was just sent. Please wait a moment.": "Eine Anfrage zum Öffnen von Excel wurde gerade gesendet. Bitte warte kurz.",
+  "The desktop opener directory is unsafe.": "Der Ordner des Öffnungshelfers ist unsicher.",
+  "The desktop opener file is unsafe.": "Die Datei des Öffnungshelfers ist unsicher.",
+  "Workbook open does not accept a path or command.": "Beim Öffnen der Arbeitsmappe sind keine Pfade oder Befehle zulässig.",
+  "Invalid workbook open request": "Ungültige Anfrage zum Öffnen der Arbeitsmappe",
   "Download a copy": "Kopie herunterladen",
   "Edit the shared workbook opened by the demo starter and save in Excel. Both containers see that file. A downloaded copy is separate.": "Bearbeite die vom Demo-Starter geöffnete gemeinsame Arbeitsmappe und speichere in Excel. Beide Container sehen diese Datei. Eine heruntergeladene Kopie ist davon getrennt.",
   "Close the shared workbook in Excel before resetting. Reopen it afterward to use the restored file.": "Schließe die gemeinsame Arbeitsmappe vor dem Zurücksetzen in Excel. Öffne sie danach erneut, um die wiederhergestellte Datei zu verwenden.",
