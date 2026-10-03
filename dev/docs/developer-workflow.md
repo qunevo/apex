@@ -1,6 +1,6 @@
 # Agent development and release workflow
 
-`main` is the default branch and contains released application states plus contributor maintenance. `dev` integrates reviewed features. Feature work starts on `codex/<topic>` from current `origin/dev`; release preparation snapshots `dev` onto `codex/release-<version>`. A security hotfix starts from `main` on `codex/hotfix-<topic>`. Both long-lived branches require PRs, resolved review conversations and `Required checks` on an up-to-date branch. No independent approval is required by this repository's maintainer process; user authorization in the task can drive the complete normal merge flow.
+`main` is the default branch and contains released application states plus contributor maintenance. `dev` integrates reviewed features. Prefer continuing an existing unfinished feature branch after the user selects it; new feature branches start on `codex/<topic>` from current `origin/dev`. Release preparation snapshots `dev` onto `codex/release-<version>`. A security hotfix starts from `main` on `codex/hotfix-<topic>`. Both long-lived branches require PRs, resolved review conversations and `Required checks` on an up-to-date branch. No independent approval is required by this repository's maintainer process; user authorization in the task can drive the complete normal merge flow.
 
 ## Branch lifecycle
 
@@ -38,7 +38,11 @@ Prior approval of a concrete plan remains valid. Skills must not ask for the sam
 
 ## A cheap preflight
 
-`python -B dev/scripts/repo_status.py` reports the current branch, dirty state, at most five other local unmerged branches and at most five open PRs. Local refs can be stale and squash merges can leave misleading ancestry; the report is a prompt to inspect relevant work, not a conflict verdict. Warn briefly at the start of development and investigate file overlaps only when relevant. Do not read all open PR diffs or repeat the inventory throughout a turn. Use worktrees to avoid changing another task's checkout.
+`python -B dev/scripts/repo_status.py` reports the current branch, dirty state, at most five other local unmerged branches and at most five open PRs. The other-branch list excludes the current branch, so inspect its unfinished work too before saying that no feature work is open. Local refs can be stale and squash merges can leave misleading ancestry; the report is a prompt to inspect relevant work, not a conflict verdict. Warn briefly at the start of development and investigate file overlaps only when relevant. Do not read all open PR diffs or repeat the inventory throughout a turn.
+
+Prefer an existing unfinished feature branch. Unless the user has already selected a branch for this work, name the candidates and ask whether to use the existing branch, which one to use if there are several, or whether to create a new one. Continue read-only investigation while waiting. Once selected, keep using that branch for the ongoing work without repeated questions. If no unfinished feature branch exists, create a new one from current `origin/dev`.
+
+Local development normally uses the existing checkout. Avoid worktrees; create one only with explicit user approval. If another task owns the checkout or unrelated changes would interfere, explain the conflict and agree on the checkout before changing it. Do not automatically create a second branch or worktree, switch another task's checkout, or discard existing work.
 
 The GitHub helpers use `GH_TOKEN`/`GITHUB_TOKEN`, existing GitHub CLI authentication or a noninteractive Git credential helper. They never store tokens. Anonymous public reads are possible; writes require authentication. CLI/MCP tools can be used instead, preserving the same expected-head and destination checks.
 

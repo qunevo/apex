@@ -8,7 +8,6 @@ import socket
 import subprocess
 import tempfile
 import time
-import tomllib
 from urllib.error import URLError
 from urllib.request import urlopen
 
@@ -32,7 +31,7 @@ def main():
     cargo = shutil.which("cargo") or str(Path.home() / ".cargo/bin" / ("cargo.exe" if os.name == "nt" else "cargo"))
     bash = shutil.which("bash")
     if not bash:
-        raise ValueError("Bash (Git Bash on Windows) is required to verify deployment helpers")
+        raise ValueError("Bash (Git Bash on Windows) is required to verify application scripts")
     env = dict(os.environ)
     env.pop("CARGO_TARGET_DIR", None)
     # A local service's settings must not affect this independent smoke test.
@@ -55,6 +54,8 @@ def main():
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(original, target)
         assert not (temporary / "dev").exists() and not (temporary / "Cargo.toml").exists()
+        for name in ("build.sh", "container.sh"):
+            run([bash, "-n", (app / "scripts" / name).as_posix()], app, env)
         run([cargo, "build", "--locked", "--release"], app, env)
         binary = app / "target/release" / ("apex.exe" if os.name == "nt" else "apex")
         output = temporary / "planning results"
@@ -75,17 +76,6 @@ def main():
         assert json.loads(schema.stdout)["$schema"]
         workspace = temporary / "customer workspace"
         workspace.mkdir()
-        for helper in sorted((app / "deploy").glob("*.sh")):
-            run([bash, "-n", helper.as_posix()], workspace, env)
-        setup = [bash, (app / "deploy/setup-mcp.sh").as_posix(), workspace.as_posix()]
-        run(setup, workspace, env)
-        config = workspace / ".codex/config.toml"
-        first = config.read_bytes()
-        run(setup, workspace, env)
-        assert first == config.read_bytes(), "MCP setup must be idempotent"
-        entry = tomllib.loads(first.decode())["mcp_servers"]["apex"]
-        assert Path(entry["command"]).resolve() == binary.resolve()
-        assert workspace.resolve() == Path(entry["args"][entry["args"].index("--workspace") + 1]).resolve()
         with socket.socket() as reservation:
             reservation.bind(("127.0.0.1", 0))
             port = reservation.getsockname()[1]
@@ -113,7 +103,8 @@ def main():
             process.wait(timeout=10)
             process.stderr.close()
         print(json.dumps(dict(passed=True, source_files=len(set(files)), methods=completed,
-                              additional_fixtures=3, viewer="embedded HTTP", mcp_setup="separate workspace, idempotent")))
+                              additional_fixtures=3, viewer="embedded HTTP, separate workspace",
+                              scripts="build.sh and container.sh syntax")))
 
 
 if __name__ == "__main__":

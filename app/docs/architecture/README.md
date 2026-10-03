@@ -193,15 +193,7 @@ cargo test
 cargo build --release
 ```
 
-When serialized types change, regenerate and review affected current schemas with the rebuilt binary:
-
-```text
-target/release/apex schema --out schemas/scheduling-problem.schema.json
-target/release/apex schema --model production --out schemas/production-orders.schema.json
-target/release/apex schema --model options --out schemas/planning-options.schema.json
-```
-
-Use `target/release/apex.exe` on Windows. Keep only the current generated schema snapshots under these role-based, versionless filenames; see [schema roles and tool releases](../data-model.md#schema-roles-and-tool-releases). The installed tool accepts its current input contract; do not keep historical schema snapshots or add format-version dispatch. Rebuild before MCP/browser verification; follow the [operating guide](../implementation.md) for relevant smoke commands. Generated reports and `.apex` artifacts stay local. Documentation-only edits need link, example and source-reference checks rather than scheduler benchmarks.
+When serialized types change, regenerate and review affected current schemas with the rebuilt binary using the [schema directory instructions](../../schemas/README.md#regeneration). The [input-contract tests](../../tests/input_contract.rs) check snapshot consistency; the [data-model release contract](../data-model.md#schema-roles-and-tool-releases) defines versioning and compatibility. Rebuild before MCP/browser verification; follow the [operating guide](../implementation.md) for relevant smoke commands. Generated reports and `.apex` artifacts stay local. Documentation-only edits need link, example and source-reference checks rather than scheduler benchmarks.
 
 ## Current limits
 

@@ -269,22 +269,39 @@ async function progressDialog(row) {
   });
 }
 function resetDialog() {
-  openDrawer('Restore the demo baseline', `<p class="subtitle">${t("This replaces all local MES edits and the demo working copy of the Excel file with the original synthetic dataset. Downloaded Excel files are unaffected.")}</p><form id="reset-form"><label class="field detail-list"><span>${t("Type RESET DEMO to continue")}</span><input name="confirmation" required autocomplete="off"></label></form>`, `<button class="button" id="cancel">${t("Cancel")}</button><button class="button danger" type="submit" form="reset-form">${t("Reset demo")}</button>`);
+  openDrawer('Restore the demo baseline', `<p class="subtitle">${t("This replaces all local MES edits and the demo working copy of the Excel file with the original synthetic dataset. Downloaded Excel files are unaffected.")}</p><p class="subtitle">${t("Close the shared workbook in Excel before resetting. Reopen it afterward to use the restored file.")}</p><form id="reset-form"><label class="field detail-list"><span>${t("Type RESET DEMO to continue")}</span><input name="confirmation" required autocomplete="off"></label></form>`, `<button class="button" id="cancel">${t("Cancel")}</button><button class="button danger" type="submit" form="reset-form">${t("Reset demo")}</button>`);
   $('#reset-form').addEventListener('submit',async event=>{
-    event.preventDefault();try{await api('/api/reset',{method:'POST',body:JSON.stringify(Object.fromEntries(new FormData(event.target)))});closeDrawer();await reloadMeta();await render();notify('Original factory baseline restored.');}
+    event.preventDefault();try{await api('/api/reset',{method:'POST',body:JSON.stringify(Object.fromEntries(new FormData(event.target)))});state.references={};closeDrawer();await reloadMeta();await render();notify('MES and shared Excel workbook restored. Reopen the workbook in Excel.');}
     catch(error){$('#form-error').textContent=error.message;$('#form-error').hidden=false;}
   });
 }
 async function renderWorkbook() {
-  const [plan, skills] = await Promise.all([api('/api/plan'),api('/api/skills')]);
+  const [plan, skills, workbook] = await Promise.all([api('/api/plan'),api('/api/skills'),api('/api/workbook')]);
   if(state.page!=='workbook')return;
   const stale=plan.mes_revision>plan.source_revision;
   $('#main').innerHTML=`<div class="page-title"><div><div class="eyebrow">${t("PLANNING / WORKBOOK")}</div><h1>${t("The planner’s desk")}</h1><p class="subtitle">${t("The working sequence, people assignments and qualifications live in Excel.")}</p></div></div>
-    <div class="planning-hero"><div class="workbook-symbol">${icon('workbook')}</div><div><h2>${t("Production planning · Weeks 41–42")}</h2><p>${number(plan.rows.length)} ${t("operations · 600 lots · 5 worksheets")}<br>${t("Original planner baseline · 05 October 2026")}</p></div>${state.meta.workbook_available?`<a class="button primary" href="/downloads/production-planning.xlsx">${icon('download')} ${t("Download Excel")}</a>`:`<span class="badge amber">${t("Workbook not installed")}</span>`}</div>
+    <div class="planning-hero"><div class="workbook-symbol">${icon('workbook')}</div><div><h2>${t("Production planning · Weeks 41–42")}</h2><p>${number(plan.rows.length)} ${t("operations · 600 lots · 5 worksheets")}<br>${t("Original planner baseline · 05 October 2026")}</p></div>${workbook.available?`<button class="button primary" id="open-workbook">${icon('workbook')} ${t("Open in Excel")}</button>`:`<span class="badge amber">${t("Workbook not installed")}</span>`}</div>
+    <div class="notice">${icon('info')} ${t("Open and save the shared working file. Both containers see your saved changes. MES data and the Excel plan are not synchronized automatically.")}</div>
+    <p id="workbook-open-status" role="status" aria-live="polite">${workbook.opener_active?'':t("The desktop opener is unavailable. Run the demo starter again without --no-open.")}</p>
+    ${workbook.host_path?`<p class="subtitle workbook-path">${t("Shared workbook:")} <code>${esc(workbook.host_path)}</code></p>`:''}
     ${stale?`<div class="notice">`+icon('info')+`The MES has changed since this workbook was prepared. Review the differences before releasing a revised plan.</div>`:''}
     <div class="tabs"><button class="tab ${state.planningTab==='dispatch'?'active':''}" data-planning="dispatch">${t("Dispatch plan")}<small>${number(plan.rows.length)}</small></button><button class="tab ${state.planningTab==='skills'?'active':''}" data-planning="skills">${t("Qualification matrix")}<small>24</small></button></div>
     <div class="panel"><div class="toolbar"><div><h3>${t(state.planningTab==='dispatch'?'First operations in the baseline':'Who can do what')}</h3><p class="subtitle">${t("Read-only preview of the original workbook data.")}</p></div><span class="badge">${t("EXCEL OWNED")}</span></div><div class="table-scroll" id="workbook-table"></div></div>
     <div class="table-footnote">${icon('info')} ${t("Excel edits are not synchronized into this preview or the MES. The workbook is a separate planning source.")}</div>`;
+  $('#open-workbook')?.addEventListener('click', async event=>{
+    const button=event.currentTarget, status=$('#workbook-open-status');
+    button.disabled=true; status.textContent=t('Opening the shared workbook…');
+    try {
+      const opened=await api('/api/workbook/open',{method:'POST',body:'{}'});
+      let outcome='pending';
+      for(let attempt=0;attempt<12&&outcome==='pending';attempt++) {
+        await new Promise(resolve=>setTimeout(resolve,500));
+        outcome=(await api(`/api/workbook/open?request_id=${encodeURIComponent(opened.request_id)}`)).status;
+      }
+      status.textContent=t(outcome==='launched'?'The shared workbook was sent to your spreadsheet application.':outcome==='failed'?'Could not open the spreadsheet application. Open the shared workbook path manually.':outcome==='unavailable'?'The desktop opener is unavailable. Run the demo starter again without --no-open.':'Opening is taking longer than expected. Check your spreadsheet application before trying again.');
+    } catch(error) { status.textContent=error.message; }
+    finally { button.disabled=false; }
+  });
   for(const tab of document.querySelectorAll('[data-planning]'))tab.addEventListener('click',()=>{state.planningTab=tab.dataset.planning;renderWorkbook();});
   if(state.planningTab==='dispatch') $('#workbook-table').innerHTML=`<table><thead><tr>${['Operation','Workplace','Sequence','Start','Finish','Person','Commitment'].map(h=>`<th>${t(h)}</th>`).join('')}</tr></thead><tbody>${plan.rows.slice(0,35).map(row=>`<tr><td class="id">${esc(row.operation_id)}<span class="sub">${esc(t(row.operation))}</span></td><td>${row.machine_id}</td><td>${row.sequence}</td><td>${displayDate(row.start)}</td><td>${displayDate(row.end)}</td><td>${row.person_id}</td><td>${row.fixed==='Yes'?`<span class="badge amber">${t("Fixed")}</span>`:`<span class="badge">${t("Proposed")}</span>`}</td></tr>`).join('')}</tbody></table>`;
   else $('#workbook-table').innerHTML=`<table><thead><tr>${['Person','Setup','Mechanical','Precision','Electrical','Calibration','Testing'].map(h=>`<th>${t(h)}</th>`).join('')}</tr></thead><tbody>${skills.rows.map(row=>`<tr><td class="id">${esc(row.person_id)}<span class="sub">${esc(t(row.name))}</span></td>${['Setup','Mechanical','Precision','Electrical','Calibration','Testing'].map(key=>`<td>${row[key]?`<span class="skills-yes">`+icon('check')+`</span>`:`<span class="skills-no">—</span>`}</td>`).join('')}</tr>`).join('')}</tbody></table>`;

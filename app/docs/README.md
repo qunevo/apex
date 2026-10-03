@@ -22,7 +22,7 @@ This index describes the runnable Rust implementation and its current, unversion
 
 ## Schemas and demo
 
-The current generated schemas cover the [scheduling problem](../schemas/scheduling-problem.schema.json), [production orders and workplans](../schemas/production-orders.schema.json) and [planning options](../schemas/planning-options.schema.json). The [schema roles and tool releases](data-model.md#schema-roles-and-tool-releases) explain their place in the import/planning workflow and how the schema contract follows the application release. Only the current snapshots are shipped; the CLI and `schema.get` generate schemas from the installed Rust types.
+Start with the [data model and planning workflow](data-model.md#from-source-data-to-a-schedule) for the two import paths, optional production expansion, lot creation and planning options. [Material preparation](material-dispatch.md#when-allocation-runs) explains when supply is allocated. The [schema roles and tool releases](data-model.md#schema-roles-and-tool-releases) describe the three input contracts and release boundary; the [schema directory README](../schemas/README.md) maps generated files to Rust types and gives regeneration commands.
 
 The [factory showcase](https://github.com/qunevo/apex/tree/main/demo) presents the MES/Excel workflow. Its [customization package](../customization/demo/model/KNOWLEDGE.md) defines the application integration boundary and optional technical policies. The live factory adapter is still pending. Small synthetic inputs used to verify individual engine capabilities remain [test fixtures](../tests/fixtures).
 
