@@ -146,7 +146,7 @@ def verify(directory, kind, image, build):
             assert meta["counts"]["orders"] == 120 and meta["workbook_available"]
             bash = shutil.which("bash")
             assert bash, "Bash is required to verify the demo launcher"
-            launched = run([bash, (cwd / "scripts/start-demo.sh").as_posix(), "--no-build", "--no-open"],
+            launched = run([bash, (cwd / "scripts/start-demo.sh").as_posix(), "--resume", "--no-build", "--no-open"],
                            {**env, "COMPOSE_PROJECT_NAME": project}, cwd)
             assert token not in launched and "Demo ready" in launched
             page = unescape((cwd / ".local/start.html").read_text(encoding="utf-8"))
@@ -202,6 +202,38 @@ def verify(directory, kind, image, build):
             assert compose("exec", "-T", "apex", "apex-container", "access") == access
             assert tool("results.get", {"result_id": result_id})["validation"]["valid"]
             print("demo: local launcher, private setup page and shared workbook reset passed", flush=True)
+            reset_command = [bash, (cwd / "scripts/start-demo.sh").as_posix(), "--reset", "--no-build", "--no-open"]
+            launcher_env = {**env, "COMPOSE_PROJECT_NAME": project}
+            lock.write_text("Synthetic Excel owner file", encoding="utf-8")
+            try:
+                run(reset_command, launcher_env, cwd)
+            except RuntimeError as error:
+                assert "Close the shared Excel workbook" in str(error)
+            else:
+                raise AssertionError("Launcher reset accepted an open workbook")
+            finally:
+                lock.unlink()
+            assert tool("results.get", {"result_id": result_id})["validation"]["valid"]
+            assert compose("exec", "-T", "apex", "apex-container", "access") == access
+            row = next(row for row in rows if row["id"] == machine["id"])
+            request(mes + "/api/tables/machines/" + row["id"],
+                    {"expected_version": row["_version"], "data": {"name": "Before full reinitialization"}}, method="PATCH")
+            with zipfile.ZipFile(workbook, "a") as archive:
+                archive.comment = b"Synthetic edit before full reinitialization"
+            print("demo: verifying full reinitialization with retained credentials", flush=True)
+            reset_output = run(reset_command, launcher_env, cwd)
+            assert token not in reset_output and "Demo reinitialized" in reset_output
+            assert compose("exec", "-T", "apex", "apex-container", "access") == access
+            assert tool("scenarios.list", {})["items"] == []
+            assert hashlib.sha256(workbook.read_bytes()).hexdigest() == baseline
+            assert compose("exec", "-T", "apex", "sha256sum", "/sources/demo/production-planning.xlsx").split()[0] == baseline
+            rows = request(mes + "/api/tables/machines?limit=100")["rows"]
+            assert next(row for row in rows if row["id"] == machine["id"])["name"] == machine["name"]
+            page = unescape((cwd / ".local/start.html").read_text(encoding="utf-8"))
+            assert token in page and origin + "/mcp" in page and mes in page
+            tool("scenarios.create", {"name": "After reinitialization", "engine": "apex", "content": {"facts": facts}})
+            assert len(tool("scenarios.list", {})["items"]) == 1
+            print("demo: full reset removed planning data, restored MES/Excel and retained working tokens", flush=True)
         print(f"{kind}: startup, authenticated planning, MCP App, database role and retained state passed", flush=True)
     finally:
         # Only this script's uniquely named disposable project is removed.

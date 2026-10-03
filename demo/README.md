@@ -15,9 +15,16 @@ Install Docker with Linux containers and Docker Compose 2.20.3 or newer. From th
 bash demo/scripts/start-demo.sh
 ```
 
-It builds and starts the containers in the background, waits for readiness, then opens the shared working workbook in the host's spreadsheet application and a simple English setup page in the browser. No second terminal or manual token lookup is needed. On the page, choose **Open MES** or **Copy setup instructions** for a local chat agent. The instructions include the existing MCP connection, MES address and host workbook path; the client may need to reconnect to load newly configured tools. The generated `.local/start.html` contains the agent token: keep it private. It is ignored by Git and is outside the directory shared with the containers.
+The starter first offers two choices in an interactive terminal:
 
-The starter can be run again without resetting edits. Use `--no-build` to reuse existing images or `--no-open` for a terminal-only start. It respects Compose environment settings and `.env`, including configured host ports. If the browser or spreadsheet application cannot open automatically, it prints the paths for manual opening. The host needs Docker and Bash; no host Python or Node installation is required.
+1. **Resume the last state** (default): keep all saved MES and Excel edits, APEX plans and access tokens. On first use, initialize the demo.
+2. **Reinitialize demo**: restore the MES and shared Excel baseline and remove all APEX scenarios, revisions, runs and results in this demo. Keep the existing access tokens, so connected chats do not need new credentials. Close the shared workbook in Excel first; a rejected workbook reset leaves APEX planning data intact.
+
+It then builds and starts the containers in the background, waits for readiness, applies the selected reset when requested, and opens the shared working workbook in the host's spreadsheet application and a simple English setup page in the browser. No second terminal or manual token lookup is needed. On the page, choose **Open MES** or **Copy setup instructions** for a local chat agent. The instructions include the existing MCP connection, MES address and host workbook path; the client may need to reconnect to load newly configured tools. The generated `.local/start.html` contains the agent token: keep it private. It is ignored by Git and is outside the directory shared with the containers.
+
+Use `--resume` to skip the menu and retain edits, or `--reset` to explicitly reinitialize without another prompt. Noninteractive starts resume by default. Add `--no-build` to reuse existing images or `--no-open` for a terminal-only start. The starter respects Compose environment settings and `.env`, including configured host ports. If the browser or spreadsheet application cannot open automatically, it prints the paths for manual opening. The host needs Docker and Bash; no host Python or Node installation is required.
+
+Full reinitialization replaces only the selected Compose project's managed PostgreSQL data volume, retaining the identity and bootstrap volumes. It refuses a database volume that is unowned or shared with another container. MES/Excel reset happens before APEX data removal; an interruption between those stages can leave a partially reset demo. Rerun with `--reset` to finish. The MES **Reset demo** button continues to restore only MES/Excel and preserves APEX plans as well as tokens.
 
 Direct Compose startup remains available from this directory, without automatically opening host applications:
 

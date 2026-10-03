@@ -4,6 +4,16 @@ Status: implemented on the selected `codex/integration-cleanup` branch. The user
 approved the local launcher and explicitly required resetting the shared Excel
 file together with the MES, including an already used container installation.
 
+Approved extension: the starter offers **Resume the last state** as the default
+and **Reinitialize demo** to reset MES/Excel plus all APEX planning data. The user
+explicitly selected retaining the current access tokens. Add explicit `--resume`
+and `--reset` modes for scripted starts; noninteractive starts retain state by
+default. Verify volume ownership and exclusive use before reset, reject an open
+workbook before deleting APEX data, then recreate only PostgreSQL storage and
+refresh the setup page. Exercise retained state, reset, failed reset and retained
+credentials in a disposable Compose project. No reset of the user's active demo
+is needed to implement or verify this extension.
+
 ## Current behavior
 
 - `demo/compose.yaml` mounts `.local/container/` into the MES at `/var/lib/demo`.
@@ -92,17 +102,25 @@ file together with the MES, including an already used container installation.
 
 ## Verification evidence
 
-- 45 MES/onboarding tests passed, including repeated HTTP reset, open-workbook
+- 50 MES/onboarding tests passed, including repeated HTTP reset, open-workbook
   rejection, failed replacement, database rollback, retained recovery backups
   and cleanup failures. Launcher checks cover paths with spaces, custom ports,
   retained edits, private page permissions and mocked successful/failed Windows,
   macOS and Linux application open commands.
+- Starter mode checks cover resume, explicit reset, conflicting options, foreign
+  and shared volume rejection, and an open workbook leaving APEX data untouched.
+  An interactive terminal check verified menu rendering, invalid-input retry and
+  Enter selecting resume by default.
 - 52 contributor tooling tests passed. JavaScript syntax and 728 matching locale
   templates passed.
 - The disposable Docker demo check passed: local starter, private setup page,
   authenticated planning, retained tokens and workbook edits across recreation,
   reset after reuse, identical baseline bytes on the host and in both containers,
   and preservation of APEX plans and credentials during MES reset.
+- Full starter reinitialization also passed in Docker: an open workbook rejects
+  the operation before APEX data removal; successful reset empties the scenario
+  list, restores MES/Excel, refreshes the page and retains both access tokens.
+  The retained agent token can create a new scenario in the fresh database.
 - A Chromium browser check passed for setup copy controls/fallback, narrow-screen
   layout, the MES copy-download label and reset instructions.
 - Desktop Excel open/save was attempted but remains unverified: Windows UI

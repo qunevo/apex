@@ -45,8 +45,10 @@ parent demo. The desktop remains an optional native client.
 See the [container contract](../../app/docs/containers.md).
 
 The optional `demo/scripts/start-demo.sh` starts the showcase and opens its shared
-host workbook plus a private local setup page. MES reset restores the workbook
-and MES baseline together; it preserves the APEX data and identity volumes. See
+host workbook plus a private local setup page. It offers resume or complete demo
+reinitialization; the latter also recreates the planning database while retaining
+access tokens. MES reset restores the workbook and MES baseline together; it
+preserves the APEX data and identity volumes. See
 the [demo workflow](../../demo/README.md) for Excel locking and recovery behavior.
 
 Run `python -B dev/scripts/check_containers.py` with a Linux Docker engine to
