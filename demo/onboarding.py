@@ -3,6 +3,7 @@ import argparse
 from html import escape
 from pathlib import Path
 import re
+import shlex
 import sys
 from urllib.parse import urlsplit
 
@@ -16,7 +17,7 @@ def http_url(value):
     return value
 
 
-def render(connection, mes_url, workbook):
+def render(connection, mes_url, workbook, demo_directory, compose_project):
     fields = {}
     for line in connection.splitlines():
         key, separator, value = line.strip().partition(":")
@@ -31,6 +32,12 @@ def render(connection, mes_url, workbook):
     mes_url = http_url(mes_url)
     if not workbook or any(ord(c) < 32 for c in workbook):
         raise ValueError("Invalid workbook path")
+    if not demo_directory or any(ord(c) < 32 for c in demo_directory):
+        raise ValueError("Invalid demo directory")
+    if not re.fullmatch(r"[a-z0-9][a-z0-9_-]*", compose_project):
+        raise ValueError("Invalid Compose project name")
+    stop_command = (f"cd -- {shlex.quote(demo_directory)} && "
+                    f"docker compose --project-name {shlex.quote(compose_project)} down")
     details = f"Transport: Streamable HTTP\nMCP URL: {mcp_url}\nAuthorization: {authorization}"
     instructions = (
         "Set up this running APEX demo in my local chat client.\n\n"
@@ -47,7 +54,7 @@ def render(connection, mes_url, workbook):
         "Ask before modifying source data or resetting the demo."
     )
     values = {"mes_url": mes_url, "workbook": workbook, "details": details,
-              "instructions": instructions}
+              "instructions": instructions, "stop_command": stop_command}
     template = Path(__file__).with_name("onboarding.html").read_text(encoding="utf-8")
     return re.sub(r"\{\{(\w+)\}\}", lambda m: escape(values[m[1]], quote=True), template)
 
@@ -56,9 +63,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--mes-url", required=True)
     parser.add_argument("--workbook", required=True)
+    parser.add_argument("--demo-directory", required=True)
+    parser.add_argument("--compose-project", required=True)
     args = parser.parse_args()
     try:
-        page = render(sys.stdin.read(), args.mes_url, args.workbook)
+        page = render(sys.stdin.read(), args.mes_url, args.workbook,
+                      args.demo_directory, args.compose_project)
     except ValueError as error:
         parser.exit(1, f"Could not prepare the setup page: {error}\n")
     sys.stdout.buffer.write(page.encode("utf-8"))

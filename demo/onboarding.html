@@ -23,6 +23,7 @@
     button:hover, .button:hover { filter: brightness(.94); }
     button:focus-visible, a:focus-visible, textarea:focus-visible { outline: 3px solid #6b9875; outline-offset: 3px; }
     code { overflow-wrap: anywhere; }
+    pre { white-space: pre-wrap; padding: 12px; background: #fafaf8; border: 1px solid #dce3dd; border-radius: 6px; }
     textarea { width: 100%; resize: vertical; border: 1px solid #dce3dd; border-radius: 6px; padding: 12px; background: #fafaf8; color: inherit; font: 13px/1.6 ui-monospace, monospace; }
     summary { cursor: pointer; margin: 12px 0; }
     #status { min-height: 26px; color: #285739; }
@@ -56,6 +57,13 @@
     </details>
     <p class="muted">Connect once and reuse the token. Container restarts and rebuilds keep it when the same data volumes are retained. Deleting those volumes or creating a separate installation generates new credentials.</p>
     <p class="muted">APEX MCP currently provides planning tools. Reading the MES and Excel sources requires the local agent's HTTP and file tools; the factory import adapter is not implemented yet.</p>
+  </section>
+  <section>
+    <h2>4. Stop the demo completely</h2>
+    <p>Save your Excel changes, then run this command in <strong>Bash (Git Bash on Windows)</strong>. It switches to this demo's directory and stops and removes its Compose containers and network.</p>
+    <pre><code id="stop-command">{{stop_command}}</code></pre>
+    <div class="actions"><button data-copy="stop-command">Copy stop command</button></div>
+    <p class="muted">Your MES data, shared Excel file, APEX plans and access tokens are kept. Run the starter again and choose <strong>Resume the last state</strong> to continue.</p>
   </section>
   <p id="status" role="status" aria-live="polite"></p>
   <footer>This local page contains your agent access token. Keep it private. Run the starter again to refresh connection details. Reset demo preserves APEX plans and credentials. The starter's Reinitialize demo option also removes APEX plans but keeps your access tokens.</footer>

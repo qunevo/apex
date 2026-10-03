@@ -95,6 +95,8 @@ if [[ ! -f "$workbook" ]]; then
 fi
 mes_address=$(compose port mes 8788)
 mes_url="http://${mes_address//$'\r'/}"
+mes_container=$(compose ps -q mes)
+compose_project=$(docker inspect --format '{{index .Config.Labels "com.docker.compose.project"}}' "$mes_container")
 connection=$(compose exec -T apex apex-container connect)
 native_workbook=$workbook
 case "$(uname -s)" in
@@ -133,7 +135,8 @@ page="$demo_root/.local/start.html"
 temporary=$(mktemp "$demo_root/.local/start.XXXXXX")
 trap 'rm -f -- "$temporary"' EXIT
 printf '%s\n' "$connection" | compose exec -T mes python -B -m demo.onboarding \
-    --mes-url "$mes_url" --workbook "$native_workbook" > "$temporary"
+    --mes-url "$mes_url" --workbook "$native_workbook" \
+    --demo-directory "$demo_root" --compose-project "$compose_project" > "$temporary"
 mv -f -- "$temporary" "$page"
 trap - EXIT
 unset connection

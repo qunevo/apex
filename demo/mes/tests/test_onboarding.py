@@ -17,7 +17,7 @@ CONNECTION = f"APEX client connection\n  MCP URL: http://127.0.0.1:18780/mcp\n  
 class OnboardingTests(unittest.TestCase):
     def test_page_contains_current_connection_and_escaped_host_path(self):
         path = '/synthetic/shared folder/"<script>alert(1)</script>&.xlsx'
-        page = render(CONNECTION, "http://127.0.0.1:18788", path)
+        page = render(CONNECTION, "http://127.0.0.1:18788", path, "/synthetic/demo", "demo-test")
         self.assertIn("http://127.0.0.1:18780/mcp", page)
         self.assertIn(TOKEN, page)
         self.assertIn(path, unescape(page))
@@ -31,7 +31,7 @@ class OnboardingTests(unittest.TestCase):
                            CONNECTION.replace("http://127.0.0.1:18780/mcp", "javascript:alert(1)"),
                            CONNECTION.replace(TOKEN, "missing")):
             with self.subTest(connection=connection[:20]), self.assertRaises(ValueError):
-                render(connection, "http://127.0.0.1:18788", "/tmp/workbook.xlsx")
+                render(connection, "http://127.0.0.1:18788", "/tmp/workbook.xlsx", "/synthetic/demo", "demo-test")
 
     @unittest.skipUnless(shutil.which("bash"), "Bash is required for the launcher")
     def test_launcher_uses_existing_connection_and_keeps_page_outside_mount(self):
@@ -48,6 +48,7 @@ class OnboardingTests(unittest.TestCase):
             harness.write_text('''#!/usr/bin/env bash
 set -euo pipefail
 docker() {
+    if [[ "$1" == inspect ]]; then printf '%s\\n' custom-demo; return; fi
     [[ "$1" == compose ]] || return 1
     shift
     case "$1" in
@@ -60,6 +61,7 @@ docker() {
                 mes)
                     if [[ "$*" == *demo.mes.desktop* ]]; then printf '%032d\\n' 0; return; fi
                     [[ "$*" == *'--mes-url http://127.0.0.1:18788 --workbook '* ]]
+                    [[ "$*" == *'--demo-directory '* && "$*" == *'--compose-project custom-demo' ]]
                     # Stub only rendering: verify private transport over stdin.
                     IFS= read -r line; [[ "$line" == 'MCP URL: http://127.0.0.1:18780/mcp' ]]
                     cat >/dev/null
