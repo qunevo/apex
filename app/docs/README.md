@@ -12,6 +12,7 @@ This index describes the runnable Rust implementation and its current, unversion
 | [Agent integration](agent-integration.md) | MCP, HTTP, authentication, pagination and large imports |
 | [Server configuration](server-configuration.md) | Enabled packages, per-call selection and scoped state |
 | [Control platform](control-platform.md) | Tenants, versioned scenarios, background runs, approval, PostgreSQL, MCP/HTTP and the desktop display client |
+| [MCP App insights](insights.md) | Revision-bound dashboards, charts, source evidence and customization view/renderer hooks |
 | [Executable data model](data-model.md) | Units, routes, orders, conditional activities, locks, objectives and KPIs |
 | [Material preparation](material-dispatch.md) | Existing-supply allocation, flexible routes and material modes |
 | [Search and objectives](search-and-parity.md) | Q policies, XH, XT, replay and search limits |
@@ -24,7 +25,7 @@ This index describes the runnable Rust implementation and its current, unversion
 
 Start with the [data model and planning workflow](data-model.md#from-source-data-to-a-schedule) for the two import paths, optional production expansion, lot creation and planning options. [Material preparation](material-dispatch.md#when-allocation-runs) explains when supply is allocated. The [schema roles and tool releases](data-model.md#schema-roles-and-tool-releases) describe the three input contracts and release boundary; the [schema directory README](../schemas/README.md) maps generated files to Rust types and gives regeneration commands.
 
-The [factory showcase](https://github.com/qunevo/apex/tree/main/demo) presents the MES/Excel workflow. Its [customization package](../customization/demo/model/KNOWLEDGE.md) defines the application integration boundary and optional technical policies. The live factory adapter is still pending. Small synthetic inputs used to verify individual engine capabilities remain [test fixtures](../tests/fixtures).
+The [factory showcase](https://github.com/qunevo/apex/tree/main/demo) presents the MES/Excel workflow. Its [customization package](../customization/demo/model/KNOWLEDGE.md) contains an optional [source adapter](../customization/demo/adapter/README.md) that reads the live MES and saved workbook into canonical input JSON, plus independent technical policy examples. Import, scenario submission and planning are explicit steps. Small synthetic inputs used to verify individual engine capabilities remain [test fixtures](../tests/fixtures).
 
 ## Work on the repository
 

@@ -14,3 +14,12 @@ invalid IDs/values, source revision retries, HTTP/CLI export, calendars, quantit
 material and execution mapping, fixed decisions and an optional real-engine
 planning/validation/corruption check. Run instructions are in the
 [adapter guide](../adapter/README.md#tests). These tests need no parent demo code.
+
+## MCP App showcase
+
+[showcase.mjs](showcase.mjs) constructs a small synthetic canonical factory and
+source summary. `npm run test:insights` from the application directory imports
+it through the release server, plans and validates a result, then exercises the
+served dashboard in a browser sandbox. API tests cover revision/tenant isolation,
+bounded output, evidence validation and package fallback. See the
+[insights contract](../../../docs/insights.md#verification).

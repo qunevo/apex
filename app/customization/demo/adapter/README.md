@@ -56,6 +56,13 @@ does not import automatically. The standalone APEX image needs no Python runtime
 | `mes-snapshot.json` | Exact extracted source records, including confirmations and material issues |
 | `planning-source.xlsx` | Exact saved workbook bytes used by this import |
 
+`scenario.json` also contains bounded `content.source_summary`: source fingerprints,
+record counts, remaining operations without Excel proposals and sampled notices.
+It is separate from engine facts and enables the [Source details](../ui/README.md)
+dashboard through `views.get` immediately after import. Full source records and
+the full report stay in this output directory. Evidence is adapter-reported and
+must be refreshed with a new import when the source changes.
+
 All outputs are runtime data: keep them in `.apex` or another ignored/private
 directory. No URL credentials are supported or copied into provenance. Source
 hashes and the problem hash identify the evidence, not separate schema versions.

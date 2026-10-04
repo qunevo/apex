@@ -123,6 +123,7 @@ pub fn content(durations: &[i64]) -> ScenarioContent {
         .map(|(i, d)| json!({"id": format!("op{i}"), "resource": "m1", "duration": d}))
         .collect();
     ScenarioContent {
+        source_summary: None,
         customization_package: None,
         facts: json!({ "operations": operations }),
         intent: PlanningIntent::default(),

@@ -248,6 +248,11 @@ class AdapterTests(unittest.TestCase):
                 problem = json.loads((root / "export/problem.json").read_text())
                 scenario = json.loads((root / "export/scenario.json").read_text())
                 self.assertEqual(problem, scenario["content"]["facts"])
+                summary = scenario["content"]["source_summary"]
+                self.assertEqual(summary["counts"]["operations_without_excel"], 1)
+                self.assertEqual(summary["counts"]["planned_operations"], len(problem["tasks"]))
+                self.assertEqual(summary["sources"][0]["revision"], str(source["revision"]))
+                self.assertLess(len(json.dumps(summary)), 4096)
                 self.assertEqual((root / "source.xlsx").read_bytes(), content)
                 self.assertEqual((root / "export/planning-source.xlsx").read_bytes(), content)
                 self.assertNotIn("/api/plan", requests)

@@ -1,0 +1,7 @@
+.apex-brand { display: grid; gap: 7px; color: var(--fg); }
+.brand-wordmark { display: flex; gap: 12px; align-items: end; }
+.wordmark { display: inline-flex; }
+.wordmark svg { display: block; width: 112px; height: auto; fill: var(--fg); }
+.brand-byline { color: var(--muted); font-size: 11px; line-height: 1.3; white-space: nowrap; }
+.brand-descriptor { color: var(--muted); font-size: 11px; letter-spacing: .01em; }
+@media(max-width: 450px) { .wordmark svg { width: 94px; } .brand-descriptor { font-size: 10px; } }

@@ -148,6 +148,7 @@ as an authorization boundary between departments.
 | `GET /v1/scenarios/{id}/results` | `results.list` |
 | `GET /v1/runs/{id}`, `POST /v1/runs/{id}/cancel` | `runs.get`, `runs.cancel` |
 | `GET /v1/results/{id}[?include_schedule=true]` | `results.get` |
+| `POST /v1/views` | `views.get` (read-only dashboard request) |
 | `POST /v1/results/{id}/approve\|reject\|publish` | result decisions |
 | `GET /v1/events` | Server-sent events for the caller's tenant |
 
@@ -166,6 +167,14 @@ resource lanes, operation filters, metrics, validation and provenance, and can
 refresh the same result through the host's `tools/call` bridge. The page stores
 no tokens and makes no direct network requests. Hosts without MCP Apps support
 still receive normal text and structured tool results.
+
+`views.get` advertises `ui://apex/insights.html` for bounded statistics before or
+after planning. It provides cards, bar/donut charts, tables and registered
+customization views. The standard Planning overview provides delivery KPIs,
+critical orders, resource utilization, work by stage and schedule navigation.
+Source details is an optional demo extension for MES/Excel evidence.
+Optional `content.source_summary` holds bounded adapter evidence saved with the
+revision, separate from engine facts. See the [insights contract](insights.md).
 
 The bridge follows the [MCP Apps protocol](https://modelcontextprotocol.io/extensions/apps/overview).
 Protocol behavior is tested in an opaque browser sandbox with a simulated host;

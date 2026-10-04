@@ -197,6 +197,7 @@ mod tests {
 
     fn content(facts: Value) -> ScenarioContent {
         ScenarioContent {
+            source_summary: None,
             customization_package: None,
             facts,
             intent: Default::default(),

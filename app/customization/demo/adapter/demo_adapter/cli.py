@@ -10,6 +10,7 @@ from zipfile import BadZipFile
 
 from .common import ImportFailure, require
 from .mapping import build
+from .presentation import source_summary
 from .sources import capture, digest
 from .workbook import read_workbook
 
@@ -66,7 +67,7 @@ def main(argv=None):
             write_json(staged / "mes-snapshot.json", snapshot)
             (staged / "planning-source.xlsx").write_bytes(content)
             write_json(staged / "scenario.json", dict(name="Demo factory", engine="apex", customization="demo",
-                       content={"facts": problem}, note=f"MES revision {snapshot['revision']}; workbook SHA256 {provenance['workbook_sha256']}"))
+                       content={"facts": problem, "source_summary": source_summary(report)}, note=f"MES revision {snapshot['revision']}; workbook SHA256 {provenance['workbook_sha256']}"))
             os.rename(staged, output)
         print(json.dumps(dict(output=str(output), counts=report["counts"], warnings=len(report["warnings"]),
                               validation=report["validation"])))

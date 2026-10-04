@@ -17,6 +17,14 @@ The Compose server advertises `engines.list`, `scenarios.*`, `revisions.get`, `r
 
 Start a bounded run with `runs.start`, inspect `runs.get` until terminal, and read the validated result with `results.get`. Compare retained result metrics and assumptions explicitly. The result supplies an MCP App resource; hosts without Apps support receive structured results. Approval/publication selects an active plan inside APEX and does not write to external systems. Do not call compatibility fork/patch/freeze/import tools or promise their detailed inspector on this catalog.
 
+For statistics and diagrams, call `views.get` with `scenario_id` and optionally a
+saved `result_id`. It opens the standard Planning overview, including input views
+before planning and delivery KPIs, critical orders and resources after planning.
+Responses expose `available_views`; use `view_id` to select a customization view. Keep
+revision and result identity explicit. Source evidence is adapter-reported;
+unknown outcomes are not zero. APEX utilization uses saved capacity ratios;
+generic resource spans are not utilization. See [insights](../../docs/insights.md).
+
 ## Compatibility workflow
 
 The remaining tool-specific instructions apply only when `capabilities` and `schedule.*` are advertised by the file-backed compatibility executable. Query `capabilities` so claims match that installed implementation.

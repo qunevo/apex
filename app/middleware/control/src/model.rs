@@ -99,6 +99,9 @@ pub struct ScenarioContent {
     /// Server-selected package identity, pinned for every revision of this scenario.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub customization_package: Option<crate::packages::Package>,
+    /// Bounded adapter evidence, retained with the immutable revision. Not engine facts.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source_summary: Option<crate::views::SourceSummary>,
 }
 impl ScenarioContent {
     pub fn hash(&self) -> String {

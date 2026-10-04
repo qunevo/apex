@@ -434,6 +434,278 @@ fn packages(default: &str, version: &str) -> apex_control::packages::LoadedConfi
     }
 }
 
+#[tokio::test]
+async fn dashboards_are_bounded_read_only_and_bound_to_the_saved_revision() {
+    use apex_control::packages::{LoadedConfig, Package};
+    let mut h = Harness::new().await;
+    h.state.control = h.state.control.clone().with_packages(LoadedConfig {
+        default: "demo".into(),
+        packages: [(
+            "demo".into(),
+            Package {
+                id: "demo".into(),
+                version: "1".into(),
+            },
+        )]
+        .into(),
+    });
+    h.app = http::router(h.state.clone());
+    let mut facts = serde_json::to_value(apex_engine::demo::problem(60)).unwrap();
+    for (index, task) in facts["tasks"]
+        .as_array_mut()
+        .unwrap()
+        .iter_mut()
+        .enumerate()
+    {
+        task["stage"] = json!(format!("Stage {index}"));
+    }
+    let summary = json!({"sources":[{"label":"MES","revision":"7","sha256":"a".repeat(64)},{"label":"Excel","sha256":"b".repeat(64)}],
+        "counts":{"mes_operations":65,"excel_operations":45,"planned_operations":60,"closed_operations":5,"operations_without_excel":20},
+        "notices":[{"code":"SYNTHETIC","message":"Check the imported source"}],"notice_count":1});
+    let input = json!({"name":"Showcase", "engine":"apex", "content":{"facts":facts, "source_summary":summary}});
+    let (failed, created) = h.tool("agent", "scenarios.create", input.clone()).await;
+    assert!(!failed, "{created}");
+    let id = created["scenario"]["id"].clone();
+    let mut events = h.state.events.subscribe();
+    let (failed, view) = h
+        .tool("display", "views.get", json!({"scenario_id":id}))
+        .await;
+    assert!(!failed, "{view}");
+    assert!(
+        events.try_recv().is_err(),
+        "Reading a view must not emit mutations"
+    );
+    assert_eq!(view["kind"], "apex_view");
+    assert_eq!(view["view_id"], "overview");
+    assert_eq!(view["revision"], 1);
+    assert_eq!(view["content_hash"], created["content_hash"]);
+    assert!(view["result_id"].is_null());
+    assert!(view.get("facts").is_none() && view.get("schedule").is_none());
+    assert!(view.to_string().len() < apex_control::views::MAX_DOCUMENT_BYTES);
+    let panels = view["dashboard"]["panels"].as_array().unwrap();
+    let stages = panels.iter().find(|p| p["id"] == "work-mix").unwrap();
+    let points = stages["points"].as_array().unwrap();
+    assert_eq!(points.len(), 24);
+    assert_eq!(
+        points
+            .iter()
+            .map(|p| p["value"].as_f64().unwrap())
+            .sum::<f64>(),
+        60.0
+    );
+    let (_, sources) = h
+        .tool(
+            "display",
+            "views.get",
+            json!({"scenario_id":id,"view_id":"demo.sources"}),
+        )
+        .await;
+    let flow = sources["dashboard"]["panels"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|p| p["id"] == "source-flow")
+        .unwrap();
+    assert_eq!(flow["renderer"], "demo.import-flow");
+    assert_eq!(flow["data"]["matched"], 40);
+    let (status, http_view) = h
+        .send(
+            "POST",
+            "/v1/views",
+            Some("display"),
+            Some(json!({"scenario_id":id})),
+        )
+        .await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(http_view, view);
+    assert_eq!(
+        h.send("POST", "/v1/views", None, Some(json!({"scenario_id":id})))
+            .await
+            .0,
+        StatusCode::UNAUTHORIZED
+    );
+    assert_eq!(
+        h.tool("other", "views.get", json!({"scenario_id":id}))
+            .await
+            .1["code"],
+        "NOT_FOUND"
+    );
+    assert!(
+        h.tool(
+            "display",
+            "views.get",
+            json!({"scenario_id":id,"view_id":"../private"})
+        )
+        .await
+        .0
+    );
+    assert!(
+        h.tool(
+            "display",
+            "views.get",
+            json!({"scenario_id":id,"revision":0})
+        )
+        .await
+        .0
+    );
+    assert!(
+        h.tool("display", "views.get", json!({"scenario_id":id,"facts":{}}))
+            .await
+            .0
+    );
+    let (_, overview) = h
+        .tool(
+            "display",
+            "views.get",
+            json!({"scenario_id":id,"view_id":"overview"}),
+        )
+        .await;
+    assert_eq!(overview["view_id"], "overview");
+
+    let (_, queued) = h
+        .tool("agent", "runs.start", json!({"scenario_id":id}))
+        .await;
+    h.work().await;
+    let (_, done) = h
+        .tool("display", "runs.get", json!({"run_id":queued["id"]}))
+        .await;
+    assert_eq!(done["state"], "succeeded", "{done}");
+    let result_id = done["result"].clone();
+    let (_, revised) = h
+        .tool(
+            "agent",
+            "scenarios.revise",
+            json!({"scenario_id":id,"expected_revision":1,"content":{"facts":facts}}),
+        )
+        .await;
+    assert_eq!(revised["revision"], 2);
+    let (failed, saved) = h
+        .tool(
+            "display",
+            "views.get",
+            json!({"scenario_id":id,"result_id":result_id}),
+        )
+        .await;
+    assert!(!failed, "{saved}");
+    assert_eq!(saved["revision"], 1);
+    assert_eq!(saved["source_summary"], summary);
+    assert_eq!(saved["validation_valid"], true);
+    assert!(
+        saved["dashboard"]["panels"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|p| p["section"] == "result")
+    );
+    assert!(
+        h.tool(
+            "display",
+            "views.get",
+            json!({"scenario_id":id,"result_id":result_id,"revision":2})
+        )
+        .await
+        .0
+    );
+    let (_, latest) = h
+        .tool("display", "views.get", json!({"scenario_id":id}))
+        .await;
+    assert_eq!(latest["revision"], 2);
+    assert!(latest["source_summary"].is_null());
+    let (_, no_sources) = h
+        .tool(
+            "display",
+            "views.get",
+            json!({"scenario_id":id,"view_id":"demo.sources"}),
+        )
+        .await;
+    assert!(
+        no_sources["dashboard"]["notes"]
+            .to_string()
+            .contains("coverage is unknown")
+    );
+    let (_, another) = h.tool("agent", "scenarios.create", input.clone()).await;
+    assert!(
+        h.tool(
+            "display",
+            "views.get",
+            json!({"scenario_id":another["scenario"]["id"],"result_id":result_id})
+        )
+        .await
+        .0
+    );
+    let (_, foreign) = h.tool("other", "scenarios.create", input).await;
+    assert_eq!(
+        h.tool(
+            "display",
+            "views.get",
+            json!({"scenario_id":foreign["scenario"]["id"],"result_id":result_id})
+        )
+        .await
+        .1["code"],
+        "NOT_FOUND"
+    );
+}
+
+#[tokio::test]
+async fn view_discovery_evidence_limits_and_package_fallback() {
+    let mut h = Harness::new().await;
+    let catalog = h.mcp("display", "tools/list", json!({})).await;
+    let tool = catalog["result"]["tools"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|t| t["name"] == "views.get")
+        .unwrap();
+    assert_eq!(tool["annotations"]["readOnlyHint"], true);
+    let uri = &tool["_meta"]["ui"]["resourceUri"];
+    let resource = h.mcp("display", "resources/read", json!({"uri":uri})).await;
+    let resource = &resource["result"]["contents"][0];
+    assert_eq!(resource["mimeType"], "text/html;profile=mcp-app");
+    let html = resource["text"].as_str().unwrap();
+    assert!(html.contains("demo.import-flow") && html.contains("views.get"));
+    assert!(!html.contains("/* APEX_"));
+    assert_eq!(resource["_meta"]["ui"]["csp"]["connectDomains"], json!([]));
+    let facts = serde_json::to_value(apex_engine::demo::problem(2)).unwrap();
+    for version in ["1", "2"] {
+        h.configure("alpha", version);
+        let (_, created) = h
+            .tool(
+                "agent",
+                "scenarios.create",
+                json!({"name":"Generic", "engine":"apex", "content":{"facts":facts}}),
+            )
+            .await;
+        let id = created["scenario"]["id"].clone();
+        let (_, view) = h
+            .tool("display", "views.get", json!({"scenario_id":id}))
+            .await;
+        assert_eq!(view["view_id"], "overview");
+        assert_eq!(view["available_views"].as_array().unwrap().len(), 1);
+        assert!(
+            h.tool(
+                "display",
+                "views.get",
+                json!({"scenario_id":id,"view_id":"demo.sources"})
+            )
+            .await
+            .0
+        );
+    }
+    let summary = json!({"sources":[],"counts":{},"notices":[],"notice_count":0});
+    let mut variants = vec![summary.clone(); 4];
+    variants[0]["sources"] = json!([{"label":"Source","sha256":"bad"}]);
+    variants[1]["notices"] = json!([{"code":"X","message":"x".repeat(501)}]);
+    variants[1]["notice_count"] = json!(1);
+    variants[2]["notices"] = json!([{"code":"X","message":"m"}]);
+    variants[3]["counts"] =
+        Value::Object((0..33).map(|i| (format!("count{i}"), json!(1))).collect());
+    for invalid in variants {
+        let (failed, body) = h.tool("agent", "scenarios.create", json!({"name":"Invalid evidence", "engine":"apex", "content":{"facts":facts,"source_summary":invalid}})).await;
+        assert!(failed, "{body}");
+        assert_eq!(body["code"], "INVALID");
+    }
+}
+
 impl Harness {
     fn configure(&mut self, default: &str, version: &str) {
         self.state.control = self
@@ -576,6 +848,157 @@ async fn configured_scenarios_pin_packages_across_revisions_and_results() {
         .await;
     assert!(failed);
     assert_eq!(other["code"], "NOT_FOUND");
+}
+
+#[tokio::test]
+async fn overview_uses_product_ready_and_withholds_unknown_outcomes() {
+    use apex_control::views::{Context, Overview, Provider};
+    let h = Harness::new().await;
+    let facts = json!({
+        "id":"overview-evidence", "epoch":"2026-10-05T06:00:00Z", "horizon":86400,
+        "resources":[{"id":"R","calendar":[{"start":0,"end":86400}]}],
+        "jobs":[{"id":"J1","item":"A","quantity":1,"due":7200},{"id":"J2","item":"B","quantity":1}],
+        "orders":[{"id":"O1","jobs":["J1"],"due":7200},{"id":"O2","jobs":["J2"]}],
+        "tasks":[
+            {"id":"T1","job":"J1","due":7200,"modes":[{"id":"M","primary":"R","phases":[{"id":"run","work":3600,"requirements":[{"resource":"R","retain":true}]}]}],
+             "post":[{"id":"finish","releases_product":true,"modes":[{"id":"F","primary":"R","phases":[{"id":"finish","work":7200,"requirements":[{"resource":"R","retain":true}]}]}]}]},
+            {"id":"T2","job":"J2","modes":[{"id":"M","primary":"R","phases":[{"id":"run","work":60,"requirements":[{"resource":"R","retain":true}]}]}]}
+        ]
+    });
+    let (failed, created) = h
+        .tool(
+            "agent",
+            "scenarios.create",
+            json!({"name":"Standard overview", "engine":"apex", "content":{"facts":facts}}),
+        )
+        .await;
+    assert!(!failed, "{created}");
+    let id = created["scenario"]["id"].clone();
+    let (_, before) = h
+        .tool("display", "views.get", json!({"scenario_id":id}))
+        .await;
+    assert_eq!(before["view_id"], "overview");
+    assert!(before["package"].is_null());
+    let metric = |d: &Value, name: &str| {
+        d["metrics"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|m| m["label"] == name)
+            .unwrap()["value"]
+            .clone()
+    };
+    assert!(metric(&before["dashboard"], "Late orders").is_null());
+    let (failed, run) = h
+        .tool("agent", "runs.start", json!({"scenario_id":id}))
+        .await;
+    assert!(!failed, "{run}");
+    h.work().await;
+    let (_, run) = h
+        .tool("display", "runs.get", json!({"run_id":run["id"]}))
+        .await;
+    assert_eq!(run["state"], "succeeded", "{run}");
+    let (failed, view) = h
+        .tool(
+            "display",
+            "views.get",
+            json!({"scenario_id":id,"result_id":run["result"]}),
+        )
+        .await;
+    assert!(!failed, "{view}");
+    assert_eq!(metric(&view["dashboard"], "Late orders"), 1.0);
+    assert_eq!(metric(&view["dashboard"], "On-time orders"), 0.0);
+    let panels = view["dashboard"]["panels"].as_array().unwrap();
+    let critical = panels
+        .iter()
+        .find(|p| p["id"] == "critical-orders")
+        .unwrap();
+    assert_eq!(critical["rows"][0][0], "O1");
+    assert_eq!(critical["rows"][0][5], "Late");
+    assert!(
+        view["dashboard"]["notes"]
+            .to_string()
+            .contains("1 orders have no due date")
+    );
+    let actor = h.state.tokens.actor("agent").unwrap();
+    let scenario = h
+        .state
+        .control
+        .get_scenario(actor, serde_json::from_value(id).unwrap())
+        .await
+        .unwrap();
+    let revision = h
+        .state
+        .control
+        .get_revision(actor, scenario.id, 1)
+        .await
+        .unwrap();
+    let mut result = h
+        .state
+        .control
+        .get_result(
+            actor,
+            serde_json::from_value(run["result"].clone()).unwrap(),
+        )
+        .await
+        .unwrap();
+    let op = result
+        .view
+        .operations
+        .iter()
+        .find(|o| o.id == "T1")
+        .unwrap();
+    assert!(
+        op.end <= 7200,
+        "The main operation alone would falsely look on time"
+    );
+    assert!(result.schedule["order_completions"]["O1"].as_i64().unwrap() > 7200);
+
+    // Reject outcome claims when independent validation failed, even if metrics remain present.
+    result.validation.valid = false;
+    let invalid = serde_json::to_value(
+        Overview
+            .build(&Context {
+                scenario: &scenario,
+                revision: &revision,
+                result: Some(&result),
+            })
+            .unwrap(),
+    )
+    .unwrap();
+    assert!(metric(&invalid, "Late orders").is_null());
+    assert!(metric(&invalid, "On-time orders").is_null());
+    assert!(invalid["notes"].to_string().contains("failed validation"));
+
+    // A missing saved completion must stay visible rather than becoming zero/on time.
+    result.validation.valid = true;
+    result.schedule["order_completions"]
+        .as_object_mut()
+        .unwrap()
+        .remove("O1");
+    let missing = serde_json::to_value(
+        Overview
+            .build(&Context {
+                scenario: &scenario,
+                revision: &revision,
+                result: Some(&result),
+            })
+            .unwrap(),
+    )
+    .unwrap();
+    assert_eq!(missing["panels"][0]["rows"][0][5], "Not scheduled");
+    result.metrics.insert("order_due_count".into(), 0.0);
+    let undated = serde_json::to_value(
+        Overview
+            .build(&Context {
+                scenario: &scenario,
+                revision: &revision,
+                result: Some(&result),
+            })
+            .unwrap(),
+    )
+    .unwrap();
+    assert!(metric(&undated, "On-time orders").is_null());
 }
 
 #[tokio::test]

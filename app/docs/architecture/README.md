@@ -57,8 +57,18 @@ flowchart LR
 `middleware/control/src/apex.rs` is the optional built-in implementation of the
 engine contract. It is not a separate adapter service. Domain source adapters
 belong in `customization/<id>/adapter`. The desktop depends on control contracts
-without enabling the `apex` feature. The MCP App receives `results.get` through
+without enabling the `apex` feature. The MCP App receives `results.get` or `views.get` through
 its host bridge and does not persist authoritative planning state.
+
+`middleware/control/src/views.rs` owns bounded read-only dashboards and the
+provider registry. Providers inspect authorized revisions and matching results.
+`middleware/control/src/overview.rs` builds the default APEX planning overview
+from saved input, completion events and validated metrics. It owns presentation
+thresholds and bounded summaries, without changing scheduling semantics.
+Shared widgets render declarative data; domain providers/renderers live under
+`customization/<id>/ui/` with explicit registration. Source details uses optional
+`ScenarioContent.source_summary` for adapter evidence, hashed/persisted but not
+passed to the engine. See the [insights contract](../insights.md).
 
 The [container deployment](../containers.md) starts this central server with
 PostgreSQL; it does not start the compatibility executable or native desktop.
@@ -163,7 +173,11 @@ Server packages group adapter, model, skills, tests and optional UI by domain.
 [Package configuration](../../middleware/control/src/packages.rs) validates manifests; it does not
 execute code. [Data storage](../../middleware/data/files.rs) owns persistence. Package selection
 and `Problem.customization` have different meanings: the latter selects native
-scheduling behavior. The demo package's live MES/Excel adapter is not implemented.
+scheduling behavior. The optional [demo source adapter](../../customization/demo/adapter/README.md)
+reads the public MES API and saved Excel file into canonical input and an import
+report. It runs separately; package selection does not execute it. It uses the
+existing input contract without changing core semantics. The HTTP server's
+deployment-configurable request-size limit also applies to these imports.
 
 `rules::Customization` covers typed lowering, sequence decorations, candidate filters/rank, Qs, objectives/metrics, validation and genetic proposals. Native implementations are deterministic, versioned, statically linked and `Send + Sync`. Registration is explicit in `extensions::registered`; `demo@1` is the current bundled implementation.
 

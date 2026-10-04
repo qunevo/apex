@@ -50,7 +50,7 @@ window.apexHost = (() => {
     notify: (method, params = {}) => { if (!closed) send({ method, params }); },
     on: (method, handler) => handlers.set(method, handler),
     async connect() {
-      if (parent === window) throw new Error('Open this view through results.get in an MCP Apps host');
+      if (parent === window) throw new Error('Open this view through results.get or views.get in an MCP Apps host');
       const result = await request('ui/initialize', {
         appInfo: { name: 'APEX Plan', version: '1.0.0' },
         appCapabilities: { availableDisplayModes: ['inline'] }, protocolVersion: '2026-01-26',

@@ -22,7 +22,11 @@ pub fn state(
     tokens: auth::Tokens,
 ) -> http::AppState {
     http::AppState {
-        control: Control::new(store, engines),
+        control: Control::new(store, engines).with_views(
+            apex_control::views::Registry::default()
+                .register(Arc::new(apex_control::demo_views::SourceDetails))
+                .expect("bundled view registration is unique"),
+        ),
         events: events::Events::default(),
         tokens: Arc::new(tokens),
         wake: Arc::new(tokio::sync::Notify::new()),
