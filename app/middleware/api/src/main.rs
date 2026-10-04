@@ -20,6 +20,7 @@ Options and environment:
   --config FILE      APEX_CONFIG                optional customization allowlist and default
   --database URL     APEX_CONTROL_DATABASE_URL  PostgreSQL; omitted = in-memory (serve only)
   --bind ADDR        APEX_CONTROL_BIND          default 127.0.0.1:8780
+  --max-request-bytes N APEX_CONTROL_MAX_REQUEST_BYTES default 2097152
   --workers N        APEX_CONTROL_WORKERS       default 2";
 
 struct Args(Vec<String>);
@@ -139,6 +140,14 @@ async fn run(args: Args) -> Result<(), Failure> {
             println!("Migrations applied.");
         }
         "serve" => {
+            let max_request_bytes = args
+                .flag("--max-request-bytes", "APEX_CONTROL_MAX_REQUEST_BYTES")
+                .map_or(Ok(http::DEFAULT_MAX_REQUEST_BYTES), |value| {
+                    value.parse::<usize>()
+                })?;
+            if max_request_bytes == 0 {
+                return Err("--max-request-bytes must be positive".into());
+            }
             let (tokens, tenants) = Tokens::load(&args.auth())?;
             let store: Arc<dyn Store> = match args.flag("--database", "APEX_CONTROL_DATABASE_URL") {
                 Some(url) => Arc::new(PgStore::connect(&url, 16).await?),
@@ -179,11 +188,14 @@ async fn run(args: Args) -> Result<(), Failure> {
             println!(
                 "apex-control listening on http://{bind} (HTTP /v1, MCP /mcp, events /v1/events)"
             );
-            axum::serve(listener, http::router(state))
-                .with_graceful_shutdown(async {
-                    let _ = tokio::signal::ctrl_c().await;
-                })
-                .await?;
+            axum::serve(
+                listener,
+                http::router_with_body_limit(state, max_request_bytes),
+            )
+            .with_graceful_shutdown(async {
+                let _ = tokio::signal::ctrl_c().await;
+            })
+            .await?;
         }
         _ => println!("{HELP}"),
     }

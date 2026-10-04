@@ -3,7 +3,7 @@ use crate::{auth::Tokens, events::Events, tools, ui};
 use apex_control::{Actor, Control, Error};
 use axum::{
     Json, Router,
-    extract::{FromRequestParts, Path, State},
+    extract::{DefaultBodyLimit, FromRequestParts, Path, State},
     http::{StatusCode, request::Parts},
     response::{
         IntoResponse, Response,
@@ -100,6 +100,13 @@ fn merge(mut body: Value, extra: Value) -> Value {
 }
 
 pub fn router(state: AppState) -> Router {
+    router_with_body_limit(state, DEFAULT_MAX_REQUEST_BYTES)
+}
+
+/// Preserve the transport default unless a deployment explicitly allows larger imports.
+pub const DEFAULT_MAX_REQUEST_BYTES: usize = 2 * 1024 * 1024;
+
+pub fn router_with_body_limit(state: AppState, max_request_bytes: usize) -> Router {
     Router::new()
         .route("/health", get(|| async { Json(json!({"status":"ok"})) }))
         .route("/v1/engines", get(engines))
@@ -115,6 +122,7 @@ pub fn router(state: AppState) -> Router {
         .route("/v1/results/{id}/{action}", post(decide_result))
         .route("/v1/events", get(events))
         .route("/mcp", post(mcp))
+        .layer(DefaultBodyLimit::max(max_request_bytes))
         .with_state(state)
 }
 

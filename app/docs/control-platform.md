@@ -74,6 +74,11 @@ target/release/apex-control serve --database postgres://postgres:apex@127.0.0.1:
 
 Settings can also come from `APEX_CONTROL_AUTH`, `APEX_CONTROL_DATABASE_URL`,
 `APEX_CONTROL_BIND` (default `127.0.0.1:8780`) and `APEX_CONTROL_WORKERS` (default 2).
+`--max-request-bytes` / `APEX_CONTROL_MAX_REQUEST_BYTES` sets a positive JSON request
+body limit for HTTP and MCP (default 2097152 bytes, 2 MiB). Larger source snapshots
+need an explicit deployment value; oversized requests return HTTP 413 before an
+operation changes state. Authentication, role checks and input validation still
+apply. The repository demo configures 128 MiB for its expanded factory model.
 `--config FILE` or `APEX_CONFIG` enables customization packages using the same
 [manifest contract](server-configuration.md) as the compatibility CLI.
 
@@ -190,7 +195,9 @@ compiled at runtime, so Xcode is not required.
   run takes effect when the computation returns; `budget_ms` bounds search time.
 - Planning intent is not yet compiled into engine input, and production templates
   must be expanded into a canonical problem before they are used as facts.
-- Authentication uses static bearer tokens from a file. There is no login provider,
-  SaaS provisioning or connector to external systems yet.
+- Authentication uses static bearer tokens from a file. There is no login provider
+  or SaaS provisioning. Source adapters execute outside the generic middleware;
+  the optional [demo adapter](../customization/demo/adapter/README.md) exports
+  live MES/Excel input for explicit scenario submission.
 - The tenant concurrency limit is checked when a run is claimed; simultaneous
   claims by several workers can exceed it briefly.

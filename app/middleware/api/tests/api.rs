@@ -120,6 +120,99 @@ impl Harness {
 }
 
 #[tokio::test]
+async fn configurable_import_limit_preserves_auth_validation_and_revisions() {
+    let mut h = Harness::new().await;
+    let mut facts = serde_json::to_value(apex_engine::demo::problem(2)).unwrap();
+    facts["assumptions"] = json!(["x".repeat(http::DEFAULT_MAX_REQUEST_BYTES)]);
+    let request =
+        json!({"name":"Large synthetic import", "engine":"apex", "content":{"facts":facts}});
+    assert_eq!(
+        h.send(
+            "POST",
+            "/v1/scenarios",
+            Some("agent"),
+            Some(request.clone())
+        )
+        .await
+        .0,
+        StatusCode::PAYLOAD_TOO_LARGE
+    );
+    assert!(
+        h.state
+            .control
+            .list_scenarios(h.state.tokens.actor("agent").unwrap())
+            .await
+            .unwrap()
+            .is_empty()
+    );
+    let mcp = json!({"jsonrpc":"2.0", "id":1, "method":"tools/call", "params":{"name":"scenarios.create", "arguments":request}});
+    assert_eq!(
+        h.send("POST", "/mcp", Some("agent"), Some(mcp.clone()))
+            .await
+            .0,
+        StatusCode::PAYLOAD_TOO_LARGE
+    );
+    h.app = http::router_with_body_limit(h.state.clone(), 3 * 1024 * 1024);
+    assert_eq!(
+        h.send("POST", "/v1/scenarios", None, Some(request.clone()))
+            .await
+            .0,
+        StatusCode::UNAUTHORIZED
+    );
+    assert_eq!(
+        h.send(
+            "POST",
+            "/v1/scenarios",
+            Some("display"),
+            Some(request.clone())
+        )
+        .await
+        .0,
+        StatusCode::FORBIDDEN
+    );
+    let (status, created) = h
+        .send(
+            "POST",
+            "/v1/scenarios",
+            Some("agent"),
+            Some(request.clone()),
+        )
+        .await;
+    assert_eq!(status, StatusCode::OK);
+    let id = created["scenario"]["id"].as_str().unwrap();
+    let path = format!("/v1/scenarios/{id}/revisions");
+    let revise = json!({"expected_revision":1, "content":{"facts":facts}});
+    assert_eq!(
+        h.send("POST", &path, Some("agent"), Some(revise.clone()))
+            .await
+            .0,
+        StatusCode::OK
+    );
+    assert_eq!(
+        h.send("POST", &path, Some("agent"), Some(revise)).await.0,
+        StatusCode::CONFLICT
+    );
+    let (status, response) = h.send("POST", "/mcp", Some("agent"), Some(mcp)).await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(response["result"]["isError"], false);
+    facts["resources"] = json!([]);
+    let invalid = json!({"name":"Invalid large input", "engine":"apex", "content":{"facts":facts}});
+    assert_eq!(
+        h.send("POST", "/v1/scenarios", Some("agent"), Some(invalid))
+            .await
+            .0,
+        StatusCode::UNPROCESSABLE_ENTITY
+    );
+    h.app = http::router_with_body_limit(h.state.clone(), 1024);
+    assert_eq!(
+        h.send("POST", "/v1/scenarios", Some("agent"), Some(request))
+            .await
+            .0,
+        StatusCode::PAYLOAD_TOO_LARGE
+    );
+}
+
+#[tokio::test]
 async fn agents_operate_and_display_clients_follow() {
     let h = Harness::new().await;
     let mut events = h.state.events.subscribe();

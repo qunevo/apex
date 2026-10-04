@@ -9,10 +9,19 @@ working file owns proposed dispatch decisions, fixed decisions and skills.
 Proposed assignments must remain distinct from commitments. Preserve stable
 order, lot and operation IDs, the factory clock, units and source revisions.
 
-The factory-specific APEX mapping is not implemented yet. Selecting this
-package does not turn the technical `demo.create` fixture into the MES factory
-or import MES data. Do not infer processing times or impose undocumented rules.
-Prefer existing core types; new semantics require independent validation tests.
+The [source adapter](../adapter/README.md) reads live MES records and the saved
+workbook into existing canonical APEX types. Its mapping contract documents source
+ownership, dynamic row parsing, quantities, calendars, running-work estimates,
+materials and fixations. All implementation and synthetic tests stay in this
+package. The optional root demo Compose profile wires its one-shot container.
+The shared middleware's configurable request-size limit admits large canonical
+snapshots; the demo deployment chooses 128 MiB. Core semantics are unchanged.
+
+Selecting this package does not automatically run the adapter or turn the technical
+`demo.create` fixture into the MES factory. Source import exports JSON; central
+scenario submission and planning are explicit subsequent steps. Do not infer
+processing times or impose undocumented rules. The source snapshot, report and
+assumptions must accompany its input. New semantics require independent tests.
 
 ## Optional technical policies
 

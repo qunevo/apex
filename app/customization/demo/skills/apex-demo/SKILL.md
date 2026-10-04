@@ -14,6 +14,15 @@ On the compatibility catalog, check `capabilities` with `customization: "demo"`,
 retain that context on every follow-up call and use the returned viewer link.
 Treat source facts separately from planner proposals and fixed commitments.
 
-The factory adapter is pending. Do not claim `demo.create` imports the MES, or
-that choosing this package synchronizes Excel, activates native rules or writes
-a plan back to production. Report the missing integration explicitly.
+Use the [source adapter](../../adapter/README.md) to read the live MES API and
+saved Excel working file into a canonical `problem.json` and import report.
+Review diagnostics and assumptions, then submit the generated `scenario.json`
+through `scenarios.create`, or revise an existing scenario with its current
+`expected_revision`. The command itself only exports files. New imports use new
+output directories. Read the actual saved workbook, never the MES seed previews.
+
+Do not claim `demo.create` imports the MES, or that choosing this package
+synchronizes Excel, activates native rules or writes a plan back to production.
+Keep uncommitted Excel proposals separate from fixed model decisions. A successful
+input check does not establish feasibility; run and independently validate before
+presenting a usable plan. The demo baseline can extend beyond the source horizon.

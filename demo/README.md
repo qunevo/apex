@@ -40,7 +40,24 @@ Keep the stack running when connecting a chat. With attached logs, open a second
 
 [compose.yaml](compose.yaml) includes the normal application stack and [apex.compose.yaml](apex.compose.yaml) selects its demo customization. PostgreSQL stores APEX state in project-scoped named volumes; the MES database and editable Excel working file live in **`.local/container/`**. Open `.local/container/production-planning.xlsx` in Excel to edit the actual mounted workbook. The versioned `planning/production-planning.xlsx` remains the reset baseline. The original native `.local/` working state is separate.
 
-The APEX container receives that same working directory at `/sources/demo` read-only and the deployment's [sources.json](sources.json) inside the demo customization's adapter directory. The MES is reachable there as `http://mes:8788`. These prepare source access; the live adapter and factory-model mapping remain unimplemented, so starting the stack does not import MES or Excel data or optimize the factory automatically.
+The APEX container receives that same working directory at `/sources/demo` read-only and the deployment's [sources.json](sources.json) inside the demo customization's adapter directory. The MES is reachable there as `http://mes:8788`. The optional [source adapter](../app/customization/demo/adapter/README.md) reads the public MES API and saved working workbook into canonical APEX JSON and an import report. Starting the stack does not import or optimize automatically.
+
+To export the current sources, save Excel, then run from this directory:
+
+```bash
+mkdir -p .local/adapter
+docker compose --profile adapter run --build --rm adapter \
+  --config /config/sources.json --output /outputs/import-001
+```
+
+Choose a new output folder on each import. The JSON and source evidence appear in
+`.local/adapter/import-001`; review the report before submitting `scenario.json`
+to the existing APEX HTTP API. The demo configures a 128 MiB request limit for its
+expanded input. New worksheet rows are found by headings and IDs, even beyond the
+original table bounds. MES operations without Excel rows are included. Unknown or
+duplicate Excel operation IDs fail explicitly. See the adapter guide for native
+execution, input checks, fixed decisions, running-work assumptions and deliberate
+horizon extensions. No source writeback is performed.
 
 The setup page ends with **Stop the demo completely** and a **Copy stop command** button. Paste the command into Bash (Git Bash on Windows); it uses this checkout's demo directory and the running Compose project name. `docker compose down` stops and removes the containers and network while retaining database volumes and local MES/Excel files. Start again with **Resume the last state** to continue. **Reset demo** resets only MES state and its working workbook, not APEX scenarios. `docker compose down -v` deletes the Compose project's APEX database and credentials; the bind-mounted `.local/container/` is retained. See the [application container guide](../app/docs/containers.md) for connection and lifecycle details.
 
@@ -88,7 +105,7 @@ The **Showcase** area presents the factory in six chapters with a five-minute sp
 | --- | --- |
 | MES | Orders, articles, released work instructions, equipment, attendance, shift calendars, material supply, downtime and booked progress |
 | Excel | Proposed operation sequence, workplace/person assignments, planned starts, setup/run allowances, fixed decisions, planner notes and qualifications |
-| APEX | Future integration: executable scheduling model and validated alternative plans |
+| APEX | Adapter-generated scheduling input; validated plans after explicit scenario submission and a successful run |
 
 The browser workbook views are previews of the original seed, not a live spreadsheet editor. Excel changes are not imported automatically. A changed MES does not silently overwrite the planner's file. Item master edits apply to future orders; existing released work instructions remain snapshots. **On hand** equals opening stock plus received deliveries available at the snapshot, minus posted component issues. Confirmed or delayed deliveries are future supply, not usable stock. Confirmation consumes components for newly processed input pieces, including scrap. It never consumes the same pieces twice.
 
@@ -102,7 +119,7 @@ The browser workbook views are previews of the original seed, not a live spreads
 - `scripts/start-demo.sh`: the demo launcher, including Git Bash on Windows; offers resume or reinitialization, then opens the private local setup page and shared workbook.
 - `scripts/workbook-opener.sh`: internal background helper managed by the starter; exchanges fixed workbook-open requests through `.local/container/.desktop/` with `mes/desktop.py`.
 
-No parent dependency is added to `app/`. The container showcase composes the existing APEX server; the MES-only Python start still runs independently. Frozen paper evidence is unchanged. The APEX package boundary is in `app/customization/demo/`; the live adapter remains a subsequent integration step.
+No parent dependency is added to `app/`. The container showcase composes the existing APEX server; the MES-only Python start still runs independently. Frozen paper evidence is unchanged. The optional source adapter and its tests live inside `app/customization/demo/`; central scenario submission and optimization remain explicit steps.
 
 To regenerate after changing seed code, stop the server, run `python -B -m demo.mes.seed`, rebuild the source workbook with the authoring runtime, and then use **Reset demo** after restarting. This is an intentional maintainer operation; do not reset someone else's active demo.
 

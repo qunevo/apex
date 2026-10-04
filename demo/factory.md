@@ -56,8 +56,8 @@ Operations before the snapshot are marked complete; those crossing it are runnin
 
 Editing a start or duration in Excel recalculates that row's finish and lateness. It does **not** repair other assignments, reapply calendar rules or validate all constraints. The initial generated baseline is checked independently for occupancy and precedence; later manual edits require review. There is no live Excel synchronization in this implementation.
 
-## Boundaries for later APEX integration
+## APEX source integration
 
-The adapter will consume business records and the planner's decisions, preserve stable order/lot/operation IDs and translate units, calendars, eligibility and commitments into typed APEX inputs. It must distinguish proposed assignments from fixed decisions and preserve booked execution.
+The optional [adapter](../app/customization/demo/adapter/README.md) consumes public MES records and the saved planner workbook, preserves stable order/lot/operation IDs and translates units, calendars, eligibility and commitments into typed APEX input. Proposed assignments remain separate from fixed decisions. Its documented running-work estimate assumes uninterrupted setup followed by run; exhausted or inconsistent estimates fail explicitly. The command exports source evidence and JSON for subsequent scenario submission and planning.
 
 Before adding sequence-dependent setups, fixtures, finite buffers, maximum waiting times, finite intermediate stock or automatic wash batches, their exact occupancy and release contracts need to be specified and tested. The current mock supplies a realistic source environment; it does not claim those solver semantics are already integrated.
