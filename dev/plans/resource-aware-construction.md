@@ -1,6 +1,6 @@
 # Resource-aware construction follow-up
 
-Status: approved structural batch implemented; final integration checks in progress.
+Status: implemented, verified and integrated through PR #29.
 
 ## Observed problem
 
@@ -54,8 +54,8 @@ the complete construction/decoding path. It does not promise optimality.
   the full factory. Report failed candidates and limits honestly.
 - Run fmt, Clippy, workspace tests and a fresh release build, followed by MCP
   and browser checks, standalone distribution and repository publication checks.
-- Merge/release only after the agreed acceptance checks pass. The currently
-  requested dev integration and 1.0.1 release remain pending.
+- Merge/release only after the agreed acceptance checks pass. Dev integration
+  passed all required checks; publication is recorded in the versioned release notes.
 
 ## Measured construction result
 
@@ -73,3 +73,5 @@ infeasibility. The source horizon, default strategy and commitments remain
 unchanged. The optional adapter guide documents the explicit showcase choices.
 Container acceptance covers the real public MES API, saved workbook, free
 construction, independent validation and MCP overview using isolated state.
+The final feature revision passed Linux, Windows and macOS checks, including the
+desktop client, PostgreSQL, standalone export and complete container acceptance.
