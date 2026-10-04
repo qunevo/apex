@@ -1,7 +1,7 @@
 [package]
 name = "apex-control-postgres"
 description = "PostgreSQL store for the APEX control platform with tenant row-level security"
-version = "0.1.0"
+version.workspace = true
 edition.workspace = true
 publish = false
 license-file = "../../LICENSE"

@@ -76,6 +76,44 @@ class ReleaseTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Commit the reviewed"):
             release.prepare(self.base, "patch", notes, self.root)
 
+    def workspace(self):
+        manifest = self.root / "app/Cargo.toml"
+        manifest.write_text('[workspace]\nmembers = ["core"]\n\n[workspace.package]\nversion = "0.6.0"\n\n'
+                            + manifest.read_text().replace('version = "0.6.0"', 'version.workspace = true'))
+        self.put("app/core/Cargo.toml", '[package]\nname = "apex-engine"\nversion.workspace = true\n')
+        lock = self.root / "app/Cargo.lock"
+        lock.write_text(lock.read_text() + '\n[[package]]\nname = "apex-engine"\nversion = "0.6.0"\n')
+        self.save()
+
+    def test_workspace_release_updates_all_product_versions_without_dependency_changes(self):
+        self.workspace()
+        self.assertEqual(release.version_at("HEAD", self.root), "0.6.0")
+        self.candidate()
+        notes = self.root / "notes.txt"
+        notes.write_text("Synthetic workspace release.")
+        release.prepare(self.base, "patch", notes, self.root)
+        self.assertEqual(release.check_lock(self.root), "0.6.1")
+        lock = tomllib.loads((self.root / "app/Cargo.lock").read_text())
+        self.assertEqual({p["name"]: p["version"] for p in lock["package"]},
+                         {"apex-scheduler": "0.6.1", "apex-engine": "0.6.1", "example": "1.2.3"})
+        self.save()
+        self.assertEqual(release.version_at("HEAD", self.root), "0.6.1")
+        self.assertTrue(release.validate(self.base, "main", self.root)["version_changed"])
+
+    def test_workspace_rejects_independent_member_version_and_stale_lock_entry(self):
+        self.workspace()
+        member = self.root / "app/core/Cargo.toml"
+        original = member.read_text()
+        member.write_text(original.replace('version.workspace = true', 'version = "0.6.0"'))
+        with self.assertRaisesRegex(ValueError, "inherit"):
+            release.check_lock(self.root)
+        member.write_text(original)
+        lock = self.root / "app/Cargo.lock"
+        lock.write_text(lock.read_text().replace('name = "apex-engine"\nversion = "0.6.0"',
+                                               'name = "apex-engine"\nversion = "0.5.0"'))
+        with self.assertRaisesRegex(ValueError, "apex-engine"):
+            release.check_lock(self.root)
+
     def test_lock_mismatch_rejected_on_both_branches(self):
         path = self.root / "app/Cargo.lock"
         path.write_text(path.read_text().replace('"0.6.0"', '"0.6.1"'))

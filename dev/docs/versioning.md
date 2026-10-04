@@ -1,6 +1,6 @@
 # APEX versioning
 
-`app/Cargo.toml` is the maintained source of the product version. The product is the complete application distribution: scheduling components, CLI, MCP/HTTP interfaces, embedded viewer, supported formats, product skills and deployment helpers. It has one release stream. The application derives its version from `CARGO_PKG_VERSION`; API clients and generated reports should use that value. The package's own `Cargo.lock` entry is a generated mirror, not a second policy source.
+`app/Cargo.toml` (`workspace.package.version`) is the maintained source of the product version. Every application workspace package inherits it, including the engine, middleware and desktop client. The product is the complete application distribution: scheduling components, CLI, MCP/HTTP interfaces, embedded viewer, supported formats, product skills and deployment helpers. It has one release stream. The application derives its version from `CARGO_PKG_VERSION`; API clients and generated reports should use that value. The workspace packages' `Cargo.lock` entries are generated mirrors, not separate policy sources.
 
 ## Compatibility determines the increment
 
@@ -20,6 +20,6 @@ Path classification is a guard, not a semantic compatibility analysis. The agent
 
 ## Prepare before merging
 
-The release skill creates a clean `codex/release-*` or `codex/hotfix-*` candidate. `release.py prepare --base origin/main --bump patch|minor|major --notes FILE` increments the manifest and its lockfile mirror together and writes `dev/releases/<version>.md`. Notes describe changes, compatibility/migration needs and measured verification. Commit the prepared result before checking the PR. No dependency refresh or global text substitution is part of version preparation.
+The release skill creates a clean `codex/release-*` or `codex/hotfix-*` candidate. `release.py prepare --base origin/main --bump patch|minor|major --notes FILE` increments the manifest and all product lockfile mirrors together and writes `dev/releases/<version>.md`. Notes describe changes, compatibility/migration needs and measured verification. Commit the prepared result before checking the PR. No dependency refresh or global text substitution is part of version preparation.
 
 CI checks manifest/lockfile agreement on both branches. Main product changes require a one-step version increment and nonempty notes. Schema and negative compatibility tests remain required by the scheduling change map. The publication job creates `v<version>` only after successful main CI; retries verify and reuse that tag/release. Existing tags pointing elsewhere or conflicting notes fail rather than being overwritten. Development builds can additionally be identified by their Git SHA; a release number alone does not uniquely identify uncommitted or unreleased work.

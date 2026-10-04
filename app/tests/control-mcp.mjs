@@ -12,6 +12,8 @@ import assert from 'node:assert/strict';
 import { facts as showcase, sourceSummary } from '../customization/demo/tests/showcase.mjs';
 
 const root = path.resolve(import.meta.dirname, '..');
+const manifest = await readFile(path.join(root, 'Cargo.toml'), 'utf8');
+const productVersion = manifest.match(/\[workspace\.package\][\s\S]*?^version = "([^"]+)"/m)[1];
 const binary = process.env.APEX_CONTROL_BINARY || path.join(root, 'target/release', process.platform === 'win32' ? 'apex-control.exe' : 'apex-control');
 const directory = await mkdtemp(path.join(tmpdir(), 'apex-control-test-'));
 const reservation = createServer().listen(0, '127.0.0.1');
@@ -46,6 +48,7 @@ try {
   assert.ok(ready, diagnostics);
   assert.equal((await fetch(url, { method: 'POST' })).status, 401);
   await client.connect(new StreamableHTTPClientTransport(url, { requestInit: { headers: { Authorization: `Bearer ${token}` } } }));
+  assert.equal(client.getServerVersion().version, productVersion);
   const tools = await client.listTools();
   const ui = tools.tools.find(t => t.name === 'results.get')._meta.ui.resourceUri;
   const resources = await client.listResources();
@@ -68,6 +71,7 @@ try {
   assert.equal(run.state, 'succeeded', JSON.stringify(run));
   const result = await call('results.get', { result_id: run.result });
   assert.equal(result.validation.valid, true);
+  assert.equal(result.provenance.engine.version, productVersion);
   assert.deepEqual(result.provenance.customization_package, revision.content.customization_package);
   assert.equal(result.provenance.content_hash, revision.content_hash);
   assert.ok(result.view.operations.length > 0);
