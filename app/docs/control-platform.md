@@ -74,6 +74,11 @@ target/release/apex-control serve --database postgres://postgres:apex@127.0.0.1:
 
 Settings can also come from `APEX_CONTROL_AUTH`, `APEX_CONTROL_DATABASE_URL`,
 `APEX_CONTROL_BIND` (default `127.0.0.1:8780`) and `APEX_CONTROL_WORKERS` (default 2).
+`--max-request-bytes` / `APEX_CONTROL_MAX_REQUEST_BYTES` sets a positive JSON request
+body limit for HTTP and MCP (default 2097152 bytes, 2 MiB). Larger source snapshots
+need an explicit deployment value; oversized requests return HTTP 413 before an
+operation changes state. Authentication, role checks and input validation still
+apply. The repository demo configures 128 MiB for its expanded factory model.
 `--config FILE` or `APEX_CONFIG` enables customization packages using the same
 [manifest contract](server-configuration.md) as the compatibility CLI.
 
@@ -143,6 +148,7 @@ as an authorization boundary between departments.
 | `GET /v1/scenarios/{id}/results` | `results.list` |
 | `GET /v1/runs/{id}`, `POST /v1/runs/{id}/cancel` | `runs.get`, `runs.cancel` |
 | `GET /v1/results/{id}[?include_schedule=true]` | `results.get` |
+| `POST /v1/views` | `views.get` (read-only dashboard request) |
 | `POST /v1/results/{id}/approve\|reject\|publish` | result decisions |
 | `GET /v1/events` | Server-sent events for the caller's tenant |
 
@@ -161,6 +167,14 @@ resource lanes, operation filters, metrics, validation and provenance, and can
 refresh the same result through the host's `tools/call` bridge. The page stores
 no tokens and makes no direct network requests. Hosts without MCP Apps support
 still receive normal text and structured tool results.
+
+`views.get` advertises `ui://apex/insights.html` for bounded statistics before or
+after planning. It provides cards, bar/donut charts, tables and registered
+customization views. The standard Planning overview provides delivery KPIs,
+critical orders, resource utilization, work by stage and schedule navigation.
+Source details is an optional demo extension for MES/Excel evidence.
+Optional `content.source_summary` holds bounded adapter evidence saved with the
+revision, separate from engine facts. See the [insights contract](insights.md).
 
 The bridge follows the [MCP Apps protocol](https://modelcontextprotocol.io/extensions/apps/overview).
 Protocol behavior is tested in an opaque browser sandbox with a simulated host;
@@ -190,7 +204,9 @@ compiled at runtime, so Xcode is not required.
   run takes effect when the computation returns; `budget_ms` bounds search time.
 - Planning intent is not yet compiled into engine input, and production templates
   must be expanded into a canonical problem before they are used as facts.
-- Authentication uses static bearer tokens from a file. There is no login provider,
-  SaaS provisioning or connector to external systems yet.
+- Authentication uses static bearer tokens from a file. There is no login provider
+  or SaaS provisioning. Source adapters execute outside the generic middleware;
+  the optional [demo adapter](../customization/demo/adapter/README.md) exports
+  live MES/Excel input for explicit scenario submission.
 - The tenant concurrency limit is checked when a run is claimed; simultaneous
   claims by several workers can exceed it briefly.

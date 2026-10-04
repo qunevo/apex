@@ -71,6 +71,21 @@ Pareto selection compares individual active metric values after direction and sc
 
 ### Construction queues
 
+For models without conditional pre/post work, execution restart activities,
+transitions, sequence patterns or native/policy filtering, construction probes
+the same placement state used by the decoder. Feasible candidates reflect the
+current resource occupancy, calendars, predecessor completion, dated material
+and hard commitments. Additional resources are occupied only by the phases that
+require them; setup-only staff are released before the machine run finishes.
+Rejected probes leave the state unchanged. Only the selected placement is booked.
+
+Other models retain full decoding and the existing policy/prefix path; nominal
+estimates track primary and secondary resource loads for their queue preferences.
+Neighbor-dependent preparation or cleanup is never silently omitted to enter the
+incremental path. Independent validation checks every completed result. Exact
+prefix placement still does not make greedy choices globally optimal or prove
+infeasibility when construction fails.
+
 There are **19 standard Qs**: due, earliest start, earliest-start binary, earliest-alternative binary, deadline interval fit, conditional work, downtime, downtime binary, most downtime, setup penalty, shortest work, longest work, remaining work, slack, priority, apparent tardiness, mode cost, fewest alternatives and most alternatives. The binary alternative comparison uses job grouping when available, otherwise the operation's modes. Some declared but inactive/unimplemented legacy queues are not represented as working v2 capabilities.
 
 `Task.stage` partitions construction stages. Numeric stages sort numerically, then nonnumeric names lexically; dependency readiness and fixed/running work remain authoritative. `QueuePolicy.stages` maps stage IDs to queue weights, with `*` as fallback. Lower normalized cost wins. Each Q is normalized over the current eligible candidate pool, then multiplied by its stage weight and summed. `minmax` and the legacy median/IQR sigmoid with minmax fallback are supported. `reverse:QUEUE_ID` reverses a signal. These are alternative priority rankings combined by score, not a pipeline of independent scheduling engines.
@@ -119,7 +134,7 @@ The [migration audit](https://github.com/qunevo/apex/blob/main/dev/docs/migratio
 
 Resource order locks constrain construction and primary-resource order; they are not product-release dependencies. Independent post-processing may overlap the next operation on the released primary resource. Explicit operation/material dependencies still wait for product release. A regression test covers fixed starts and consecutive sequences in XG, XH and XT.
 
-The material ledger's monotone consumption frontier applies at main start. It does not postpone preparatory work solely because another operation has already consumed material at the same main-start timestamp. This preserves feasible frozen production baselines with preparation on separate resources. See the [parity tests](../tests/parity.rs) and [material contract](material-dispatch.md).
+The material ledger reserves each consumption at main start and each production output at product readiness. It preserves the dated balances of already selected work, including future reservations. A later selected operation may consume earlier available stock without following the start of an unrelated consumer. Future receipts never become opening stock. Independent validation reconstructs its own material timeline; see the [timeline regressions](../tests/material_timeline.rs), [parity tests](../tests/parity.rs) and [material contract](material-dispatch.md).
 
 ## Shared declarative dispatch
 

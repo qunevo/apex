@@ -27,6 +27,8 @@ pub mod xg;
 pub mod xh;
 pub mod xt;
 
+mod decoding;
+mod material_ledger;
 pub(crate) mod placement;
 
 // The bundled synthetic customization is statically registered by `extensions`.

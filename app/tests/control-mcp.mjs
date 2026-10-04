@@ -4,13 +4,16 @@ import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/
 import { spawn } from 'node:child_process';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { once } from 'node:events';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import assert from 'node:assert/strict';
+import { facts as showcase, sourceSummary } from '../customization/demo/tests/showcase.mjs';
 
 const root = path.resolve(import.meta.dirname, '..');
+const manifest = await readFile(path.join(root, 'Cargo.toml'), 'utf8');
+const productVersion = manifest.match(/\[workspace\.package\][\s\S]*?^version = "([^"]+)"/m)[1];
 const binary = process.env.APEX_CONTROL_BINARY || path.join(root, 'target/release', process.platform === 'win32' ? 'apex-control.exe' : 'apex-control');
 const directory = await mkdtemp(path.join(tmpdir(), 'apex-control-test-'));
 const reservation = createServer().listen(0, '127.0.0.1');
@@ -45,6 +48,7 @@ try {
   assert.ok(ready, diagnostics);
   assert.equal((await fetch(url, { method: 'POST' })).status, 401);
   await client.connect(new StreamableHTTPClientTransport(url, { requestInit: { headers: { Authorization: `Bearer ${token}` } } }));
+  assert.equal(client.getServerVersion().version, productVersion);
   const tools = await client.listTools();
   const ui = tools.tools.find(t => t.name === 'results.get')._meta.ui.resourceUri;
   const resources = await client.listResources();
@@ -67,9 +71,41 @@ try {
   assert.equal(run.state, 'succeeded', JSON.stringify(run));
   const result = await call('results.get', { result_id: run.result });
   assert.equal(result.validation.valid, true);
+  assert.equal(result.provenance.engine.version, productVersion);
   assert.deepEqual(result.provenance.customization_package, revision.content.customization_package);
   assert.equal(result.provenance.content_hash, revision.content_hash);
   assert.ok(result.view.operations.length > 0);
+  const insightsTool = tools.tools.find(t => t.name === 'views.get');
+  assert.equal(insightsTool.annotations.readOnlyHint, true);
+  const insightsResource = await client.readResource({ uri: insightsTool._meta.ui.resourceUri });
+  assert.ok(!insightsResource.contents[0].text.includes('/* APEX_'));
+  const demo = await call('scenarios.create', { name: 'Synthetic factory · October', engine: 'apex', content: { facts: showcase, source_summary: sourceSummary } });
+  const inputView = await call('views.get', { scenario_id: demo.scenario.id });
+  assert.equal(inputView.view_id, 'overview');
+  assert.equal(inputView.dashboard.metrics.find(m => m.label === 'Operations').value, 36);
+  assert.equal(inputView.dashboard.metrics.find(m => m.label === 'On-time orders').value, null);
+  const demoRun = await call('runs.start', { scenario_id: demo.scenario.id });
+  let finished;
+  for (let i = 0; i < 100; i++) {
+    finished = await call('runs.get', { run_id: demoRun.id });
+    if (['succeeded', 'failed', 'cancelled'].includes(finished.state)) break;
+    await new Promise(resolve => setTimeout(resolve, 50));
+  }
+  assert.equal(finished.state, 'succeeded', JSON.stringify(finished));
+  const resultView = await call('views.get', { scenario_id: demo.scenario.id, result_id: finished.result });
+  assert.equal(resultView.validation_valid, true);
+  assert.ok(resultView.dashboard.metrics.find(m => m.label === 'Late orders').value > 0);
+  assert.equal(resultView.content_hash, inputView.content_hash);
+  assert.ok(JSON.stringify(resultView).length < 65536);
+  const reports = path.join(root, '.apex/reports');
+  await mkdir(reports, { recursive: true });
+  await writeFile(path.join(reports, 'insights.html'), insightsResource.contents[0].text);
+  await writeFile(path.join(reports, 'insights-input.json'), JSON.stringify(inputView));
+  await writeFile(path.join(reports, 'insights-result.json'), JSON.stringify(resultView));
+  await writeFile(path.join(reports, 'insights-sources.json'), JSON.stringify(await call('views.get', { scenario_id: demo.scenario.id, view_id: 'demo.sources' })));
+  await writeFile(path.join(reports, 'insights-result-sources.json'), JSON.stringify(await call('views.get', { scenario_id: demo.scenario.id, result_id: finished.result, view_id: 'demo.sources' })));
+  await writeFile(path.join(reports, 'insights-schedule.json'), JSON.stringify(await call('results.get', { result_id: finished.result })));
+  console.log('Insights MCP: source snapshot, package registration, bounded charts and independently validated result passed');
   console.log('Control MCP: release startup, auth, official SDK discovery, UI resource, config, worker and result provenance passed');
 } finally {
   await client.close();

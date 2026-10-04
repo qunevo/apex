@@ -57,8 +57,18 @@ flowchart LR
 `middleware/control/src/apex.rs` is the optional built-in implementation of the
 engine contract. It is not a separate adapter service. Domain source adapters
 belong in `customization/<id>/adapter`. The desktop depends on control contracts
-without enabling the `apex` feature. The MCP App receives `results.get` through
+without enabling the `apex` feature. The MCP App receives `results.get` or `views.get` through
 its host bridge and does not persist authoritative planning state.
+
+`middleware/control/src/views.rs` owns bounded read-only dashboards and the
+provider registry. Providers inspect authorized revisions and matching results.
+`middleware/control/src/overview.rs` builds the default APEX planning overview
+from saved input, completion events and validated metrics. It owns presentation
+thresholds and bounded summaries, without changing scheduling semantics.
+Shared widgets render declarative data; domain providers/renderers live under
+`customization/<id>/ui/` with explicit registration. Source details uses optional
+`ScenarioContent.source_summary` for adapter evidence, hashed/persisted but not
+passed to the engine. See the [insights contract](../insights.md).
 
 The [container deployment](../containers.md) starts this central server with
 PostgreSQL; it does not start the compatibility executable or native desktop.
@@ -76,6 +86,8 @@ All module links below point into `core` unless stated otherwise.
 | Readiness and indexes | [compile.rs](../../core/compile.rs): `compile`, `Compiled`; validates supported inputs, resolves IDs and builds dependency and dispatch graphs. [urgency.rs](../../core/urgency.rs) derives upstream dispatch urgency. |
 | Active problem | [domain.rs](../../core/domain.rs): `resolve`; selects routes, removes inactive work, expands quantity formulas and applies job/order defaults. [language.rs](../../core/language.rs) lowers typed planning templates; [conditionals.rs](../../core/conditionals.rs) checks and applies conditional choices. |
 | Material preparation | [material.rs](../../core/material.rs): existing-supply allocation, pegging and route/mode-aware preparation. Flexible allocation runs during active-model resolution; explicit preparation creates a separate scenario. |
+| Construction stock reservations | [material_ledger.rs](../../core/material_ledger.rs): dated receipts, consumption and production during decoding. Previously reserved future work stays supplied when a later decision is placed earlier. Independent validation reconstructs balances separately. |
+| Shared placement state | [decoding.rs](../../core/decoding.rs): calendar occupancy, predecessor readiness, execution continuation, material, fixed starts and phase placement. Probes roll back temporary calendar writes; only committed assignments update the prefix. Full decoding and eligible construction use this same implementation. |
 | Construction and policy enforcement | [dispatch.rs](../../core/dispatch.rs): `decisions_with`, `choices`; common ready-pool selection. [policy.rs](../../core/policy.rs): mandatory filters and replay. [placement.rs](../../core/placement.rs): private exact-placement oracle for those filters. |
 | Ranking and objectives | [queues.rs](../../core/queues.rs): Q definitions, normalization and stage policies. [rules.rs](../../core/rules.rs): bounds, rank, exact objectives and score. [metrics.rs](../../core/metrics.rs): KPI catalog and evaluation. |
 | Schedule construction (XG) | [xg.rs](../../core/xg.rs): `create`, `evaluate`, `decode`, `conditional_specs`; orchestrates evaluation and places main/pre/post/restart work. [activities.rs](../../core/activities.rs) handles conditional DAGs; [calendar.rs](../../core/calendar.rs) places phased work against resource calendars and occupancy. |
@@ -163,7 +175,11 @@ Server packages group adapter, model, skills, tests and optional UI by domain.
 [Package configuration](../../middleware/control/src/packages.rs) validates manifests; it does not
 execute code. [Data storage](../../middleware/data/files.rs) owns persistence. Package selection
 and `Problem.customization` have different meanings: the latter selects native
-scheduling behavior. The demo package's live MES/Excel adapter is not implemented.
+scheduling behavior. The optional [demo source adapter](../../customization/demo/adapter/README.md)
+reads the public MES API and saved Excel file into canonical input and an import
+report. It runs separately; package selection does not execute it. It uses the
+existing input contract without changing core semantics. The HTTP server's
+deployment-configurable request-size limit also applies to these imports.
 
 `rules::Customization` covers typed lowering, sequence decorations, candidate filters/rank, Qs, objectives/metrics, validation and genetic proposals. Native implementations are deterministic, versioned, statically linked and `Send + Sync`. Registration is explicit in `extensions::registered`; `demo@1` is the current bundled implementation.
 

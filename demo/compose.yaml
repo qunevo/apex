@@ -6,6 +6,19 @@ include:
       - ./apex.compose.yaml
 
 services:
+  adapter:
+    profiles: ["adapter"]
+    build:
+      context: ../app/customization/demo/adapter
+    user: "${DEMO_UID:-1000}:${DEMO_GID:-1000}"
+    command: ["--config", "/config/sources.json", "--output", "/outputs/snapshot"]
+    volumes:
+      - ./sources.json:/config/sources.json:ro
+      - ./.local/container:/sources/demo:ro
+      - ./.local/adapter:/outputs
+    depends_on:
+      mes:
+        condition: service_healthy
   mes:
     build:
       context: .

@@ -20,12 +20,18 @@ fn id_arg(name: &str, description: &str) -> Value {
     json!({"type":"object","properties":{name:{"type":"string","format":"uuid","description":description}},"required":[name],"additionalProperties":false})
 }
 
-const CONTENT: &str = "Scenario content: {facts: <engine facts model, e.g. an APEX scheduling problem>, intent: {declarations: [{id, kind, target, parameters, note}]}}. Declarations the engine cannot represent are rejected.";
+const CONTENT: &str = "Scenario content: {facts: <engine facts model, e.g. an APEX scheduling problem>, intent: {declarations: [{id, kind, target, parameters, note}]}, source_summary?: <bounded adapter evidence>}. Declarations the engine cannot represent are rejected.";
 
 pub fn catalog() -> Vec<Tool> {
     let scenario = || id_arg("scenario_id", "Scenario ID");
     let result = |verb: &str| json!({"type":"object","properties":{"result_id":{"type":"string","format":"uuid"},"note":{"type":"string","description":format!("Optional reason recorded with the {verb}")}},"required":["result_id"],"additionalProperties":false});
     vec![
+        Tool {
+            name: "views.get",
+            description: "Open the standard Planning overview in an MCP App: delivery KPIs, critical orders, workload and resource charts. Optional result_id selects saved outcomes and pins its revision; otherwise revision defaults to current and outcomes are unknown. Customization views are listed in available_views. Read-only; no planning or source refresh.",
+            input: json!({"type":"object","properties":{"scenario_id":{"type":"string","format":"uuid"},"revision":{"type":"integer","minimum":1},"result_id":{"type":"string","format":"uuid"},"view_id":{"type":"string","description":"Registered view ID from available_views; omit for the standard overview"}},"required":["scenario_id"],"additionalProperties":false}),
+            mutates: false,
+        },
         Tool {
             name: "engines.list",
             description: "List available engines with their facts model, run methods, supported planning declarations and extensions.",
@@ -147,6 +153,7 @@ pub async fn call(
     let args = if args.is_null() { json!({}) } else { args };
     let tenant = actor.tenant;
     Ok(match name {
+        "views.get" => out(control.get_view(actor, body(args, &[])?).await?),
         "engines.list" => out(control.engines(actor)?),
         "scenarios.list" => out(control.list_scenarios(actor).await?),
         "scenarios.get" => out(control

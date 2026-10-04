@@ -8,15 +8,21 @@
 #[cfg(feature = "apex")]
 pub mod apex;
 pub mod auth;
+#[cfg(feature = "apex")]
+#[path = "../../../customization/demo/ui/provider.rs"]
+pub mod demo_views;
 pub mod engine;
 pub mod error;
 pub mod memory;
 pub mod model;
 pub mod ops;
+#[cfg(feature = "apex")]
+mod overview;
 pub mod packages;
 pub mod store;
 #[cfg(any(test, feature = "testing"))]
 pub mod testing;
+pub mod views;
 pub mod worker;
 
 pub use auth::{Actor, Permission, Role};

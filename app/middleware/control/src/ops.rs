@@ -51,6 +51,7 @@ pub struct Control {
     store: Arc<dyn Store>,
     engines: EngineRegistry,
     packages: Option<crate::packages::LoadedConfig>,
+    views: crate::views::Registry,
 }
 
 fn not_found(kind: &str, id: impl std::fmt::Display) -> Error {
@@ -63,6 +64,7 @@ impl Control {
             store,
             engines,
             packages: None,
+            views: crate::views::Registry::default(),
         }
     }
     pub fn with_packages(mut self, packages: crate::packages::LoadedConfig) -> Self {
@@ -71,6 +73,14 @@ impl Control {
     }
     pub fn packages(&self) -> Option<&crate::packages::LoadedConfig> {
         self.packages.as_ref()
+    }
+    /// Register explicitly linked read-only view providers at server startup.
+    pub fn with_views(mut self, views: crate::views::Registry) -> Self {
+        self.views = views;
+        self
+    }
+    pub fn views(&self) -> &crate::views::Registry {
+        &self.views
     }
     fn check_package(&self, content: &ScenarioContent) -> Result<()> {
         match &self.packages {
@@ -98,6 +108,9 @@ impl Control {
     }
 
     fn check_content(&self, engine: &str, content: &ScenarioContent) -> Result<()> {
+        if let Some(summary) = &content.source_summary {
+            summary.validate()?;
+        }
         let adapter = self.engine(engine)?;
         let mut diagnostics = adapter
             .check_facts(&content.facts)

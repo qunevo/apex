@@ -1,5 +1,8 @@
 # Cargo workspace and initial control platform
 
+> Historical implementation record. Paths and feature status below describe that
+> batch, not the current product. See [current documentation](../../app/docs/architecture/README.md).
+
 Approved scope: turn `app/` into a Cargo workspace with independently usable
 engine, control platform and desktop UI crates. The existing `apex` executable
 remains the engine-only product (CLI, MCP, HTTP, viewer) with unchanged behavior.

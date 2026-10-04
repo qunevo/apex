@@ -5,9 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>APEX Plan</title>
   <style>/* APEX_APP_STYLE */</style>
+  <style>/* APEX_BRAND_STYLE */</style>
 </head>
 <body>
-  <header><div><span class="brand">APEX</span><h1>Production plan</h1></div><button id="refresh" disabled>Refresh result</button></header>
+  <header>/* APEX_BRAND */<button id="refresh" disabled>Refresh result</button></header>
+  <h1>Production plan</h1>
   <p id="message" role="status">Connecting to the chat host…</p>
   <main hidden>
     <section class="summary" aria-label="Result summary"><strong id="status"></strong><span id="revision"></span><span id="validation"></span><span id="package"></span></section>

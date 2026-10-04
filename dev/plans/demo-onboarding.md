@@ -1,5 +1,8 @@
 # Local demo startup and shared Excel editing
 
+> Historical implementation record. Paths and feature status below describe that
+> batch, not the current product. See [current documentation](../../demo/README.md).
+
 Status: implemented on the selected `codex/integration-cleanup` branch. The user
 approved the local launcher and explicitly required resetting the shared Excel
 file together with the MES, including an already used container installation.

@@ -3,7 +3,7 @@ use crate::{auth::Tokens, events::Events, tools, ui};
 use apex_control::{Actor, Control, Error};
 use axum::{
     Json, Router,
-    extract::{FromRequestParts, Path, State},
+    extract::{DefaultBodyLimit, FromRequestParts, Path, State},
     http::{StatusCode, request::Parts},
     response::{
         IntoResponse, Response,
@@ -100,11 +100,19 @@ fn merge(mut body: Value, extra: Value) -> Value {
 }
 
 pub fn router(state: AppState) -> Router {
+    router_with_body_limit(state, DEFAULT_MAX_REQUEST_BYTES)
+}
+
+/// Preserve the transport default unless a deployment explicitly allows larger imports.
+pub const DEFAULT_MAX_REQUEST_BYTES: usize = 2 * 1024 * 1024;
+
+pub fn router_with_body_limit(state: AppState, max_request_bytes: usize) -> Router {
     Router::new()
         .route("/health", get(|| async { Json(json!({"status":"ok"})) }))
         .route("/v1/engines", get(engines))
         .route("/v1/scenarios", get(list_scenarios).post(create_scenario))
         .route("/v1/scenarios/{id}", get(get_scenario))
+        .route("/v1/views", post(get_view))
         .route("/v1/scenarios/{id}/revisions", post(revise_scenario))
         .route("/v1/scenarios/{id}/revisions/{number}", get(get_revision))
         .route("/v1/scenarios/{id}/runs", get(list_runs).post(start_run))
@@ -115,6 +123,7 @@ pub fn router(state: AppState) -> Router {
         .route("/v1/results/{id}/{action}", post(decide_result))
         .route("/v1/events", get(events))
         .route("/mcp", post(mcp))
+        .layer(DefaultBodyLimit::max(max_request_bytes))
         .with_state(state)
 }
 
@@ -139,6 +148,13 @@ async fn get_scenario(
     Path(id): Path<String>,
 ) -> Reply {
     op(&s, &a, "scenarios.get", json!({"scenario_id": id})).await
+}
+async fn get_view(
+    State(s): State<AppState>,
+    Authenticated(a): Authenticated,
+    Json(body): Json<Value>,
+) -> Reply {
+    op(&s, &a, "views.get", body).await
 }
 async fn revise_scenario(
     State(s): State<AppState>,
@@ -282,7 +298,8 @@ async fn mcp(
             "instructions": "APEX control platform. Scenarios hold immutable revisions of facts and planning intent. Runs plan one revision in the background; results are validated, then approved and published by an approver. Use scenarios.revise with expected_revision; publishing fails for results of superseded revisions."
         })),
         "ping" => Ok(json!({})),
-        "resources/list" => Ok(json!({"resources": [ui::descriptor()]})),
+        "resources/list" => Ok(json!({"resources": [ui::descriptor(), ui::insights_descriptor()]})),
+        "resources/read" if request["params"]["uri"] == ui::INSIGHTS_URI => Ok(ui::read_insights()),
         "resources/read" if request["params"]["uri"] == ui::URI => Ok(ui::read()),
         "resources/read" => Err(json!({"code": -32002, "message": "Resource not found"})),
         "tools/list" => Ok(json!({"tools": tools::catalog().iter().map(|t| {
@@ -294,6 +311,9 @@ async fn mcp(
             });
             if t.name == "results.get" {
                 tool["_meta"] = json!({"ui": {"resourceUri": ui::URI}});
+            }
+            if t.name == "views.get" {
+                tool["_meta"] = json!({"ui": {"resourceUri": ui::INSIGHTS_URI}});
             }
             tool
         }).collect::<Vec<_>>()})),

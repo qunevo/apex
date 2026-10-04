@@ -59,8 +59,9 @@ store; migrating old state requires an explicit future migration procedure.
 Native model selection is separate: `Problem.customization` still selects a
 compiled, versioned scheduling extension. Enabling the `demo` package
 does not impose its optional technical policy (`demo@1`) on every problem.
-The package also defines the factory integration boundary; its live MES/Excel
-adapter is still pending.
+The package also contains an optional [MES/Excel source adapter](../customization/demo/adapter/README.md).
+Run it explicitly to export input JSON; server package selection does not execute
+it or synchronize source systems.
 Folders and Markdown never execute code or automatically install agent skills.
 
 The server remains a shared-trust workspace service. Package namespaces are

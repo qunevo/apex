@@ -4,6 +4,8 @@ import { readFile, mkdir } from 'node:fs/promises';
 import { chromium } from 'playwright';
 
 let html = await readFile(new URL('../ui/mcp-app/index.html', import.meta.url), 'utf8');
+const brand = (await readFile(new URL('../ui/mcp-app/brand/brand.html', import.meta.url), 'utf8')).replace('/* APEX_LOGO */', await readFile(new URL('../ui/mcp-app/brand/apex-logo.svg', import.meta.url), 'utf8'));
+html = html.replace('/* APEX_BRAND */', brand).replace('/* APEX_BRAND_STYLE */', await readFile(new URL('../ui/mcp-app/brand/brand.css', import.meta.url), 'utf8'));
 for (const [token, file] of [['STYLE', 'style.css'], ['BRIDGE', 'bridge.js'], ['VIEW', 'view.js']]) {
   html = html.replace(`/* APEX_APP_${token} */`, await readFile(new URL(`../ui/mcp-app/${file}`, import.meta.url), 'utf8'));
 }

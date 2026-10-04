@@ -13,6 +13,15 @@ from repository import ROOT, changed_files, commit, git, product_file
 VERSION = re.compile(r"(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\Z")
 
 
+def manifest_version(manifest):
+    version = manifest["package"]["version"]
+    if version == {"workspace": True}:
+        version = manifest["workspace"]["package"]["version"]
+    if not isinstance(version, str) or not VERSION.fullmatch(version):
+        raise ValueError("Expected a numeric release version")
+    return version
+
+
 def bump_version(version, kind):
     match = VERSION.fullmatch(version)
     if not match:
@@ -28,24 +37,41 @@ def version_at(ref, root=ROOT):
         result = subprocess.run(["git", "-C", str(root), "show", f"{revision}:{name}"],
                                 capture_output=True, text=True, encoding="utf-8")
         if result.returncode == 0:
-            return tomllib.loads(result.stdout)["package"]["version"]
+            return manifest_version(tomllib.loads(result.stdout))
     raise ValueError("The release base has no APEX Cargo manifest")
 
 
 def current_version(root=ROOT):
     manifest = tomllib.loads((root / "app/Cargo.toml").read_text(encoding="utf-8"))
     package = manifest["package"]
-    if package["name"] != "apex-scheduler" or not VERSION.fullmatch(package["version"]):
+    if package["name"] != "apex-scheduler":
         raise ValueError("Expected the apex-scheduler package with a numeric release version")
-    return package["version"]
+    return manifest_version(manifest)
+
+
+def product_packages(root=ROOT):
+    app = (root / "app").resolve()
+    manifest = tomllib.loads((app / "Cargo.toml").read_text(encoding="utf-8"))
+    workspace = manifest.get("workspace", {})
+    names = []
+    for member in [".", *workspace.get("members", [])]:
+        path = (app / member / "Cargo.toml").resolve()
+        if not path.is_relative_to(app):
+            raise ValueError("Workspace members must stay inside app/")
+        package = tomllib.loads(path.read_text(encoding="utf-8"))["package"]
+        if workspace.get("package", {}).get("version") and package["version"] != {"workspace": True}:
+            raise ValueError("Every product package must inherit the workspace version")
+        names.append(package["name"])
+    return names
 
 
 def check_lock(root=ROOT):
     version = current_version(root)
     lock = tomllib.loads((root / "app/Cargo.lock").read_text(encoding="utf-8"))
-    entries = [p for p in lock["package"] if p["name"] == "apex-scheduler"]
-    if len(entries) != 1 or entries[0]["version"] != version:
-        raise ValueError("Cargo.lock must contain the same APEX version as app/Cargo.toml")
+    for name in product_packages(root):
+        entries = [p for p in lock["package"] if p["name"] == name and "source" not in p]
+        if len(entries) != 1 or entries[0]["version"] != version:
+            raise ValueError(f"Cargo.lock must contain the same APEX version for {name} as app/Cargo.toml")
     return version
 
 
@@ -103,9 +129,12 @@ def prepare(base, kind, notes_path, root=ROOT):
         raise ValueError("Release notes already exist; inspect the existing release instead of overwriting")
     manifest = root / "app/Cargo.toml"
     lock = root / "app/Cargo.lock"
-    manifest_text = replace_version(manifest.read_text(encoding="utf-8"), r"\[package\]", version)
-    lock_text = replace_version(lock.read_text(encoding="utf-8"),
-                                r'\[\[package\]\]\s*\nname = "apex-scheduler"', version)
+    manifest_text = manifest.read_text(encoding="utf-8")
+    inherited = tomllib.loads(manifest_text)["package"]["version"] == {"workspace": True}
+    manifest_text = replace_version(manifest_text, r"\[workspace.package\]" if inherited else r"\[package\]", version)
+    lock_text = lock.read_text(encoding="utf-8")
+    for name in product_packages(root):
+        lock_text = replace_version(lock_text, r'\[\[package\]\]\s*\nname = "' + re.escape(name) + '"', version)
     # Validate both replacements before writing either file. Dependency versions stay fixed.
     tomllib.loads(manifest_text)
     tomllib.loads(lock_text)

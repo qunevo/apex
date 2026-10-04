@@ -48,8 +48,10 @@ def render(connection, mes_url, workbook, demo_directory, compose_project):
         "Verify the connection by listing the APEX engines. If the client must reconnect "
         "or reload tools, explain that remaining step instead of claiming it is connected.\n\n"
         "Use local filesystem tools to read the saved workbook at the path above, "
-        "and HTTP tools for the MES. APEX MCP itself does not yet expose these source "
-        "files or implement the factory import adapter. Do not use the MES preview "
+        "and HTTP tools for the MES. Use the optional adapter in "
+        "app/customization/demo/adapter to export a canonical input and source report, "
+        "then explicitly import the scenario and request views.get for the MCP App. "
+        "APEX MCP itself does not expose the raw source files. Do not use the MES preview "
         "as current Excel data or assume that sources have already been imported. "
         "Ask before modifying source data or resetting the demo."
     )

@@ -12,6 +12,7 @@
     "test:viewer": "node tests/viewer-smoke.mjs",
     "test:config": "node tests/server-config.mjs",
     "test:mcp-app": "node tests/mcp-app.mjs",
-    "test:control": "node tests/control-mcp.mjs"
+    "test:control": "node tests/control-mcp.mjs",
+    "test:insights": "node tests/control-mcp.mjs && node tests/insights.mjs"
   }
 }
