@@ -124,7 +124,8 @@ matrix has no eligible modes and appears in the report.
 - Excel setup/run allowances apply to the row's proposed machine. Other machines
   retain their released rates. Run allowances scale with remaining usable input
   quantity after booked upstream scrap; setup occurs once. Attendance allowances
-  must agree with the released attendance contract.
+  must agree with the released attendance contract. A supplied run allowance must
+  be positive; leave it blank to use the MES rate. Zero setup is allowed.
 - Proposed assignments, sequence and starts stay in the report. `Fixed=Yes`
   creates a mode lock (machine/person), a start lock and, where supplied, relative
   sequence among fixed operations on that machine. Fixed decisions never disappear
@@ -151,8 +152,40 @@ matrix has no eligible modes and appears in the report.
 
 The source horizon is preserved. Use `--horizon-end 2026-10-30T22:00` only when
 deliberately extending it. The demo's Excel baseline can finish beyond its target
-period. A valid input does not guarantee that the default constructive strategy
-finds a full plan; optimization and baseline-replay settings are separate work.
+period. `PROPOSAL_HORIZON` reports proposed starts outside the imported horizon;
+it neither extends the horizon nor turns proposals into fixed decisions.
+
+## Reproducible full-factory showcase
+
+For the shipped synthetic factory, explicitly import with
+`--horizon-end 2026-10-30T22:00`, then select the existing `release` construction
+strategy. It chooses machines and qualified people freely; it does not replay
+Excel assignments or ordering. From the standalone application directory:
+
+```bash
+target/release/apex plan .apex/demo-import-001/problem.json \
+  --strategy release --out .apex/demo-import-001/schedule.json
+target/release/apex validate .apex/demo-import-001/problem.json \
+  .apex/demo-import-001/schedule.json
+```
+
+After importing `scenario.json`, the equivalent `runs.start` MCP arguments are:
+
+```json
+{
+  "scenario_id": "<returned scenario ID>",
+  "options": {"method": "create", "options": {"strategy": "release"}}
+}
+```
+
+Wait for a successful run, check `results.get` validation, then open `views.get`
+with the scenario and result IDs. The complete acceptance case covers 3,705
+unfinished operations, six running operations and 65 locks. A local release-build
+measurement completed free construction in about 2.3 seconds; this is a feasible
+starting plan, not an optimization or delivery-performance claim. The original
+October 16 horizon and the default `queues` strategy did not produce complete
+plans in that check. Failed greedy construction does not prove infeasibility.
+New or edited source data always requires a fresh run and validation.
 
 ## Tests
 

@@ -69,7 +69,7 @@ def read_workbook(content):
                 if row[key] in (None, ""):
                     row[key] = None
                 else:
-                    row[key] = number(row[key], loc + ":" + key, positive=key in ("quantity", "sequence"),
+                    row[key] = number(row[key], loc + ":" + key, positive=key in ("quantity", "sequence", "run_minutes"),
                                       integer=key in ("quantity", "sequence"))
             for key in ("machine_id", "person_id"):
                 row[key] = identifier(row[key], loc + ":" + key) if row[key] not in (None, "") else None

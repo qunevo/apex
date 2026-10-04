@@ -73,6 +73,23 @@ class AdapterTests(unittest.TestCase):
         plans, _ = read_workbook(workbook(headers=HEADERS + ["Local note"], rows=[plan_row() + ["Added column"]]))
         self.assertIn("OP1", plans)
 
+    def test_proposed_start_outside_horizon_is_reported_without_changing_facts(self):
+        self.plans["OP1"]["start"] = "2026-10-12T08:00"
+        problem, report = self.convert()
+        self.assertEqual(report["warnings"][0]["code"], "PROPOSAL_HORIZON")
+        self.assertEqual(report["warnings"][0]["ids"], ["OP1"])
+        self.assertEqual(problem["locks"], [])
+        self.assertEqual(problem["horizon"], 403200)
+
+    def test_zero_run_allowance_cannot_remove_processing_for_positive_quantity(self):
+        row = plan_row()
+        row[9] = 0
+        self.fails("NUMBER", lambda: read_workbook(workbook(rows=[row])))
+        row[9] = None
+        self.plans, self.skills = read_workbook(workbook(rows=[row]))
+        problem, _ = self.convert()
+        self.assertEqual(problem["tasks"][0]["modes"][0]["phases"][1]["work"], 1200)
+
     def test_new_unassigned_row_uses_mes_times_without_implicit_fixation(self):
         row = ["OP1", "LOT1", "ORDER1", 10, "", "", "", "", "", "", "No", "", "New operation"]
         self.plans, self.skills = read_workbook(workbook(rows=[row]))

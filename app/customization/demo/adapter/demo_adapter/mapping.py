@@ -235,6 +235,11 @@ def build(snapshot, plans, skills, provenance, *, horizon_end=None):
     missing = sorted(set(records["personnel"]) - set(skills))
     if missing:
         warnings.append(dict(code="MISSING_QUALIFICATIONS", ids=missing, message="People without Excel qualifications have no eligible modes"))
+    outside = [plan["operation_id"] for plan in proposals
+               if plan["start"] is not None and clock.seconds(plan["start"]) >= clock.horizon]
+    if outside:
+        warnings.append(dict(code="PROPOSAL_HORIZON", ids=outside,
+                             message=f"{len(outside)} Excel proposed starts fall at/after the planning horizon. Review the horizon explicitly before planning."))
     assumptions = [
         "Only unfinished released MES operations are scheduled; completed/skipped history remains in the import report.",
         "MES facts override workbook copies of orders, calendars and material; Excel proposals are not hard commitments unless Fixed=Yes.",

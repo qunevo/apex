@@ -32,3 +32,8 @@ synchronizes Excel, activates native rules or writes a plan back to production.
 Keep uncommitted Excel proposals separate from fixed model decisions. A successful
 input check does not establish feasibility; run and independently validate before
 presenting a usable plan. The demo baseline can extend beyond the source horizon.
+For the complete shipped factory, the adapter guide documents an explicitly
+extended October 30 horizon and the free `release` strategy in `runs.start`.
+Use that tested starting point only when extending the horizon is intended;
+do not silently alter the source period, use Excel proposals as commitments or
+claim optimality. Report lateness and the actual validated completion dates.

@@ -35,7 +35,7 @@ def port():
         return sock.getsockname()[1]
 
 
-def request(url, payload=None, token=None, method=None, headers=None):
+def request(url, payload=None, token=None, method=None, headers=None, timeout=15):
     headers = dict(headers or {})
     if token:
         headers["Authorization"] = f"Bearer {token}"
@@ -43,7 +43,7 @@ def request(url, payload=None, token=None, method=None, headers=None):
         headers["Content-Type"] = "application/json"
     req = Request(url, data=None if payload is None else json.dumps(payload).encode(),
                   method=method, headers=headers)
-    with urlopen(req, timeout=15) as response:
+    with urlopen(req, timeout=timeout) as response:
         body = response.read()
         return json.loads(body) if "application/json" in response.headers.get("Content-Type", "") else body
 
@@ -144,6 +144,35 @@ def verify(directory, kind, image, build):
         if kind == "demo":
             meta = request(mes + "/api/meta")
             assert meta["counts"]["orders"] == 120 and meta["workbook_available"]
+            # Exercise the complete public MES + saved Excel adapter, not only a small engine fixture.
+            (cwd / ".local/adapter").mkdir(parents=True, exist_ok=True)
+            compose("--profile", "adapter", "run", "--build", "--rm", "adapter",
+                    "--config", "/config/sources.json", "--output", "/outputs/acceptance",
+                    "--horizon-end", "2026-10-30T22:00")
+            imported = json.loads((cwd / ".local/adapter/acceptance/scenario.json").read_text())
+            imported_ids = {task["id"] for task in imported["content"]["facts"]["tasks"]}
+            assert len(imported_ids) == 3705
+            factory = request(origin + "/v1/scenarios", imported, token, timeout=120)
+            factory_id = factory["scenario"]["id"]
+            del imported
+            factory_run = tool("runs.start", {"scenario_id": factory_id,
+                               "options": {"method": "create", "options": {"strategy": "release"}}})
+            for _ in range(300):
+                factory_state = tool("runs.get", {"run_id": factory_run["id"]})
+                if factory_state["state"] in ("succeeded", "failed", "cancelled"):
+                    break
+                time.sleep(.2)
+            assert factory_state["state"] == "succeeded", factory_state
+            factory_result = tool("results.get", {"result_id": factory_state["result"]})
+            assert factory_result["validation"]["valid"], factory_result["validation"]
+            assert {row["id"] for row in factory_result["view"]["operations"]} == imported_ids
+            overview = tool("views.get", {"scenario_id": factory_id, "result_id": factory_state["result"]})
+            assert overview["source_summary"]["counts"]["planned_operations"] == 3705
+            sources = tool("views.get", {"scenario_id": factory_id, "view_id": "demo.sources"})
+            assert sources["view_id"] == "demo.sources"
+            insights = rpc("resources/read", {"uri": "ui://apex/insights.html"})
+            assert insights["contents"][0]["mimeType"] == "text/html;profile=mcp-app"
+            print("demo: MES + Excel -> 3,705 operations -> free release strategy -> valid MCP result; explicit October 30 horizon", flush=True)
             bash = shutil.which("bash")
             assert bash, "Bash is required to verify the demo launcher"
             launched = run([bash, (cwd / "scripts/start-demo.sh").as_posix(), "--resume", "--no-build", "--no-open"],
