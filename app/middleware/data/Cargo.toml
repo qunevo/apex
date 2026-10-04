@@ -1,0 +1,23 @@
+[package]
+name = "apex-control-postgres"
+description = "PostgreSQL store for the APEX control platform with tenant row-level security"
+version.workspace = true
+edition.workspace = true
+publish = false
+license-file = "../../LICENSE"
+
+[dependencies]
+apex-control = { path = "../control" }
+async-trait.workspace = true
+chrono.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sqlx = { version = "0.9", default-features = false, features = ["runtime-tokio", "tls-rustls", "postgres", "uuid", "chrono", "json", "migrate", "macros"] }
+uuid.workspace = true
+
+[dev-dependencies]
+apex-control = { path = "../control", features = ["testing"] }
+tokio.workspace = true
+
+[lints]
+workspace = true

@@ -150,7 +150,7 @@ fn conditional_commitments_conflicts_corruption_and_parallel_search() {
 fn post_choices_and_governed_prefixes_use_the_same_conditional_genes() {
     let mut p = fixture();
     p.tasks[0].post = std::mem::take(&mut p.tasks[0].pre);
-    p.planning=serde_json::from_value(json!({"version":"apex.planning.v1","policies":[{"kind":"idle_gap","id":"gap","resource":"M0","maximum":1000,"fallback_to_smallest":false}]})).unwrap();
+    p.planning=serde_json::from_value(json!({"policies":[{"kind":"idle_gap","id":"gap","resource":"M0","maximum":1000,"fallback_to_smallest":false}]})).unwrap();
     let o = prefix(&p);
     let s = apex::xt::search(&p, &o).unwrap();
     assert_eq!(s.metrics["makespan"], 100.0);
@@ -556,14 +556,17 @@ fn metric_catalog_units_and_reserved_names_are_unambiguous() {
 #[test]
 fn fractional_objectives_and_native_metrics_survive_json_persistence() {
     let mut p: Problem = apex::production::expand(
-        serde_json::from_str(include_str!("../examples/production-orders.json")).unwrap(),
+        serde_json::from_str(include_str!(
+            "../customization/demo/model/production-orders.json"
+        ))
+        .unwrap(),
     )
     .unwrap();
     p.customization = Some(CustomizationRef {
-        id: "dummy_customer".into(),
+        id: "demo".into(),
         version: "1".into(),
     });
-    for metric in ["dummy_priority_completion", "task_on_time_delivery"] {
+    for metric in ["demo_priority_completion", "task_on_time_delivery"] {
         p.objectives = vec![Objective {
             metric: metric.into(),
             maximize: metric.ends_with("delivery"),
@@ -582,7 +585,7 @@ fn fractional_objectives_and_native_metrics_survive_json_persistence() {
         old.metrics.retain(|id, _| {
             apex::metrics::ORIGINAL.contains(&id.as_str())
                 || id == metric
-                || id == "dummy_priority_completion"
+                || id == "demo_priority_completion"
         });
         assert!(validate(&p, &old).valid);
     }

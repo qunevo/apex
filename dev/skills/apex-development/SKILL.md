@@ -9,7 +9,9 @@ Read root `AGENTS.md`, [repository layout](../../docs/repository-layout.md) and 
 
 ## Investigate and clarify
 
-Run `python -B dev/scripts/repo_status.py` once at the start of development. Briefly surface other open work and a dirty checkout before editing. Treat local unmerged branches as candidates, not proven conflicts; inspect only relevant overlaps. Do not load every PR diff or repeat the inventory on each turn. An unavailable GitHub check is an explicit limitation, not evidence that no work exists.
+Run `python -B dev/scripts/repo_status.py` once at the start of development. Briefly surface open work and a dirty checkout before editing, including unfinished work on the current feature branch. The script's other-branch list excludes the current branch; an empty list does not establish that no feature work is open. Treat local unmerged branches as candidates, not proven conflicts; inspect only relevant overlaps. Do not load every PR diff or repeat the inventory on each turn. An unavailable GitHub check is an explicit limitation, not evidence that no work exists.
+
+Prefer an existing unfinished feature branch. If the user has not already selected a branch for this work, name the existing candidates and ask whether to use one or create a new branch. With one candidate, ask whether to use it; with several, ask which to use or whether a new branch is wanted. Continue read-only investigation while awaiting that choice. A branch selection already made for the ongoing work remains valid; do not ask again on every turn.
 
 Turn spoken notes or pasted ideas into an outcome, boundaries and observable acceptance criteria. Read the affected entry points and tests before proposing changes. Ask one to three consequential questions at a time; distinguish unresolved requirements from choices the agent can make. Continue independent investigation while answers are pending.
 
@@ -23,7 +25,9 @@ For an exploratory idea, wait for approval of the concrete implementation plan b
 
 ## Implement the approved plan
 
-Fetch `origin`, then create `codex/<topic>` from `origin/dev` in an isolated worktree when another task owns the checkout or it has unrelated changes. Continue the current task's existing feature branch rather than creating duplicates. If `dev` is absent, report the bootstrap requirement in [developer workflow](../../docs/developer-workflow.md); do not silently use a different integration branch. Never switch another task's checkout, reset its work or carry unrelated changes into a PR.
+Work in the local checkout on the selected feature branch. Avoid worktrees by default; create one only when the user explicitly approves it. Another task's ownership or unrelated local changes require coordination, not automatic creation of a worktree or another feature branch. Preserve existing work and resolve the checkout choice with the user before switching or editing conflicting files.
+
+When no unfinished feature branch exists, or the user chooses a new one, fetch `origin` and create `codex/<topic>` from `origin/dev` in the local checkout. If `dev` is absent, report the bootstrap requirement in [developer workflow](../../docs/developer-workflow.md); do not silently use a different integration branch. Never switch another task's checkout, reset its work or carry unrelated changes into a PR.
 
 Keep edits within the approved scope. Keep customer workflows in `app/skills`, contributor workflows in `dev/skills` and generated discovery entries in `.agents/skills`. Split modules only for an understood responsibility boundary; use `apex-refactor` for a broader audit.
 
@@ -39,4 +43,4 @@ Carry the user's existing authorization through to completion without asking for
 
 Treat [branch lifecycle](../../docs/developer-workflow.md#branch-lifecycle) as the completion contract: verify the task's merged temporary branches are gone remotely and locally, preserve `main`, `dev`, active work and worktree files, and report any deferred cleanup with its reason. After release synchronization, verify ancestry and equal tracked content, retaining and explaining any newer development changes. A merged PR alone is not completion.
 
-Report the actual checks, integration/publication state, branch cleanup and remaining limitations that apply to the authorized scope. Start later work on a fresh branch from current `origin/dev`; do not reuse a completed branch.
+Report the actual checks, integration/publication state, branch cleanup and remaining limitations that apply to the authorized scope. For later work, first check for unfinished feature branches and follow the branch-selection process above. Do not reuse a completed branch; create a fresh branch from current `origin/dev` when no unfinished branch is selected.

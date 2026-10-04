@@ -9,7 +9,7 @@ async function call(name,args={}) {
   const r=await fetch(`${origin}/api/tools/${name}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(args)});
   const value=await r.json(); assert.ok(r.ok,JSON.stringify(value)); return value;
 }
-const imported=await call('problem.import',{path:'examples/chain-routing.json'});
+const imported=await call('problem.import',{path:'tests/fixtures/chain-routing.json'});
 const prepared=await call('material.prepare',{scenario_id:imported.scenario_id,expected_revision:1});
 assert.equal(prepared.allocation_preview,true);
 const scenario_id=prepared.scenario_id;

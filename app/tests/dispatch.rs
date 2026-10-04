@@ -2,7 +2,6 @@ use apex::{demo, model::*, policy, rules::Customization, validate, xg};
 use serde_json::{Value, json};
 fn problem(n: usize) -> Problem {
     let mut p = demo::problem(n);
-    p.schema_version = "apex.v3.4".into();
     for (i, t) in p.tasks.iter_mut().enumerate() {
         t.id = format!("T{i}");
         t.family = "A".into();
@@ -386,11 +385,8 @@ fn policy_counts_observed_and_remaining_running_work() {
     assert!(validate::validate(&p, &s).valid);
 }
 #[test]
-fn planning_versions_unknown_selectors_and_reserved_metric_names_are_rejected() {
+fn unknown_selectors_and_reserved_metric_names_are_rejected() {
     let mut p = problem(1);
-    p.planning.version = "future".into();
-    assert!(apex::compile::compile(&p).is_err());
-    p.planning.version = "apex.planning.v1".into();
     p.planning.constraints=serde_json::from_value(json!([{"kind":"window","id":"typo","select":{"tasks":["missing"]},"earliest":0,"latest":100}])).unwrap();
     assert!(apex::compile::compile(&p).is_err());
     p.planning.constraints.clear();
@@ -502,14 +498,14 @@ fn registered_native_metrics_and_sequence_decorations_compose_with_exact_policie
         max_lag: None,
     }];
     p.customization = Some(CustomizationRef {
-        id: "dummy_customer".into(),
+        id: "demo".into(),
         version: "1".into(),
     });
     campaign(&mut p, "productive_time", 20.0);
     let s = xg::create(&p, &o()).unwrap();
     assert_eq!(seq(&s), vec!["T0", "T1", "T2"]);
     assert_eq!(s.metrics["setup_penalty"], 100.0);
-    assert!(s.metrics.contains_key("dummy_priority_completion"));
+    assert!(s.metrics.contains_key("demo_priority_completion"));
     assert!(validate::validate(&p, &s).valid);
 }
 struct TimedFilter;

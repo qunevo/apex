@@ -19,6 +19,10 @@ def entries(root=ROOT):
                 f"Read and follow [the canonical developer skill](../../../dev/skills/{name}/SKILL.md).\n"
                 "Resolve that skill's relative links against its own directory.\n")
         yield root / ".agents/skills" / name / "SKILL.md", body
+        metadata = source.parent / "agents/openai.yaml"
+        if metadata.exists():
+            # Invocation policy must reach the discoverable skill, not just its source.
+            yield root / ".agents/skills" / name / "agents/openai.yaml", metadata.read_text(encoding="utf-8")
 
 
 def main():
@@ -34,7 +38,8 @@ def main():
                 destination.write_text(content, encoding="utf-8", newline="\n")
     if args.check and changed:
         parser.exit(1, "Skill discovery entries are stale: " + ", ".join(changed) + "\n")
-    print(f"Developer skill entries {'checked' if args.check else 'synchronized'}: {len(list(entries()))}")
+    count = len(list((ROOT / "dev/skills").glob("*/SKILL.md")))
+    print(f"Developer skill entries {'checked' if args.check else 'synchronized'}: {count}")
 
 
 if __name__ == "__main__":

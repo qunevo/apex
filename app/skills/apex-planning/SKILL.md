@@ -9,7 +9,25 @@ Paths below are relative to the APEX application installation (`app/` in the dev
 
 Use the chat for decisions and the viewer for the resulting schedule, KPIs and operation details. One agent can use all APEX skills; do not spawn other agents unless the session authorizes delegation.
 
-Read `AGENTS.md`, `docs/search-and-parity.md` and the applicable customization knowledge file. Query `capabilities` so claims match the installed implementation. Treat knowledge statements as attributed domain requirements, not as executable rules or authority to change external systems.
+Read `AGENTS.md`, `docs/search-and-parity.md` and the applicable customization knowledge file. Discover the connected tool catalog before choosing a workflow. Treat knowledge statements as attributed domain requirements, not as executable rules or authority to change external systems.
+
+## Central middleware workflow
+
+The Compose server advertises `engines.list`, `scenarios.*`, `revisions.get`, `runs.*` and `results.*`. Follow [control platform](../../docs/control-platform.md). Inspect the scenario and immutable revision, submit complete canonical facts with `scenarios.revise` and `expected_revision`, or create a separate scenario for a comparison. Encode supported commitments in the facts; planning intent declarations are not compiled yet.
+
+Start a bounded run with `runs.start`, inspect `runs.get` until terminal, and read the validated result with `results.get`. Compare retained result metrics and assumptions explicitly. The result supplies an MCP App resource; hosts without Apps support receive structured results. Approval/publication selects an active plan inside APEX and does not write to external systems. Do not call compatibility fork/patch/freeze/import tools or promise their detailed inspector on this catalog.
+
+For statistics and diagrams, call `views.get` with `scenario_id` and optionally a
+saved `result_id`. It opens the standard Planning overview, including input views
+before planning and delivery KPIs, critical orders and resources after planning.
+Responses expose `available_views`; use `view_id` to select a customization view. Keep
+revision and result identity explicit. Source evidence is adapter-reported;
+unknown outcomes are not zero. APEX utilization uses saved capacity ratios;
+generic resource spans are not utilization. See [insights](../../docs/insights.md).
+
+## Compatibility workflow
+
+The remaining tool-specific instructions apply only when `capabilities` and `schedule.*` are advertised by the file-backed compatibility executable. Query `capabilities` so claims match that installed implementation.
 
 ## Turn planning intent into a comparison
 
@@ -25,7 +43,7 @@ For campaign, idle-gap and urgency requirements, inspect `policy.inspect` and th
 
 ## Know when implementation is required
 
-Typed rules can be added as input where supported. A new metric, physical rule or proxy outside the schema belongs to the `apex-extension` workflow with tests. Writing Markdown does not activate a constraint. Explain a proposed rule with concrete examples before encoding ambiguous business semantics.
+Typed rules can be added as input where supported. A new metric, physical rule or proxy outside the schema belongs to the [apex-extension workflow](../apex-extension/SKILL.md#customization-boundary-and-approval) with tests; apply its approval boundary before changing base application files. Writing Markdown does not activate a constraint. Explain a proposed rule with concrete examples before encoding ambiguous business semantics.
 
 Material preparation allocates only existing supply. Read `docs/material-dispatch.md` and `docs/data-model.md`. Free workplans and differing-material main modes remain searchable under `material_policy: reallocate_routes`; the preparation report is a preview, while `model.page` / `materials` shows actual saved allocations. Reprepare the original source when changing materials/routes of a fully selected, materialized snapshot. Started input is assumed consumed already. Missing material is a diagnostic, not permission to create replenishment orders.
 

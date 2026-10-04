@@ -79,6 +79,11 @@ jobs:
           cargo clippy --locked --all-targets -- -D warnings
           cargo test --locked
           cargo build --locked --release
+      - name: Lint and test the desktop display client
+        if: runner.os == 'macOS'
+        run: |
+          cargo clippy --locked -p apex-desktop --all-targets -- -D warnings
+          cargo test --locked -p apex-desktop
       - name: Install Node for Linux integration
         if: runner.os == 'Linux'
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -86,6 +91,16 @@ jobs:
           node-version: '24'
           cache: npm
           cache-dependency-path: app/package-lock.json
+      - name: Install Python for the optional demo adapter
+        if: runner.os == 'Linux'
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.14'
+      - name: Demo adapter mapping and real-engine validation
+        if: runner.os == 'Linux'
+        run: |
+          python -m pip install -r customization/demo/adapter/requirements.txt
+          APEX_TEST_BINARY="$PWD/target/release/apex" python -B -m unittest discover -s customization/demo/tests -p 'test_adapter.py' -v
       - name: Install integration dependencies
         if: runner.os == 'Linux'
         run: |
@@ -96,6 +111,9 @@ jobs:
         run: |
           npm run test:mcp
           npm run test:http
+          npm run test:config
+          npm run test:mcp-app
+          npm run test:insights
       - name: Viewer integration using the same release executable
         if: runner.os == 'Linux'
         run: |
@@ -139,6 +157,16 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.14'
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+      - name: Demo MES workflows and language templates
+        run: |
+          python -B -m unittest discover -s demo/mes/tests -v
+          for source in demo/mes/web/*.js demo/mes/web/locales/*.js; do
+            node --check "$source"
+          done
+          node demo/mes/tests/i18n.mjs
       - name: Contributor tests, documentation and skill consistency
         run: |
           python -B -m unittest discover -s dev/tests -p 'test_*.py' -v
@@ -151,6 +179,40 @@ jobs:
           BASE_REVISION: ${{ needs.changes.outputs.base }}
           TARGET_BRANCH: ${{ needs.changes.outputs.target }}
         run: python -B dev/scripts/release.py check --base "$BASE_REVISION" --target "$TARGET_BRANCH"
+
+  control-postgres:
+    name: Control platform on PostgreSQL
+    needs: changes
+    if: needs.changes.outputs.runtime == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: app
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_PASSWORD: apex
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install stable Rust
+        run: |
+          rustup toolchain install stable --profile minimal --no-self-update
+          rustup default stable
+      - name: Store conformance and row-level security
+        env:
+          APEX_TEST_DATABASE_URL: postgres://postgres:apex@127.0.0.1:5432/postgres
+        run: cargo test --locked -p apex-control-postgres
 
   standalone:
     name: Standalone application
@@ -172,10 +234,26 @@ jobs:
       - name: Build and run using only the application source
         run: python -B dev/scripts/check_standalone.py
 
+  containers:
+    name: Standalone and demo containers
+    needs: changes
+    if: needs.changes.outputs.runtime == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.14'
+      - name: Start, plan and recreate both deployments
+        run: python -B dev/scripts/check_containers.py
+
   required:
     name: Required checks
     if: ${{ always() }}
-    needs: [changes, rust, publication, standalone]
+    needs: [changes, rust, control-postgres, publication, standalone, containers]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -184,17 +262,23 @@ jobs:
           SCOPE_RESULT: ${{ needs.changes.result }}
           RUNTIME_REQUIRED: ${{ needs.changes.outputs.runtime }}
           RUST_RESULT: ${{ needs.rust.result }}
+          POSTGRES_RESULT: ${{ needs.control-postgres.result }}
           PUBLICATION_RESULT: ${{ needs.publication.result }}
           STANDALONE_RESULT: ${{ needs.standalone.result }}
+          CONTAINERS_RESULT: ${{ needs.containers.result }}
         run: |
           test "$SCOPE_RESULT" = success
           test "$PUBLICATION_RESULT" = success
           if test "$RUNTIME_REQUIRED" = true; then
             test "$RUST_RESULT" = success
+            test "$POSTGRES_RESULT" = success
             test "$STANDALONE_RESULT" = success
+            test "$CONTAINERS_RESULT" = success
           elif test "$RUNTIME_REQUIRED" = false; then
             test "$RUST_RESULT" = skipped
+            test "$POSTGRES_RESULT" = skipped
             test "$STANDALONE_RESULT" = skipped
+            test "$CONTAINERS_RESULT" = skipped
           else
             exit 1
           fi

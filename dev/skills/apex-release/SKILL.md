@@ -18,7 +18,7 @@ python -B dev/scripts/release.py inspect --base origin/main
 python -B dev/scripts/release.py prepare --base origin/main --bump patch --notes PATH_TO_NOTES
 ```
 
-Use the selected bump type. Preparation updates only the product version, its own lockfile entry and versioned release notes; it does not upgrade dependencies. Commit those reviewed changes and validate with `release.py check --base origin/main --target main`. Pure maintenance can reach `main` without a product bump or a new tag.
+Use the selected bump type. Preparation updates only the shared product version, its workspace-package lockfile entries and versioned release notes; it does not upgrade dependencies. Commit those reviewed changes and validate with `release.py check --base origin/main --target main`. Pure maintenance can reach `main` without a product bump or a new tag.
 
 Create or reuse a PR to `main` using the same PR tooling and SHA safeguards as [merge-dev](../apex-merge-dev/SKILL.md). Check the complete release diff, all required checks and resolved conversations before merging. Attach the PR. If `main` changed meanwhile, reconcile and recompute the candidate version before running CI again. Never bypass branch rules or publish an untested replacement commit.
 

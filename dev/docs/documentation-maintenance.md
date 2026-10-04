@@ -4,13 +4,16 @@ Executable behavior, documented intent and measured evidence are different sourc
 
 | Material | Owner and maintenance rule |
 | --- | --- |
-| Product contracts and operation | `app/docs`; keep usable in a standalone app checkout |
+| Shared product concepts, business semantics and user workflows | `app/docs`; keep usable in a standalone app checkout and include public guides in `dev/scripts/wiki-pages.json` |
+| Local technical instructions | Directory READMEs: responsibilities, files, interfaces and build/test/generation steps; link to the owning product guide for business behavior |
 | Module boundaries and affected tests | `app/docs/architecture/README.md`; link to owners instead of duplicating implementation |
 | Customer planning/customization instructions | `app/skills`; never depend on repository contributor tools |
 | Contributor processes and CI/release policy | `dev/docs` and `dev/skills`; discovery entries are generated |
 | Historical migration evidence | `dev/docs/migration-audit.md`; preserve dates, versions and limits |
 | Frozen benchmark evidence | `benchmark/`; no cleanup without specific review of the frozen artifact |
 | Local reports, caches and runtime artifacts | ignored local outputs; establish ownership and reproducibility before cleanup |
+
+Extend an existing guide before creating another page for the same topic. Each contract has one maintained source; the wiki is generated from that source, not written separately. When moving an explanation out of a directory README, reconcile overlapping documentation and repair its inbound links. Package-specific customer knowledge stays with its customization and is not automatically promoted to the public wiki.
 
 Run `python -B dev/scripts/context_audit.py` for a small ranked list of source and Markdown hotspots. Its thresholds prompt investigation; they are not style limits. Inspect mixed responsibilities and the files a developer must load for a concrete change. Keep cohesive code together, split only along useful interfaces, and keep comments focused on invariants and reasoning.
 

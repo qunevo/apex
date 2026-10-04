@@ -1,10 +1,12 @@
 # Chat-led scheduling
 
-The default web UI is a plan viewer: schedule, KPIs, order completion, commitments and operation details. It does not require the planner to understand scenario forks, patches, Q policies or search budgets. The agent performs those operations through tools and returns a saved-plan link. `?mode=workbench` exposes the development controls when needed.
+The central server uses `scenarios.create|revise`, `runs.start|get` and `results.get`. Facts are canonical engine input; production-template expansion and live source adapters are not exposed as central tools yet. A supporting chat host displays the MCP App returned with a result. Approval/publication sets the active plan inside APEX and does not write back to MES/ERP. See [control platform](control-platform.md).
+
+The compatibility executable's web UI is a plan viewer: schedule, KPIs, order completion, commitments and operation details. It does not require the planner to understand scenario forks, patches, Q policies or search budgets. The agent performs those operations through tools and returns a saved-plan link. `?mode=workbench` exposes the development controls when needed.
 
 The **Discuss in your chat** button copies a bounded context with scenario, revision, schedule, baseline and selected operation IDs. It does not send a message or embed another model. A tool-capable chat needs an actual MCP/HTTP connection; a URL alone does not grant tool access. The UI is independent of the chat provider.
 
-## Roles, not mandatory separate agents
+## Agent workflows
 
 Three portable repository skills live in `skills/`:
 
@@ -13,6 +15,8 @@ Three portable repository skills live in `skills/`:
 | `apex-data-intake` | Read authorized sources, convert units and relationships, validate and import | Scenario/revision, source mapping, counts, unresolved facts |
 | `apex-planning` | Discuss domain rules, explain plans, run scenarios and sensitivity cases | Validated results, KPI trade-offs, viewer links |
 | `apex-extension` | Implement new rules, objectives, hooks and measured Q proxies | Tested code/schema, synthetic examples, documented limits |
+
+Customer extensions follow the [customization boundary and approval workflow](../skills/apex-extension/SKILL.md#customization-boundary-and-approval). The agent uses existing package interfaces first and obtains informed, scoped approval before changing shipped base application files, including registration/build wiring. The skill records upgrade implications; it is agent guidance, not a runtime write barrier.
 
 A single agent can switch skills. Separate agents are optional when distinct credentials, domains or independently testable implementation work justify them. They must exchange artifact references and explicit requirements, not duplicate full production exports in their context. These are ordinary Markdown skills; hosts without skill discovery can load the relevant file as workflow guidance.
 
@@ -38,6 +42,8 @@ flowchart LR
   Results --> Viewer[Lean plan viewer]
   Results --> Planning
 ```
+
+The following fork/freeze/patch sequence describes the compatibility tools. On the central server, preserve a baseline scenario, submit canonical facts to a new scenario or revision, and compare retained result metrics explicitly.
 
 ```mermaid
 sequenceDiagram

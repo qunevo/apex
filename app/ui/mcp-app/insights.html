@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>APEX · Planning overview</title><style>/* APEX_INSIGHTS_STYLE */</style><style>/* APEX_BRAND_STYLE */</style><style>/* APEX_CUSTOM_STYLE */</style></head>
+<body>
+  <header>/* APEX_BRAND */<div class="header-actions"><button id="refresh" disabled>Refresh</button><button id="show-schedule" class="primary" hidden>Open schedule <span aria-hidden="true">↗</span></button></div></header>
+  <p id="message" role="status">Connecting to the chat host…</p>
+  <main id="main" hidden>
+    <section class="hero"><div><p id="context"></p><h1 id="title"></h1><p id="subtitle"></p></div><span id="revision" class="revision-badge"></span></section>
+    <div class="summary"><span id="validation"></span><span id="result-status"></span></div>
+    <div id="dashboard">
+    <section id="metrics" aria-label="Snapshot metrics"></section>
+    <nav class="toolbar" aria-label="Dashboard controls"><div id="sections" role="group" aria-label="Show panels"><button data-section="all" aria-pressed="true">Overview</button><button data-section="orders" aria-pressed="false">Orders</button><button data-section="resources" aria-pressed="false">Resources</button><button data-section="input" aria-pressed="false">Input</button><button data-section="result" aria-pressed="false">Metrics</button></div><label>View <select id="view-select"></select></label></nav>
+    <div id="panels"></div>
+    <div id="notes" class="notes"></div>
+    </div>
+    <section id="schedule-view" hidden aria-label="Production schedule"><button id="back-overview">← Back to overview</button><div id="schedule-content"></div></section>
+    <details class="provenance"><summary>Data and provenance</summary><span id="package"></span><p id="identity"></p><div id="sources"></div></details>
+  </main>
+  <footer><span>APEX <span class="footer-byline">by Qunevo</span></span><span>Saved planning data · Read only</span></footer>
+  <script>/* APEX_APP_BRIDGE */</script>
+  <script>/* APEX_INSIGHTS_WIDGETS */</script>
+  <script>/* APEX_SCHEDULE */</script>
+  <script>/* APEX_CUSTOM_VIEWS */</script>
+  <script>/* APEX_INSIGHTS_VIEW */</script>
+</body></html>

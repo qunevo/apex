@@ -1,0 +1,25 @@
+# Customization packages
+
+Each folder groups one synthetic or privately installed domain package. The
+bundled package is `demo`, containing the factory integration boundary and an
+optional native scheduling extension example in `model/`.
+
+`package.json` contains a stable `id` matching the folder and a version token.
+The server configuration explicitly enables folder IDs and selects a default;
+placing another folder here does not activate it. The base container stack leaves package selection unconfigured; an optional package-specific configuration is bundled inside `demo/`. See
+[server configuration](../docs/server-configuration.md).
+
+- `adapter/`: source extraction and repeatable mapping.
+- `model/`: domain knowledge, executable declarations and optional native hooks.
+- `skills/`: domain workflows extending the general application skills.
+- `tests/`: synthetic mapping and semantic tests.
+- `ui/`: optional views reusing the common UI.
+
+These are responsibility boundaries, not automatic plugin discovery. Package
+selection scopes server state and inputs. `Problem.customization` independently
+selects a statically registered native extension; a folder does not register
+Rust code. Skills must be loaded by the agent host. UI extensions need explicit
+build/server registration through the [provider and renderer hooks](../docs/insights.md).
+Source details exercises both hooks. Real customer packages and data are not published.
+
+For customer changes, follow the [extension boundary and approval workflow](../skills/apex-extension/SKILL.md#customization-boundary-and-approval). It distinguishes package work, explicit registration outside the package and base application changes, and records the approved changes needed when upgrading APEX.

@@ -1,34 +1,31 @@
 # APEX documentation
 
-This index describes the runnable Rust implementation with executable schema **`apex.v3.4`**. Canonical v3.1, v3.2 and v3.3 inputs remain accepted. Runtime capabilities and generated schemas are authoritative for the installed build; the migration audit records the scope of historical v2 comparisons.
+This index describes the runnable Rust implementation and its current, unversioned input schemas, which ship with the application release. Runtime capabilities and generated schemas are authoritative for the installed build; the migration audit records the scope of historical v2 comparisons.
 
 ## Use and integrate APEX
 
 | Guide | Read it for |
 | --- | --- |
+| [Container start](containers.md) | One-command server startup, credentials and retained state |
 | [Operating guide](implementation.md) | Build, run, verify and understand runtime limits |
 | [Agent workflows](agent-workflows.md) | Data intake, planner conversations and extension responsibilities |
 | [Agent integration](agent-integration.md) | MCP, HTTP, authentication, pagination and large imports |
+| [Server configuration](server-configuration.md) | Enabled packages, per-call selection and scoped state |
+| [Control platform](control-platform.md) | Tenants, versioned scenarios, background runs, approval, PostgreSQL, MCP/HTTP and the desktop display client |
+| [MCP App insights](insights.md) | Revision-bound dashboards, charts, source evidence and customization view/renderer hooks |
 | [Executable data model](data-model.md) | Units, routes, orders, conditional activities, locks, objectives and KPIs |
 | [Material preparation](material-dispatch.md) | Existing-supply allocation, flexible routes and material modes |
 | [Search and objectives](search-and-parity.md) | Q policies, XH, XT, replay and search limits |
 | [Combined improvement](architecture/combined-improvement.md) | One shared budget for XH, XT and optional XE |
 | [Direct schedule evolution](direct-schedule-evolution.md) | Priority chromosomes, genetic operators and extension contracts |
 | [Declarative scheduling](architecture/declarative-scheduling.md) | Typed constraints, mandatory dispatch policies and explanations |
-| [Synthetic customization](../customizations/dummy_customer/KNOWLEDGE.md) | Domain knowledge, native hooks and validation requirements |
+| [Synthetic customization](../customization/demo/model/KNOWLEDGE.md) | Domain knowledge, native hooks and validation requirements |
 
-## Schemas and examples
+## Schemas and demo
 
-The current generated schemas cover the [canonical problem](../schemas/apex.v3.4.json), [production templates](../schemas/production.v3.4.json) and [planning options](../schemas/options.v3.4.json). Only these current snapshots are kept in the repository. The CLI and `schema.get` generate schemas from Rust types; acceptance of older canonical inputs is enforced by the runtime and does not depend on historical schema files.
+Start with the [data model and planning workflow](data-model.md#from-source-data-to-a-schedule) for the two import paths, optional production expansion, lot creation and planning options. [Material preparation](material-dispatch.md#when-allocation-runs) explains when supply is allocated. The [schema roles and tool releases](data-model.md#schema-roles-and-tool-releases) describe the three input contracts and release boundary; the [schema directory README](../schemas/README.md) maps generated files to Rust types and gives regeneration commands.
 
-| Synthetic example | Focus |
-| --- | --- |
-| [Demo](../examples/demo.json) | Basic canonical scheduling input |
-| [Production orders](../examples/production-orders.json) | Quantities, lot expansion and selectable workplans |
-| [Shift factory](../examples/shift-factory.json) | Calendars, conditional work and material |
-| [Material chains](../examples/chain-routing.json) | Flexible routing, allocation and downstream urgency |
-| [Dispatch campaign](../examples/dispatch-campaign.json) | Mandatory construction policies |
-| [Release times](../examples/improve-release-times.json) | Combined-improvement scenario |
+The [factory showcase](https://github.com/qunevo/apex/tree/main/demo) presents the MES/Excel workflow. Its [customization package](../customization/demo/model/KNOWLEDGE.md) contains an optional [source adapter](../customization/demo/adapter/README.md) that reads the live MES and saved workbook into canonical input JSON, plus independent technical policy examples. Import, scenario submission and planning are explicit steps. Small synthetic inputs used to verify individual engine capabilities remain [test fixtures](../tests/fixtures).
 
 ## Work on the repository
 
@@ -44,4 +41,4 @@ Read the [contribution guide](https://github.com/qunevo/apex/blob/main/CONTRIBUT
 - [Publication preparation](https://github.com/qunevo/apex/blob/main/dev/docs/publication.md) lists release checks.
 - [Wiki publication](https://github.com/qunevo/apex/blob/main/dev/docs/wiki-publication.md) explains how reviewed documentation is published automatically.
 
-The [data-model reference](data-model.md) covers the current format and accepted canonical input versions. The removed v2 source and execution harnesses cannot be run from this checkout; see [migration audit](https://github.com/qunevo/apex/blob/main/dev/docs/migration-audit.md).
+The [data-model reference](data-model.md) covers the current scheduling problem and its input contract. The removed v2 source and execution harnesses cannot be run from this checkout; see [migration audit](https://github.com/qunevo/apex/blob/main/dev/docs/migration-audit.md).

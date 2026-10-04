@@ -88,6 +88,7 @@ def source_archive_codes(root: Path, path: Path) -> set[str]:
                         or any(part.startswith(".") for part in relative.parts)
                         or any(part.lower() in {"target", "node_modules", "__pycache__", "venv", "env"}
                                for part in relative.parts)
+                        # The frozen source archive retains its reviewed historical package name.
                         or any(part == "customizations" and relative.parts[index + 1] != "dummy_customer"
                                for index, part in enumerate(relative.parts[:-1]))):
                     codes.add("SOURCE_ARCHIVE_MEMBER")
@@ -139,8 +140,8 @@ def scan(root: Path) -> list[dict[str, str]]:
         if path.name == ".env" or (path.name.startswith(".env.") and path.name != ".env.example"):
             codes.add("LOCAL_ENV_FILE")
         product_parts = relative.parts[1:] if relative.parts[:1] == ("app",) else relative.parts
-        if product_parts[:1] == ("customizations",) and len(product_parts) > 2:
-            if product_parts[1] != "dummy_customer":
+        if product_parts[:1] in (("customizations",), ("customization",)) and len(product_parts) > 2:
+            if product_parts[1] != "demo":
                 codes.add("NON_DEMO_CUSTOMIZATION")
         if path.suffix in TEXT_SUFFIXES or path.name in {".env-example", ".env.example", "Dockerfile"}:
             try:

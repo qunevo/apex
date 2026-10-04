@@ -1,6 +1,13 @@
 # Agent integration
 
-APEX exposes the same 32 tools through MCP stdio, MCP Streamable HTTP and a plain JSON HTTP API. The scheduler does not depend on a model provider. A chat host must support one of these tool transports, or supply a small bridge. A chat without tool access cannot invoke APEX merely by receiving its URL.
+For the central server started by Docker Compose, use the authenticated HTTP MCP endpoint and the scenario/run/result tools in [control platform](control-platform.md#agents-mcp). Read [containers](containers.md#connect-a-chat) for access tokens. Its MCP App resource is shown by supporting chat hosts.
+
+This page documents the separate compatibility `apex` executable. It exposes the same 32 tools through MCP stdio, MCP Streamable HTTP and a plain JSON HTTP API. The scheduler does not depend on a model provider. A chat host must support one of these tool transports, or supply a small bridge. A chat without tool access cannot invoke APEX merely by receiving its URL.
+
+One server can enable several customization packages through `--config FILE`
+or `APEX_CONFIG`. Every tool accepts an optional `customization` folder ID;
+omission uses the configured default. Carry that ID on subsequent calls.
+See [server configuration](server-configuration.md) for input and state scopes.
 
 ## Local MCP
 
@@ -15,7 +22,7 @@ Configure the host to launch the release executable:
 
 Use `apex.exe` on Windows. This is a command/arguments example; the surrounding configuration format belongs to the host. `--with-viewer` also starts the browser workbench on port 8765. An occupied viewer port does not terminate stdio tools. Select another `--port` if necessary.
 
-For the existing Codex project setup, `bash deploy/setup-mcp.sh` writes the ignored project configuration. Run it in Bash, or Git Bash for a native Windows host, after building the release executable. It preserves other settings and leaves an existing APEX entry unchanged. Restart the host's MCP connection after changing the executable. See the [Bash helper guide](implementation.md#bash-helpers) and [configuration template](../examples/codex-mcp.toml).
+The executable path points to the application installation; `--workspace` can select a separate data directory. Build for the environment that runs the client: native Windows hosts need Windows paths and `apex.exe`; a client inside WSL needs Linux paths and a Linux binary. Keep host configuration local and restart its MCP connection after replacing the executable. For the central server, use the [HTTP MCP connection](control-platform.md#agents-mcp).
 
 ## HTTP MCP and function tools
 
@@ -53,7 +60,7 @@ The portable repository skills under `skills/` cover data intake, planning and c
 
 ## Suggested agent workflow
 
-1. `capabilities` and `schema.get`: discover supported semantics. Request a named definition rather than the entire schema.
+1. `capabilities` and `schema.get`: discover the tool version and its current input contract. Schemas ship with the application release and have no separate format-version fields. Request a named definition rather than the entire schema.
 2. Import a canonical problem with `problem.import`, or orders and workplan templates with `production.import`.
 3. When existing supply needs allocation, use `material.prepare` to create a separate prepared scenario and page its report. See [the material contract](material-dispatch.md). Inspect diagnostics; missing processing work is an error, never silently replaced with zero. Preserve source references and record explicit estimates in `assumptions`.
 4. `schedule.create` produces a quickly constructed, independently validated plan. `queues.inspect` exposes goal/proxy mapping. `schedule.improve` combines XH and XT, with an optional XE, under one total budget. Pass `schedule_id` only for an incumbent from the same scenario identity and revision. Individual XH/XT tools remain available for diagnostics; `schedule.evolve` refines a same-revision saved plan with its own requested budget. Search exposes phases, improvement curves and replay metadata; see [search settings](search-and-parity.md).

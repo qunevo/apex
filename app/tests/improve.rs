@@ -97,8 +97,7 @@ fn supplied_incumbent_survives_and_corruption_or_conflicting_options_fail() {
 }
 #[test]
 fn campaign_and_fixed_start_hold_through_every_phase_and_parallel_workers() {
-    let p: Problem =
-        serde_json::from_str(include_str!("../examples/dispatch-campaign.json")).unwrap();
+    let p: Problem = serde_json::from_str(include_str!("fixtures/dispatch-campaign.json")).unwrap();
     let mut o = options();
     o.xh.workers = 2;
     o.xt.workers = 2;
@@ -131,7 +130,10 @@ fn invalid_combined_limits_and_configurations_fail_explicitly() {
 }
 #[test]
 fn declarative_goal_and_route_choices_are_replayable() {
-    let input = serde_json::from_str(include_str!("../examples/production-orders.json")).unwrap();
+    let input = serde_json::from_str(include_str!(
+        "../customization/demo/model/production-orders.json"
+    ))
+    .unwrap();
     let mut p = apex::production::expand(input).unwrap();
     p.planning =
         serde_json::from_value(json!({"objectives":[{"id":"completion","weight":1,"priority":0}]}))
@@ -184,7 +186,7 @@ fn native_customization_and_mandatory_filters_remain_active() {
         t.family = if i % 2 == 0 { "A" } else { "B" }.into();
     }
     p.customization = Some(CustomizationRef {
-        id: "dummy_customer".into(),
+        id: "demo".into(),
         version: "1".into(),
     });
     p.planning = serde_json::from_value(json!({"policies":[{"kind":"campaign","id":"a","resource":"M0","basis":"work","minimum":120,"on_no_match":"allow_switch"}]})).unwrap();

@@ -17,6 +17,7 @@
 
 # Runtime state and machine-specific agent/editor settings
 .apex/
+.apex-control/
 .codex/
 .vscode/
 .idea/
@@ -103,3 +104,6 @@ embeddings/
 *.7z
 *.tar
 *.tar.gz
+
+# Local input files for configured customization workspaces.
+/inputs/
