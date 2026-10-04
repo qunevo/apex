@@ -1,5 +1,8 @@
 # Middleware and client boundaries
 
+> Historical implementation record. Paths and feature status below describe that
+> batch, not the current product. See [current documentation](../../app/docs/architecture/README.md).
+
 Approved in the repository conversation after integrating PR #25. Retain its
 control workflow, storage contracts, PostgreSQL implementation and desktop client.
 

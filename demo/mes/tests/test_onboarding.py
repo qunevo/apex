@@ -22,7 +22,8 @@ class OnboardingTests(unittest.TestCase):
         self.assertIn(TOKEN, page)
         self.assertIn(path, unescape(page))
         self.assertNotIn("<script>alert(1)</script>", page)
-        self.assertIn("factory import adapter is not implemented yet", page)
+        self.assertIn("optional demo adapter", page)
+        self.assertIn("views.get", unescape(page))
         self.assertIn("Reset demo preserves APEX plans and credentials", page)
         self.assertNotIn("{{", page)
 

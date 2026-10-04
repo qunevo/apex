@@ -1,5 +1,8 @@
 # Factory demo
 
+> Historical implementation record. Paths and feature status below describe that
+> batch, not the current product. See [current documentation](../../demo/README.md).
+
 Approved in the task: build a reviewable fictional MES and Excel planning environment.
 
 ## Scope

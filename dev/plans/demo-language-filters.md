@@ -1,5 +1,8 @@
 # Demo language, filters and execution visibility
 
+> Historical implementation record. Paths and feature status below describe that
+> batch, not the current product. See [current documentation](../../demo/README.md).
+
 Implemented on `codex/demo-language-filters`, following the user's request to add
 German/English UI templates, column filters and a direct view of current production.
 

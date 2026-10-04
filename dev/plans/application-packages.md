@@ -1,5 +1,8 @@
 # Application packages and customization selection
 
+> Historical implementation record. Paths and feature status below describe that
+> batch, not the current product. See [current documentation](../../app/docs/architecture/README.md).
+
 Approved scope: restructure the application into core, server, data, UI, skills
 and customization packages on the existing demo feature branch and PR.
 
