@@ -298,11 +298,35 @@ pub struct DispatchState<'a> {
     pub definitions: &'a [QueueDefinition],
     pub extension: Option<&'a dyn Customization>,
 }
+
+/// Nominal resource-load estimate; exact capacity/calendar placement stays in the decoder.
+pub(crate) fn resource_start(c: &Compiled<'_>, mode: &Mode, tails: &[f64], earliest: f64) -> f64 {
+    let mut start = earliest.max(tails[c.resources[mode.primary.as_str()]]);
+    let mut offset = 0.0;
+    for phase in &mode.phases {
+        for requirement in &phase.requirements {
+            start = start.max(tails[c.resources[requirement.resource.as_str()]] - offset);
+        }
+        offset += phase.work.unwrap_or(0.0);
+    }
+    start
+}
+
 pub fn candidate(
     c: &Compiled<'_>,
     i: usize,
     mi: usize,
     state: &DispatchState<'_>,
+) -> Result<Candidate, Diagnostic> {
+    candidate_at(c, i, mi, state, None)
+}
+
+pub(crate) fn candidate_at(
+    c: &Compiled<'_>,
+    i: usize,
+    mi: usize,
+    state: &DispatchState<'_>,
+    placement_start: Option<Time>,
 ) -> Result<Candidate, Diagnostic> {
     let DispatchState {
         tails,
@@ -320,7 +344,7 @@ pub fn candidate(
         .iter()
         .map(|(j, lag, _)| ready[*j] + *lag as f64)
         .fold(t.release as f64, f64::max);
-    let mut start = tail.max(pred);
+    let mut start = resource_start(c, m, tails, pred);
     // Calendar-aware lower estimate; exact allocation remains the decoder's responsibility.
     for phase in &m.phases {
         for req in &phase.requirements {
@@ -335,6 +359,9 @@ pub fn candidate(
                 start = p.horizon as f64;
             }
         }
+    }
+    if let Some(placement_start) = placement_start {
+        start = placement_start as f64;
     }
     let work = m.phases.iter().map(|p| p.work.unwrap_or(0.0)).sum::<f64>();
     let sequence = history.get(&m.primary).map(Vec::as_slice).unwrap_or(&[]);

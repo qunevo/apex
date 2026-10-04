@@ -141,6 +141,8 @@ fn run(
             direct_placements: 0,
         });
     }
+    let mut precise = (!governed && extension.is_none() && crate::decoding::State::incremental(p))
+        .then(|| crate::decoding::State::new(c));
     let mut tails = vec![0.0; p.resources.len()];
     let mut ready_times = vec![0.0; p.tasks.len()];
     let mut active = HashMap::<&str, &str>::new();
@@ -155,6 +157,8 @@ fn run(
                 && active.get(m.primary.as_str()).is_none_or(|id| *id == t.id)
         };
         let mut selected = None;
+        let mut placements = HashMap::new();
+        let mut placement_error = None;
         let mut candidate_estimate = None;
         let mut removed = vec![];
         let mut step = None;
@@ -291,7 +295,22 @@ fn run(
                 removed.push(r);
                 for mi in 0..p.tasks[i].modes.len() {
                     if eligible(i, mi) {
-                        let candidate = crate::queues::candidate(
+                        let placement_start = if let Some(state) = &mut precise {
+                            match state.preview(c, i, mi, &(vec![], vec![])) {
+                                Ok(assignment) => {
+                                    let start = assignment.start;
+                                    placements.insert((i, mi), assignment);
+                                    Some(start)
+                                }
+                                Err(error) => {
+                                    placement_error = Some(error);
+                                    continue;
+                                }
+                            }
+                        } else {
+                            None
+                        };
+                        let candidate = crate::queues::candidate_at(
                             c,
                             i,
                             mi,
@@ -303,6 +322,7 @@ fn run(
                                 definitions: &definitions,
                                 extension,
                             },
+                            placement_start,
                         )?;
                         candidates.push(candidate);
                     }
@@ -369,43 +389,64 @@ fn run(
                 let i = r.1;
                 let t = &p.tasks[i];
                 removed.push(r);
-                let best = (0..t.modes.len())
-                    .filter(|mi| eligible(i, *mi))
-                    .min_by(|a, b| {
-                        let cost = |mi: usize| {
-                            tails[c.resources[t.modes[mi].primary.as_str()]].max(t.release as f64)
-                                + t.modes[mi]
-                                    .phases
-                                    .iter()
-                                    .map(|p| p.work.unwrap_or(0.0))
-                                    .sum::<f64>()
-                        };
+                let mut best: Option<(usize, f64)> = None;
+                for mi in 0..t.modes.len() {
+                    if !eligible(i, mi) {
+                        continue;
+                    }
+                    let cost = if let Some(state) = &mut precise {
+                        match state.preview(c, i, mi, &(vec![], vec![])) {
+                            Ok(assignment) => {
+                                let end = assignment.end as f64;
+                                placements.insert((i, mi), assignment);
+                                end
+                            }
+                            Err(error) => {
+                                placement_error = Some(error);
+                                continue;
+                            }
+                        }
+                    } else {
+                        crate::queues::resource_start(c, &t.modes[mi], &tails, t.release as f64)
+                            + t.modes[mi]
+                                .phases
+                                .iter()
+                                .map(|p| p.work.unwrap_or(0.0))
+                                .sum::<f64>()
+                    };
+                    let preferred = best.is_none_or(|(previous_mode, previous)| {
                         if matches!(options.strategy.as_str(), "random" | "weighted")
                             && !options.mode_choices.contains_key(&t.id)
                         {
-                            let key = |mi: usize| {
+                            let key = |index: usize| {
                                 crate::domain::mixed_seed(
                                     options.seed,
-                                    &format!("{}:{}", t.id, t.modes[mi].id),
+                                    &format!("{}:{}", t.id, t.modes[index].id),
                                 )
                             };
-                            key(*a).cmp(&key(*b))
+                            key(mi) < key(previous_mode)
                         } else {
-                            cost(*a).total_cmp(&cost(*b))
+                            cost.total_cmp(&previous).is_lt()
                         }
                     });
-                if let Some(mi) = best {
+                    if preferred {
+                        best = Some((mi, cost));
+                    }
+                }
+                if let Some((mi, _)) = best {
                     selected = Some((i, mi));
                     break;
                 }
             }
         }
         let Some((i, mi)) = selected else {
-            return Err(Diagnostic::new(
-                "NO_CANDIDATE",
-                &p.id,
-                "No eligible ready task/mode for this construction",
-            ));
+            return Err(placement_error.unwrap_or_else(|| {
+                Diagnostic::new(
+                    "NO_CANDIDATE",
+                    &p.id,
+                    "No eligible ready task/mode for this construction",
+                )
+            }));
         };
         for r in removed {
             if r.1 != i {
@@ -434,18 +475,41 @@ fn run(
         result.order.push(i);
         result.modes[i] = mi;
         history.entry(m.primary.clone()).or_default().push(i);
-        let (start, work) = candidate_estimate.unwrap_or_else(|| {
-            let pred = c.predecessors[i]
-                .iter()
-                .map(|(j, lag, _)| ready_times[*j] + *lag as f64)
-                .fold(t.release as f64, f64::max);
-            (
-                tails[c.resources[m.primary.as_str()]].max(pred),
-                m.phases.iter().map(|p| p.work.unwrap_or(0.0)).sum(),
-            )
-        });
-        tails[c.resources[m.primary.as_str()]] = start + work;
-        ready_times[i] = start + work;
+        if let Some(state) = &mut precise {
+            let assignment = match placements.remove(&(i, mi)) {
+                Some(assignment) => assignment,
+                None => state.preview(c, i, mi, &(vec![], vec![]))?,
+            };
+            for reservation in assignment.activities.iter().flat_map(|a| &a.reservations) {
+                let index = c.resources[reservation.resource.as_str()];
+                tails[index] = tails[index].max(reservation.end as f64);
+            }
+            ready_times[i] = assignment.ready as f64;
+            state.commit(c, i, assignment);
+        } else {
+            let (start, work) = candidate_estimate.unwrap_or_else(|| {
+                let pred = c.predecessors[i]
+                    .iter()
+                    .map(|(j, lag, _)| ready_times[*j] + *lag as f64)
+                    .fold(t.release as f64, f64::max);
+                (
+                    crate::queues::resource_start(c, m, &tails, pred),
+                    m.phases.iter().map(|p| p.work.unwrap_or(0.0)).sum(),
+                )
+            });
+            tails[c.resources[m.primary.as_str()]] = start + work;
+            // Fallback estimates include secondary resource loads by phase.
+            // Exact feasibility stays with the policy oracle and full decoder.
+            let mut phase_end = start;
+            for phase in &m.phases {
+                phase_end += phase.work.unwrap_or(0.0);
+                for requirement in &phase.requirements {
+                    let index = c.resources[requirement.resource.as_str()];
+                    tails[index] = tails[index].max(phase_end);
+                }
+            }
+            ready_times[i] = start + work;
+        }
         for lock in &p.locks {
             if let Lock::Order {
                 resource,

@@ -6,11 +6,14 @@ use std::ops::Bound::{Excluded, Unbounded};
 #[derive(Default)]
 pub struct Book {
     pub profiles: Vec<BTreeMap<Time, f64>>,
+    recording: bool,
+    journal: Vec<(usize, Time, Option<f64>)>,
 }
 impl Book {
     pub fn new(n: usize) -> Self {
         Self {
             profiles: vec![BTreeMap::from([(0, 0.0)]); n],
+            ..Default::default()
         }
     }
     pub fn used(&self, r: usize, t: Time) -> f64 {
@@ -31,10 +34,34 @@ impl Book {
         }
         let a = self.used(r, start);
         let b = self.used(r, end);
+        if self.recording {
+            for time in [start, end] {
+                if !self.profiles[r].contains_key(&time) {
+                    self.journal.push((r, time, None));
+                }
+            }
+        }
         self.profiles[r].entry(start).or_insert(a);
         self.profiles[r].entry(end).or_insert(b);
-        for (_, v) in self.profiles[r].range_mut(start..end) {
+        for (&time, v) in self.profiles[r].range_mut(start..end) {
+            if self.recording {
+                self.journal.push((r, time, Some(*v)));
+            }
             *v += amount;
+        }
+    }
+    pub(crate) fn begin(&mut self) {
+        assert!(!self.recording && self.journal.is_empty());
+        self.recording = true;
+    }
+    pub(crate) fn rollback(&mut self) {
+        self.recording = false;
+        for (resource, time, value) in self.journal.drain(..).rev() {
+            if let Some(value) = value {
+                self.profiles[resource].insert(time, value);
+            } else {
+                self.profiles[resource].remove(&time);
+            }
         }
     }
     pub fn reservations(&mut self, c: &Compiled<'_>, rs: &[Reservation], sign: f64) {
