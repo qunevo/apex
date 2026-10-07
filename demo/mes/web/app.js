@@ -8,7 +8,7 @@ import {createShowcase, isShowcase} from './showcase.js';
 const $ = (query, root = document) => root.querySelector(query);
 const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const number = value => Number(value).toLocaleString(locale());
-const displayDate = value => value ? new Date(value).toLocaleString(locale(), {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'}) : '—';
+const displayDate = (value, withYear = false) => value ? new Date(value).toLocaleString(locale(), {day:'2-digit', month:'short', ...(withYear?{year:'numeric'}:{}), hour:'2-digit', minute:'2-digit'}) : '—';
 const state = {page:'orders', offset:0, q:'', sort:'id', direction:'asc', filters:{}, exact:null, rows:[], meta:null, references:{}, planningTab:'dispatch'};
 let requestSequence = 0, toastTimer, previousFocus;
 const details = createDetails({$, esc, api, badge, displayDate, state, openDrawer, closeDrawer, editDialog, navigate, reloadMeta, render, notify});
@@ -48,10 +48,9 @@ function shell() {
     <div class="nav-bottom"><button class="nav-item" id="reset-demo" title="${t("Reset demo")}">${icon('reset')}<span>${t("Reset demo")}</span></button><div class="environment"><span class="dot"></span> ${t("Synthetic demo")} <span class="environment-version">V1.0</span></div></div>`;
   const label = state.meta.catalog[state.page]?.label || (state.page==='workbook'?'Excel planning':'Showcase');
   const section = productionPages.includes(state.page) ? 'Production' : label;
-  $('#topbar').innerHTML = `<div class="breadcrumb"><span class="app-name">Qunevo Demo MES</span>${icon('chevron')}<strong>${esc(t(section))}</strong></div><div class="top-right"><span class="plant-label">${t("Plant 01")}</span><button id="demo-clock" class="button text" title="${t("Advance the demo clock")}">${icon('clock')} ${displayDate(m.factory.as_of)}</button><label class="language-switch"><span class="sr-only">${t('Language')}</span><select id="language" aria-label="${t('Language')}"><option value="de" ${language()==='de'?'selected':''}>DE</option><option value="en" ${language()==='en'?'selected':''}>EN</option></select></label><span class="avatar" title="${t("Demo planner")}">PL</span></div>`;
+  $('#topbar').innerHTML = `<div class="breadcrumb"><span class="app-name">Qunevo Demo MES</span>${icon('chevron')}<strong>${esc(t(section))}</strong></div><div class="top-right"><span class="demo-snapshot" title="${t("All demo dates are fixed. Today means this snapshot, not the computer's date.")}">${icon('clock')} <span>${t("Demo snapshot")} · ${displayDate(m.factory.as_of,true)}<small>${esc(m.factory.timezone)} · ${t("Fixed")}</small></span></span><label class="language-switch"><span class="sr-only">${t('Language')}</span><select id="language" aria-label="${t('Language')}"><option value="de" ${language()==='de'?'selected':''}>DE</option><option value="en" ${language()==='en'?'selected':''}>EN</option></select></label><span class="avatar" title="${t("Demo planner")}">PL</span></div>`;
   for (const button of document.querySelectorAll('[data-nav]')) button.addEventListener('click', () => navigate(button.dataset.nav));
   $('#reset-demo').addEventListener('click', resetDialog);
-  $('#demo-clock').addEventListener('click', details.clockDialog);
   $('#language').addEventListener('change',async event=>{setLanguage(event.target.value);await render();});
   // Keep parent navigation selected when a subordinate table is open.
   const parent = {lots:'orders',operations:'orders',routings:'items',item_routings:'items',routing_steps:'items',routing_modes:'items',routing_materials:'items',shifts:'personnel',absences:'personnel',confirmations:'orders',material_issues:'materials'}[state.page];

@@ -77,8 +77,10 @@ class DemoTests(unittest.TestCase):
             self.assertEqual(self.store.all(db,"operations"),before)
 
     def test_progress_requires_precedence_and_valid_quantity(self):
-        records, skills = create_records(self.seed["factory"])
-        self.store.seed(dict(factory=self.seed["factory"], records=records, qualifications=skills, plan=[]), reset=True)
+        # A separate fixed snapshot exercises bookings in a later free shift.
+        factory = dict(self.seed["factory"], as_of="2026-10-06T09:00")
+        records, skills = create_records(factory)
+        self.store.seed(dict(factory=factory, records=records, qualifications=skills, plan=[]), reset=True)
         with self.store.connect() as db:
             ops=self.store.all(db,"operations")
             first=next(o for o in ops if o["status"]=="Waiting" and o["sequence"]==10)
@@ -88,8 +90,6 @@ class DemoTests(unittest.TestCase):
             self.store.report(second["id"],dict(expected_version=1,completed_quantity=1,resource_id="DB-01"))
         with self.assertRaises(ValueError):
             self.store.report(first["id"],dict(expected_version=1,completed_quantity=lot["quantity"]+1,resource_id="CNC-03"))
-        # Book in a later free shift, leaving the seeded execution history intact.
-        self.store.advance_clock(dict(expected_as_of=self.seed["factory"]["as_of"],as_of="2026-10-06T09:00"))
         self.store.report(first["id"],dict(expected_version=1,completed_quantity=lot["quantity"],resource_id="CNC-03",
                           person_id="P01",actual_start="2026-10-06T08:00",actual_end="2026-10-06T09:00"))
         with self.store.connect() as db:
@@ -109,6 +109,12 @@ class DemoTests(unittest.TestCase):
         try:
             status,data=request("GET","/api/tables/lots?filter_field=order_id&filter_value=SO-26001&limit=1")
             self.assertEqual((status,data["total"],len(data["rows"])),(200,2,1))
+            before = request("GET", "/api/meta")[1]
+            status, data = request("POST", "/api/clock", {"expected_as_of": before["factory"]["as_of"],
+                                                          "as_of": "2035-10-05T10:00"})
+            self.assertEqual(status, 409)
+            self.assertIn("fixed", data["error"])
+            self.assertEqual(request("GET", "/api/meta")[1], before)
             status,_=request("PATCH","/api/tables/orders/SO-26001",dict(expected_version=1,data={"quantity":9}))
             self.assertEqual(status,400)
             status,_=request("POST","/api/reset",{"confirmation":"wrong"})

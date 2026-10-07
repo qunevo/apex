@@ -107,7 +107,7 @@ start_workbook_opener() (
     export APEX_DEMO_BRIDGE_DIR="$demo_root/.local/container/.desktop"
     export APEX_DEMO_WORKBOOK="$workbook"
     export APEX_DEMO_OPENER_SESSION APEX_DEMO_MES_CONTAINER
-    APEX_DEMO_OPENER_SESSION=$(compose exec -T mes python -B -m demo.mes.desktop --host-path "$native_workbook")
+    APEX_DEMO_OPENER_SESSION=$(compose exec -T mes /opt/demo/scripts/container.sh --prepare-desktop --host-path "$native_workbook")
     APEX_DEMO_MES_CONTAINER=$(compose ps -q mes)
     [[ "$APEX_DEMO_OPENER_SESSION" =~ ^[a-f0-9]{32}$ && "$APEX_DEMO_MES_CONTAINER" =~ ^[a-f0-9]+$ ]] || exit 1
     case "$(uname -s)" in

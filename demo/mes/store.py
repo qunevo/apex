@@ -272,16 +272,4 @@ class Store:
             return result
 
     def advance_clock(self, payload):
-        with self.connect() as db:
-            db.execute("BEGIN IMMEDIATE")
-            factory = self.meta(db, "factory")
-            if payload.get("expected_as_of") != factory["as_of"]:
-                raise Conflict("The demo clock changed. Reload before advancing it.")
-            value = payload.get("as_of")
-            execution.timestamp(value, "Snapshot")
-            if not factory["as_of"] < value <= "2026-12-31T23:59":
-                raise ValueError("Advance the demo clock forward within 2026")
-            factory["as_of"] = value
-            self.put_meta(db, "factory", factory)
-            self.record_action(db, "factory", "clock", payload)
-            return factory
+        raise Conflict("The demo snapshot is fixed. Its date and time cannot be changed.")

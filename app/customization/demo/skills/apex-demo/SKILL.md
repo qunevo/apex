@@ -20,6 +20,30 @@ On the compatibility catalog, check `capabilities` with `customization: "demo"`,
 retain that context on every follow-up call and use the returned viewer link.
 Treat source facts separately from planner proposals and fixed commitments.
 
+## Frozen business time
+
+The shipped case starts on 5 October 2026 at 06:00, with a fixed snapshot at
+**5 October 2026, 10:00 Europe/Berlin** and a source target period ending on
+16 October at 22:00 (weeks 41-42). For this demo, "today", "now" and "this week"
+refer to that snapshot and its calendar week, never the real system/chat date,
+import time or scenario creation timestamp. Do not advance the MES clock or
+shift orders, receipts, absences, downtime or workbook dates as real time passes.
+
+Before answering time-sensitive questions, read `factory.as_of` from MES or
+the saved revision's frozen-snapshot assumption and `DEMO_SNAPSHOT` source notice.
+The import report also records `time_basis`, including the timezone, epoch and
+source/effective horizon. State the reference time in the answer. If evidence
+contains a different snapshot or lacks one, flag the discrepancy; do not silently
+replace it with the current date or relabel an old scenario as the shipped case.
+
+Distinguish unfinished work **already overdue at the snapshot** (due before that
+instant) from **predicted plan lateness** (validated completion minus due date,
+clamped at zero). Historical lateness uses actual completion. Excel proposals
+alone do not establish predicted completion in a validated APEX plan. An explicit
+what-if horizon extension does not move the snapshot or any source dates.
+
+## Source intake
+
 Use the [source adapter](../../adapter/README.md) to read the live MES API and
 saved Excel working file into a canonical `problem.json` and import report.
 Review diagnostics and assumptions, then submit the generated `scenario.json`

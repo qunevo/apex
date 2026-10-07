@@ -62,6 +62,59 @@ def copy_source(destination, area):
         shutil.copy2(source, target)
 
 
+def verify_desktop_opener(compose):
+    """Exercise real MES writes after both fresh and legacy helper initialization."""
+    compose("exec", "-T", "mes", "python", "-B", "-c", '''
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import time
+from urllib.request import Request, urlopen
+from demo.mes import desktop
+
+directory = Path("/var/lib/demo")
+bridge = directory / ".desktop"
+workbook = directory / desktop.NAME
+digest = hashlib.sha256(workbook.read_bytes()).hexdigest()
+owner = (int(os.environ.get("DEMO_UID", "1000")), int(os.environ.get("DEMO_GID", "1000")))
+host_path = "/synthetic/shared folder/production-planning.xlsx"
+previous_session = None
+for legacy in (False, True):
+    if legacy:
+        # Reproduce initialization by a root docker exec in older starters.
+        for path in (bridge, bridge / "session", bridge / "workbook-path"):
+            os.chown(path, 0, 0)
+        bridge.chmod(0o755)
+        os.utime(bridge / "request", (0, 0))
+    session = subprocess.check_output([
+        "/opt/demo/scripts/container.sh", "--prepare-desktop", "--host-path", host_path
+    ], text=True).strip()
+    assert desktop.IDENTIFIER.fullmatch(session) and session != previous_session
+    previous_session = session
+    for path in (bridge, bridge / "session", bridge / "workbook-path"):
+        info = path.stat()
+        assert (info.st_uid, info.st_gid) == owner, (path, info.st_uid, info.st_gid, owner)
+    desktop.write(bridge / "heartbeat", f"{session} {int(time.time())}")
+    assert desktop.state(directory) == {"available": True, "opener_active": True, "host_path": host_path}
+    origin = "http://127.0.0.1:8788"
+    request = Request(origin + "/api/workbook/open", data=b"{}",
+                      headers={"Content-Type": "application/json", "Origin": origin})
+    with urlopen(request, timeout=10) as response:
+        opened = json.load(response)
+    assert opened["status"] == "pending", opened
+    info = (bridge / "request").stat()
+    assert (info.st_uid, info.st_gid) == owner
+    assert desktop.read(bridge / "request") == f"{session} {opened['request_id']}"
+    desktop.write(bridge / "response", f"{session} {opened['request_id']} launched")
+    with urlopen(origin + "/api/workbook/open?request_id=" + opened["request_id"], timeout=10) as response:
+        assert json.load(response) == {"status": "launched"}
+    assert hashlib.sha256(workbook.read_bytes()).hexdigest() == digest
+desktop.write(bridge / "heartbeat", "")
+''')
+
+
 def verify(directory, kind, image, build):
     project = f"apex-check-{kind}-{uuid.uuid4().hex[:10]}"
     env = {key: value for key, value in os.environ.items()
@@ -182,6 +235,7 @@ def verify(directory, kind, image, build):
             assert origin + "/mcp" in page and mes in page and token in page
             assert tokens[1] not in page
             assert not (cwd / ".local/container/start.html").exists()
+            verify_desktop_opener(compose)
             machine = request(mes + "/api/tables/machines?limit=1")["rows"][0]
             request(mes + "/api/tables/machines/" + machine["id"],
                     {"expected_version": machine["_version"], "data": {"name": "Container persistence check"}}, method="PATCH")

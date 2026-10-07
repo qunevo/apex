@@ -41,6 +41,8 @@ button:disabled { opacity: .45; cursor: default; }
 a { color: inherit; text-decoration: none; }
 ::selection { background: #dbe4ff; color: #17244b; }
 .icon { flex-shrink: 0; vertical-align: middle; }
+.demo-snapshot { display: flex; align-items: center; gap: 8px; color: var(--text); font-size: 12px; }
+.demo-snapshot small { display: block; color: var(--muted); font-size: 10px; }
 [hidden] { display: none !important; }
 
 /* Application frame. */
@@ -232,7 +234,7 @@ td strong { color: var(--ink); font-weight: 500; }
   .breadcrumb { flex-wrap: wrap; gap: 5px 9px; font-size: 12px; }
   .top-right { gap: 0; }
   .top-right .avatar { display: none; }
-  #demo-clock { font-size: 11px; padding: 6px; }
+  .demo-snapshot { font-size: 11px; margin-right: 8px; }
   main { padding: 25px 20px; }
   .stats { grid-template-columns: 1fr 1fr; gap: 22px 0; }
   .stat:nth-child(2) { border: 0; }
