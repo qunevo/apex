@@ -189,7 +189,7 @@ checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
 
 [[package]]
 name = "apex-control"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "apex-engine",
  "async-trait",
@@ -204,7 +204,7 @@ dependencies = [
 
 [[package]]
 name = "apex-control-postgres"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "apex-control",
  "async-trait",
@@ -218,7 +218,7 @@ dependencies = [
 
 [[package]]
 name = "apex-control-server"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "apex-control",
  "apex-control-postgres",
@@ -237,7 +237,7 @@ dependencies = [
 
 [[package]]
 name = "apex-desktop"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "apex-control",
  "chrono",
@@ -251,7 +251,7 @@ dependencies = [
 
 [[package]]
 name = "apex-engine"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "schemars",
  "serde",
@@ -261,7 +261,7 @@ dependencies = [
 
 [[package]]
 name = "apex-scheduler"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "apex-control",
  "apex-engine",
