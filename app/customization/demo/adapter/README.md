@@ -63,6 +63,16 @@ dashboard through `views.get` immediately after import. Full source records and
 the full report stay in this output directory. Evidence is adapter-reported and
 must be refreshed with a new import when the source changes.
 
+The demo's business clock is frozen. The shipped source uses 5 October 2026,
+10:00 Europe/Berlin as its snapshot and 06:00 as its planning epoch. `report.json`
+records `time_basis` with the offset-qualified snapshot, timezone, epoch and
+source/effective horizon. Canonical assumptions and the `DEMO_SNAPSHOT` notice in
+`source_summary` carry this context into saved scenarios and chat views. This is
+an informational notice, not a mapping warning. Neither import time nor the real
+chat/computer date advances the snapshot or shifts source dates. Overdue-at-snapshot
+analysis uses that instant; predicted lateness uses validated completion minus due
+date. An explicit `--horizon-end` changes only the planning horizon.
+
 All outputs are runtime data: keep them in `.apex` or another ignored/private
 directory. No URL credentials are supported or copied into provenance. Source
 hashes and the problem hash identify the evidence, not separate schema versions.

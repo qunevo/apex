@@ -25,6 +25,10 @@ class OnboardingTests(unittest.TestCase):
         self.assertIn("optional demo adapter", page)
         self.assertIn("views.get", unescape(page))
         self.assertIn("Reset demo preserves APEX plans and credentials", page)
+        self.assertIn("2026-10-05T10:00 Europe/Berlin", page)
+        self.assertIn("today and now always mean the frozen snapshot", page)
+        self.assertIn("computer date, chat date or import time", page)
+        self.assertIn("completion minus due date", page)
         self.assertNotIn("{{", page)
 
     def test_invalid_or_missing_connection_never_renders_a_success_page(self):
@@ -60,7 +64,10 @@ docker() {
             case "$3" in
                 apex) printf 'MCP URL: http://127.0.0.1:18780/mcp\\nHTTP header value: Bearer apx_%064d\\n' 0 ;;
                 mes)
-                    if [[ "$*" == *demo.mes.desktop* ]]; then printf '%032d\\n' 0; return; fi
+                    if [[ "$4" == /opt/demo/scripts/container.sh ]]; then
+                        [[ "$5" == --prepare-desktop && "$6" == --host-path ]]
+                        printf '%032d\\n' 0; return
+                    fi
                     [[ "$*" == *'--mes-url http://127.0.0.1:18788 --workbook '* ]]
                     [[ "$*" == *'--demo-directory '* && "$*" == *'--compose-project custom-demo' ]]
                     # Stub only rendering: verify private transport over stdin.

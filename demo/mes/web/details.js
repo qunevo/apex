@@ -51,9 +51,5 @@ export function createDetails(context) {
       $('#op-issues').addEventListener('click',()=>navigate('material_issues',{field:'operation_id',value:row.id}));
     }
   }
-  function clockDialog(){
-    openDrawer('Advance demo clock',`<p class="subtitle">${t("Availability and usable receipts follow this clock. Advancing it does not execute the Excel plan. Production still needs explicit confirmations.")}</p><form id="clock-form" class="detail-list"><label class="field"><span>${t("New snapshot · local plant time")}</span><input name="as_of" type="datetime-local" required value="${state.meta.factory.as_of}" min="${state.meta.factory.as_of}"></label></form>`,`<button class="button" id="cancel">${t("Close")}</button><button class="button primary" type="submit" form="clock-form">${t("Advance clock")}</button>`);
-    $('#clock-form').addEventListener('submit',event=>{event.preventDefault();action('/api/clock',{...Object.fromEntries(new FormData(event.target)),expected_as_of:state.meta.factory.as_of});});
-  }
-  return {enhance,isLocked,clockDialog};
+  return {enhance,isLocked};
 }

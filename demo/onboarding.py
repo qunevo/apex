@@ -1,6 +1,7 @@
 """Render a private local setup page using connection details from stdin."""
 import argparse
 from html import escape
+import json
 from pathlib import Path
 import re
 import shlex
@@ -39,9 +40,23 @@ def render(connection, mes_url, workbook, demo_directory, compose_project):
     stop_command = (f"cd -- {shlex.quote(demo_directory)} && "
                     f"docker compose --project-name {shlex.quote(compose_project)} down")
     details = f"Transport: Streamable HTTP\nMCP URL: {mcp_url}\nAuthorization: {authorization}"
+    factory = json.loads((Path(__file__).parent / "data/factory.json").read_text(encoding="utf-8"))
+    snapshot = f"{factory['as_of']} {factory['timezone']}"
+    time_context = (
+        f"Frozen demo snapshot: {snapshot}. Planning starts at {factory['plan_start']}; "
+        f"the source planning period ends at {factory['horizon_end']}. "
+        "For this demo, today and now always mean the frozen snapshot, never the real "
+        "computer date, chat date or import time. Keep all order, receipt, calendar and "
+        "Excel dates unchanged. Check factory.as_of and the saved scenario's time basis "
+        "before reporting; flag a different snapshot instead of silently rebasing it. "
+        "Distinguish unfinished work already overdue at the snapshot from predicted "
+        "lateness in a validated plan (completion minus due date). Do not advance the "
+        "demo clock or shift the planning period."
+    )
     instructions = (
         "Set up this running APEX demo in my local chat client.\n\n"
         f"{details}\n\nMES: {mes_url}\nShared Excel workbook: {workbook}\n\n"
+        f"{time_context}\n\n"
         "Configure the HTTP MCP connection locally, preserving other client settings. "
         "Keep the authorization private and out of Git. Reuse this existing token; "
         "do not reset or restart the demo to connect another chat. "
@@ -56,7 +71,7 @@ def render(connection, mes_url, workbook, demo_directory, compose_project):
         "Ask before modifying source data or resetting the demo."
     )
     values = {"mes_url": mes_url, "workbook": workbook, "details": details,
-              "instructions": instructions, "stop_command": stop_command}
+              "instructions": instructions, "stop_command": stop_command, "snapshot": snapshot}
     template = Path(__file__).with_name("onboarding.html").read_text(encoding="utf-8")
     return re.sub(r"\{\{(\w+)\}\}", lambda m: escape(values[m[1]], quote=True), template)
 

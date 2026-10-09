@@ -62,6 +62,59 @@ def copy_source(destination, area):
         shutil.copy2(source, target)
 
 
+def verify_desktop_opener(compose):
+    """Exercise real MES writes after both fresh and legacy helper initialization."""
+    compose("exec", "-T", "mes", "python", "-B", "-c", '''
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import time
+from urllib.request import Request, urlopen
+from demo.mes import desktop
+
+directory = Path("/var/lib/demo")
+bridge = directory / ".desktop"
+workbook = directory / desktop.NAME
+digest = hashlib.sha256(workbook.read_bytes()).hexdigest()
+owner = (int(os.environ.get("DEMO_UID", "1000")), int(os.environ.get("DEMO_GID", "1000")))
+host_path = "/synthetic/shared folder/production-planning.xlsx"
+previous_session = None
+for legacy in (False, True):
+    if legacy:
+        # Reproduce initialization by a root docker exec in older starters.
+        for path in (bridge, bridge / "session", bridge / "workbook-path"):
+            os.chown(path, 0, 0)
+        bridge.chmod(0o755)
+        os.utime(bridge / "request", (0, 0))
+    session = subprocess.check_output([
+        "/opt/demo/scripts/container.sh", "--prepare-desktop", "--host-path", host_path
+    ], text=True).strip()
+    assert desktop.IDENTIFIER.fullmatch(session) and session != previous_session
+    previous_session = session
+    for path in (bridge, bridge / "session", bridge / "workbook-path"):
+        info = path.stat()
+        assert (info.st_uid, info.st_gid) == owner, (path, info.st_uid, info.st_gid, owner)
+    desktop.write(bridge / "heartbeat", f"{session} {int(time.time())}")
+    assert desktop.state(directory) == {"available": True, "opener_active": True, "host_path": host_path}
+    origin = "http://127.0.0.1:8788"
+    request = Request(origin + "/api/workbook/open", data=b"{}",
+                      headers={"Content-Type": "application/json", "Origin": origin})
+    with urlopen(request, timeout=10) as response:
+        opened = json.load(response)
+    assert opened["status"] == "pending", opened
+    info = (bridge / "request").stat()
+    assert (info.st_uid, info.st_gid) == owner
+    assert desktop.read(bridge / "request") == f"{session} {opened['request_id']}"
+    desktop.write(bridge / "response", f"{session} {opened['request_id']} launched")
+    with urlopen(origin + "/api/workbook/open?request_id=" + opened["request_id"], timeout=10) as response:
+        assert json.load(response) == {"status": "launched"}
+    assert hashlib.sha256(workbook.read_bytes()).hexdigest() == digest
+desktop.write(bridge / "heartbeat", "")
+''')
+
+
 def verify(directory, kind, image, build):
     project = f"apex-check-{kind}-{uuid.uuid4().hex[:10]}"
     env = {key: value for key, value in os.environ.items()
@@ -144,6 +197,15 @@ def verify(directory, kind, image, build):
         if kind == "demo":
             meta = request(mes + "/api/meta")
             assert meta["counts"]["orders"] == 120 and meta["workbook_available"]
+            snapshot = meta["factory"]
+            assert snapshot["as_of"] == "2026-10-05T10:00" and snapshot["timezone"] == "Europe/Berlin"
+            try:
+                request(mes + "/api/clock", {"expected_as_of": snapshot["as_of"], "as_of": "2035-10-05T10:00"})
+            except HTTPError as error:
+                assert error.code == 409
+            else:
+                raise AssertionError("The frozen demo clock accepted a date change")
+            assert request(mes + "/api/meta")["factory"] == snapshot
             # Exercise the complete public MES + saved Excel adapter, not only a small engine fixture.
             (cwd / ".local/adapter").mkdir(parents=True, exist_ok=True)
             compose("--profile", "adapter", "run", "--build", "--rm", "adapter",
@@ -152,6 +214,10 @@ def verify(directory, kind, image, build):
             imported = json.loads((cwd / ".local/adapter/acceptance/scenario.json").read_text())
             imported_ids = {task["id"] for task in imported["content"]["facts"]["tasks"]}
             assert len(imported_ids) == 3705
+            assert "2026-10-05T10:00:00+02:00" in imported["content"]["facts"]["assumptions"][0]
+            time_notice = imported["content"]["source_summary"]["notices"][0]
+            assert time_notice["code"] == "DEMO_SNAPSHOT"
+            assert "2026-10-05T10:00:00+02:00" in time_notice["message"]
             factory = request(origin + "/v1/scenarios", imported, token, timeout=120)
             factory_id = factory["scenario"]["id"]
             del imported
@@ -168,6 +234,7 @@ def verify(directory, kind, image, build):
             assert {row["id"] for row in factory_result["view"]["operations"]} == imported_ids
             overview = tool("views.get", {"scenario_id": factory_id, "result_id": factory_state["result"]})
             assert overview["source_summary"]["counts"]["planned_operations"] == 3705
+            assert overview["source_summary"]["notices"][0] == time_notice
             sources = tool("views.get", {"scenario_id": factory_id, "view_id": "demo.sources"})
             assert sources["view_id"] == "demo.sources"
             insights = rpc("resources/read", {"uri": "ui://apex/insights.html"})
@@ -182,6 +249,7 @@ def verify(directory, kind, image, build):
             assert origin + "/mcp" in page and mes in page and token in page
             assert tokens[1] not in page
             assert not (cwd / ".local/container/start.html").exists()
+            verify_desktop_opener(compose)
             machine = request(mes + "/api/tables/machines?limit=1")["rows"][0]
             request(mes + "/api/tables/machines/" + machine["id"],
                     {"expected_version": machine["_version"], "data": {"name": "Container persistence check"}}, method="PATCH")
@@ -206,6 +274,9 @@ def verify(directory, kind, image, build):
         assert compose("exec", "-T", "apex", "apex-container", "access") == access
         assert tool("results.get", {"result_id": result_id})["validation"]["valid"]
         if kind == "demo":
+            assert request(mes + "/api/meta")["factory"] == snapshot
+            persisted = tool("views.get", {"scenario_id": factory_id, "result_id": factory_state["result"]})
+            assert persisted["source_summary"]["notices"][0] == time_notice
             rows = request(mes + "/api/tables/machines?limit=100")["rows"]
             assert next(row for row in rows if row["id"] == machine["id"])["name"] == "Container persistence check"
             assert compose("exec", "-T", "mes", "sha256sum", "/var/lib/demo/production-planning.xlsx").split()[0] == digest
@@ -222,6 +293,7 @@ def verify(directory, kind, image, build):
             assert hashlib.sha256(workbook.read_bytes()).hexdigest() == digest
             reset = request(mes + "/api/reset", {"confirmation": "RESET DEMO"})
             assert reset == {"reset": True, "workbook_reset": True}
+            assert request(mes + "/api/meta")["factory"] == snapshot
             baseline = hashlib.sha256((directory / "demo/planning/production-planning.xlsx").read_bytes()).hexdigest()
             assert hashlib.sha256(workbook.read_bytes()).hexdigest() == baseline
             assert compose("exec", "-T", "mes", "sha256sum", "/var/lib/demo/production-planning.xlsx").split()[0] == baseline
@@ -254,6 +326,7 @@ def verify(directory, kind, image, build):
             assert token not in reset_output and "Demo reinitialized" in reset_output
             assert compose("exec", "-T", "apex", "apex-container", "access") == access
             assert tool("scenarios.list", {})["items"] == []
+            assert request(mes + "/api/meta")["factory"] == snapshot
             assert hashlib.sha256(workbook.read_bytes()).hexdigest() == baseline
             assert compose("exec", "-T", "apex", "sha256sum", "/sources/demo/production-planning.xlsx").split()[0] == baseline
             rows = request(mes + "/api/tables/machines?limit=100")["rows"]

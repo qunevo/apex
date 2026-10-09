@@ -1,9 +1,11 @@
 """Business acceptance checks independent of the synthetic planning heuristic."""
 from copy import deepcopy
+from datetime import datetime
 import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from demo.mes.seed import DEMO, create_records
 from demo.mes.store import Conflict, Store
@@ -148,7 +150,9 @@ class MesWorkflowTests(unittest.TestCase):
             self.change("receipts", "IN-NOW", status="Confirmed")
 
     def test_execution_rejects_wrong_skill_break_absence_and_downtime(self):
-        self.store.advance_clock(dict(expected_as_of="2026-10-05T10:00", as_of="2026-10-05T11:00"))
+        fixture = deepcopy(self.seed)
+        fixture["factory"]["as_of"] = "2026-10-05T11:00"
+        self.store.seed(fixture, reset=True)
         for extra in [dict(person_id="P04"), dict(actual_start="2026-10-05T05:00"),
                       dict(actual_start="2026-10-05T09:55", actual_end="2026-10-05T10:20")]:
             with self.assertRaises(ValueError):
@@ -195,12 +199,25 @@ class MesWorkflowTests(unittest.TestCase):
         self.assertEqual(ops[3]["material_requirements"], [dict(material_id="SEAL-KIT", quantity_per_unit=2, quantity=20)])
         self.assertEqual(before, self.row("operations", "L00001-040")["material_requirements"])
 
-    def test_clock_and_historical_stock(self):
-        self.store.advance_clock(dict(expected_as_of="2026-10-05T10:00", as_of="2026-10-05T14:00"))
-        with self.assertRaises(Conflict):
-            self.store.advance_clock(dict(expected_as_of="2026-10-05T10:00", as_of="2026-10-05T15:00"))
-        with self.assertRaisesRegex(ValueError, "forward"):
-            self.store.advance_clock(dict(expected_as_of="2026-10-05T14:00", as_of="2026-10-05T10:00"))
+    def test_fixed_snapshot_survives_edits_wall_clock_and_reopen(self):
+        before = {entity: self.all(entity) for entity in ("orders", "receipts", "downtime")}
+        for at in ("2026-10-05T10:00", "2026-10-05T14:00", "2035-10-05T10:00"):
+            with self.assertRaisesRegex(Conflict, "snapshot is fixed"):
+                self.store.advance_clock(dict(expected_as_of="2026-10-05T10:00", as_of=at))
+        with patch("demo.mes.store.datetime", wraps=datetime) as wall_clock:
+            wall_clock.now.return_value = datetime(2035, 10, 5, 14)
+            self.change("items", "D-C-AL", name="Synthetic edit in a later real year")
+        self.store = Store(self.store.path)
+        self.assertFalse(self.store.seed(self.seed))
+        with self.store.connect() as db:
+            self.assertEqual(self.store.meta(db, "factory"), self.seed["factory"])
+            self.assertTrue(db.execute("SELECT at FROM audit").fetchone()[0].startswith("2035-"))
+        self.assertEqual({entity: self.all(entity) for entity in before}, before)
+
+    def test_historical_stock_uses_its_fixed_snapshot(self):
+        fixture = deepcopy(self.seed)
+        fixture["factory"]["as_of"] = "2026-10-05T14:00"
+        self.store.seed(fixture, reset=True)
         self.change("materials", "BODY-AL", stock=0)
         self.store.change("receipts", dict(data=dict(id="LATE", material_id="BODY-AL", quantity=100,
             available_at="2026-10-05T12:00", status="Received", note="Later supply")))

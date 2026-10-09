@@ -9,6 +9,15 @@ working file owns proposed dispatch decisions, fixed decisions and skills.
 Proposed assignments must remain distinct from commitments. Preserve stable
 order, lot and operation IDs, the factory clock, units and source revisions.
 
+Business time is frozen: the shipped case starts on 2026-10-05 at 06:00 and is
+observed at 10:00 Europe/Berlin that day, with a target period through October 16.
+Use the source snapshot for "today" and overdue-at-snapshot analysis even when
+the real date is later. Do not rebase dates when importing or opening a chat.
+The adapter retains the instant with its UTC offset in `report.time_basis`,
+canonical assumptions and a `DEMO_SNAPSHOT` source notice visible through views.
+Future plan lateness uses validated completion versus due date, not the snapshot
+as an invented completion time. Audit/creation timestamps are not business time.
+
 The [source adapter](../adapter/README.md) reads live MES records and the saved
 workbook into existing canonical APEX types. Its mapping contract documents source
 ownership, dynamic row parsing, quantities, calendars, running-work estimates,
