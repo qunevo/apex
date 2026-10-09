@@ -2,16 +2,20 @@ use apex::{demo, service::Service, transport};
 use serde_json::{Value, json};
 use std::{
     fs,
+    sync::atomic::{AtomicU64, Ordering},
     time::{SystemTime, UNIX_EPOCH},
 };
 fn service() -> Service {
+    // Clock readings can coincide across parallel tests, including on macOS.
+    static NEXT_ROOT: AtomicU64 = AtomicU64::new(0);
     let root = std::env::temp_dir().join(format!(
-        "apex-test-{}-{}",
+        "apex-test-{}-{}-{}",
         std::process::id(),
         SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .unwrap()
-            .as_nanos()
+            .as_nanos(),
+        NEXT_ROOT.fetch_add(1, Ordering::Relaxed)
     ));
     Service::new(&root, std::env::current_dir().unwrap()).unwrap()
 }

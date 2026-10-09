@@ -240,7 +240,13 @@ def build(snapshot, plans, skills, provenance, *, horizon_end=None):
     if outside:
         warnings.append(dict(code="PROPOSAL_HORIZON", ids=outside,
                              message=f"{len(outside)} Excel proposed starts fall at/after the planning horizon. Review the horizon explicitly before planning."))
+    time_basis = dict(mode="fixed", as_of=clock.date(snapshot["factory"]["as_of"]).isoformat(),
+                      timezone=snapshot["factory"]["timezone"], plan_start=clock.epoch.isoformat(),
+                      source_horizon_end=clock.date(snapshot["factory"]["horizon_end"]).isoformat(),
+                      horizon_end=clock.end.isoformat())
     assumptions = [
+        f"Frozen demo snapshot: {time_basis['as_of']} ({time_basis['timezone']}). Today/now and overdue-at-snapshot queries use this instant, never the host date, chat date or import time. Do not shift source dates.",
+        "Overdue at snapshot compares unfinished work's due date with the frozen snapshot. Predicted plan lateness compares validated completion with due date; the snapshot is not a predicted completion.",
         "Only unfinished released MES operations are scheduled; completed/skipped history remains in the import report.",
         "MES facts override workbook copies of orders, calendars and material; Excel proposals are not hard commitments unless Fixed=Yes.",
         "Excel setup/run allowances apply to the proposed machine; run allowances scale to current input quantity. Other machines use released MES rates.",
@@ -253,7 +259,7 @@ def build(snapshot, plans, skills, provenance, *, horizon_end=None):
                    epoch=clock.epoch.isoformat(), horizon=clock.horizon, resources=resources, tasks=tasks,
                    dependencies=dependencies, locks=locks, inventory=inventory, receipts=receipts,
                    jobs=jobs, orders=orders, assumptions=assumptions)
-    report = dict(provenance=provenance, factory_snapshot=snapshot["factory"]["as_of"], assumptions=assumptions,
+    report = dict(provenance=provenance, factory_snapshot=snapshot["factory"]["as_of"], time_basis=time_basis, assumptions=assumptions,
                   counts=dict(mes_operations=len(records["operations"]), planned_operations=len(tasks),
                               closed_operations=len(excluded), excel_operations=len(plans), resources=len(resources)),
                   operations_without_excel=sorted(t["id"] for t in tasks if t["id"] not in plans),

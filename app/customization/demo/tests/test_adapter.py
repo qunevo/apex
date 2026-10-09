@@ -16,6 +16,7 @@ from demo_adapter.calendar import Clock
 from demo_adapter.cli import check_engine
 from demo_adapter.common import ImportFailure
 from demo_adapter.mapping import build
+from demo_adapter.presentation import source_summary
 from demo_adapter.sources import TABLES, capture, digest
 from demo_adapter.workbook import read_workbook
 from adapter_fixtures import HEADERS, plan_row, snapshot, workbook
@@ -34,6 +35,24 @@ class AdapterTests(unittest.TestCase):
         with self.assertRaises(ImportFailure) as context:
             action()
         self.assertEqual(code, context.exception.diagnostic["code"])
+
+    def test_fixed_time_basis_reaches_saved_facts_and_chat_views(self):
+        before = deepcopy(self.source)
+        problem, report = self.convert(horizon_end="2026-10-30T22:00")
+        basis = report["time_basis"]
+        self.assertEqual(basis, dict(mode="fixed", as_of="2026-10-05T10:00:00+02:00",
+                                    timezone="Europe/Berlin", plan_start="2026-10-05T06:00:00+02:00",
+                                    source_horizon_end="2026-10-09T22:00:00+02:00",
+                                    horizon_end="2026-10-30T22:00:00+01:00"))
+        self.assertEqual(problem["epoch"], basis["plan_start"])
+        self.assertTrue(all(task["release"] >= 4 * 3600 for task in problem["tasks"]))
+        self.assertIn(basis["as_of"], problem["assumptions"][0])
+        self.assertIn("validated completion", problem["assumptions"][1])
+        summary = source_summary(report)
+        self.assertEqual(summary["notices"][0]["code"], "DEMO_SNAPSHOT")
+        self.assertIn(basis["as_of"], summary["notices"][0]["message"])
+        self.assertEqual(summary["notice_count"], 1 + len(report["warnings"]))
+        self.assertEqual(self.source, before)
 
     def test_appended_rows_after_blank_rows_and_stale_dimension(self):
         rows, _ = read_workbook(workbook(extra_row=plan_row("OP3")))

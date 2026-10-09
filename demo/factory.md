@@ -8,6 +8,13 @@ The baseline contains 120 customer orders, each split into five production lots.
 
 The planning period is 05–16 October 2026. The shopfloor snapshot is Monday 05 October at 10:00, Europe/Berlin. Production starts at 06:00. The conventional baseline may complete some work after the target period; overdue operations are visible in Excel, not silently moved inside the horizon.
 
+This business snapshot is frozen. The MES cannot advance it, and chat analysis
+must use it for "today" or current overdue status regardless of the real date.
+Order, delivery and calendar dates stay in the same case. Predicted lateness is
+calculated from plan completion versus due date, separately from current overdue
+status. Explicit source edits remain possible; opening or importing the demo
+does not execute production or move its dates.
+
 ## Material flow
 
 All lots visit CNC machining, deburring and washing. The cleaned body is transferred as a whole lot. A machining cell becomes available after its operation; cleaning uses separate equipment.

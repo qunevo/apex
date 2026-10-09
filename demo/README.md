@@ -26,6 +26,11 @@ Use `--resume` to skip the menu and retain edits, or `--reset` to explicitly rei
 
 To reopen a closed workbook, choose **Excel planning > Open in Excel** in the MES. The starter runs a small local background helper that opens only the fixed shared file in the host's associated spreadsheet application. There is no download or separate working copy. The helper exits when its MES container stops and is replaced when the starter runs again. A start with `--no-open` does not launch a desktop helper. If it is unavailable, the MES shows the workbook path and asks you to rerun the starter without `--no-open`. No browser extension, extra network port or system-wide service is installed.
 
+The container initializes the helper's working files as the configured MES user
+(`DEMO_UID`/`DEMO_GID`, both defaulting to `1000`). Startup also repairs ownership
+of an existing `.desktop` directory, so earlier root-owned helper state does not
+prevent the MES from accepting **Open in Excel** requests.
+
 Full reinitialization replaces only the selected Compose project's managed PostgreSQL data volume, retaining the identity and bootstrap volumes. It refuses a database volume that is unowned or shared with another container. MES/Excel reset happens before APEX data removal; an interruption between those stages can leave a partially reset demo. Rerun with `--reset` to finish. The MES **Reset demo** button continues to restore only MES/Excel and preserves APEX plans as well as tokens.
 
 Direct Compose startup remains available from this directory, without automatically opening host applications:
@@ -86,7 +91,7 @@ The first start generates the synthetic data and conventional planning baseline,
 3. Add an urgent order, select an approved workplan, enter total quantity and pieces per lot. Saving releases its lots and frozen instructions together, including a remainder lot. Existing Excel assignments are unchanged.
 4. Open **Articles & workplans > Workplans**. Compare combined machining with the separate roughing/drilling route. Create a draft revision, open a step, and edit its machine alternatives, times or component requirements. **Check & release** locks that revision. Approve it under **Article workplans** before selecting it on an order.
 5. Open an operation to inspect its released alternatives and components. **Record progress** captures cumulative good/scrap quantities, operator, machine and actual start/finish. A scrap reason is required. The preceding step must be complete; only its good pieces can proceed. Confirmation history and material issues remain visible in separate tables.
-6. Edit an inbound delivery, schedule equipment unavailability or a personnel absence, or place a production lot on **Quality hold** with a reason. The snapshot button advances the demo clock; it does not automatically execute the plan.
+6. Edit an inbound delivery, schedule equipment unavailability or a personnel absence, or place a production lot on **Quality hold** with a reason. The demo snapshot stays fixed at **5 October 2026, 10:00 Europe/Berlin**. Production still requires explicit confirmations; real time does not advance the case.
 7. Close the shared workbook in Excel, then use **Reset demo**, entering the displayed confirmation text, to restore the original MES and shared workbook even after prolonged use or container recreation. Reopen the workbook afterward. Do not save an old open copy over the restored file. If the workbook is open or cannot be replaced, the reset is rejected and MES changes are rolled back. Separately downloaded Excel files, APEX scenarios and access tokens are unaffected.
 
 Use **DE / EN** in the top-right header to switch the entire interface, including the showcase, forms and validation messages. The browser remembers the selection; the initial language follows the browser language. UI templates and known synthetic display labels live in `mes/web/locales/en.js` and `de.js`. IDs, API enum values, customer/person names, custom source prose and the Excel/CSV source files stay unchanged. Language changes never write to the MES database.
@@ -137,7 +142,7 @@ The same API backs the browser and a future adapter; Compose also makes it avail
 | `POST /api/progress/{operation_id}/report` | `expected_version`, cumulative `completed_quantity` and `scrap_quantity`, released `resource_id`, qualified `person_id`, `actual_start`, `actual_end` (only when complete), `scrap_reason` |
 | `POST /api/workplans/{id}/revise` | `expected_version`, new `id` (max 24 characters), `revision`, optional `name`; copies all child rows into a draft |
 | `POST /api/workplans/{id}/release` | `expected_version`; validates the complete draft, then locks it |
-| `POST /api/clock` | `expected_as_of`, later `as_of`; advances the local demo snapshot |
+| `POST /api/clock` | Rejects clock changes with HTTP 409; the demo snapshot is fixed |
 | `GET /api/plan`, `GET /api/skills` | Original Excel seed data with source and current MES revisions |
 | `GET /api/audit` | Latest 50 persisted changes |
 | `GET /api/workbook` | Shared workbook availability, local helper status and host path |
@@ -148,6 +153,16 @@ The same API backs the browser and a future adapter; Compose also makes it avail
 `filters` is an object keyed by a non-JSON catalog field. Text fields accept `{"contains":"OEM", "values":["OEM 01","OEM 02"]}`; numeric fields accept `{"min":25,"max":100}`; datetime fields accept calendar dates such as `{"min":"2026-10-07","max":"2026-10-07"}`. Empty bounds and an empty selection impose no restriction. Unknown fields/operators, invalid dates, non-finite numeric bounds and reversed ranges return HTTP 400. `facets=1` returns distinct values across the complete parent scope, independently of pagination and active column filters. Operation rows expose a computed `order_id`; lot rows expose computed `current_operation` and `resource_id` (running only). These read-only projections do not change stored records or revisions.
 
 Dates use `YYYY-MM-DDTHH:MM` in the named plant timezone. The October seed stays within CEST. Monetary costs and time-zone transitions are outside this initial case. Row updates reject stale versions with HTTP 409. Invalid values and references return HTTP 400. There is no deletion or automatic source-system writeback. This local mock has no multi-user authentication and is not a deployment-ready MES.
+
+The shipped case starts on 5 October 2026 at 06:00 and is frozen at 10:00 that
+day, with a target period through 16 October (weeks 41-42). The setup page's chat
+instructions, demo skill and imported scenario evidence explicitly use that
+snapshot for "today", "now" and overdue-at-snapshot questions. Predicted plan
+lateness compares validated completion with due dates. Host time is used only
+for operational timestamps such as the audit log, not to move business dates.
+Resuming preserves the saved snapshot and all edits; it does not redate an older
+installation that was explicitly advanced before the clock was frozen. A different
+saved snapshot must be reported rather than silently presented as the shipped case.
 
 Equipment rows expose read-only `status`, `unavailable_from`, `unavailable_until` and `unavailability_reason`, calculated at `factory.as_of`. Edit `downtime` records for dated blocks (`cancelled: true` withdraws a period), or explicitly set the Boolean `permanently_unavailable`. Production booking checks actual execution intervals against equipment calendars, dated blocks, operator shifts/breaks, absences, the original Excel qualification snapshot and existing execution bookings. Existing local databases are upgraded without resetting edits; legacy global Maintenance/Unavailable values become permanent exceptions because no end date was recorded. The Excel baseline remains a separate snapshot after any availability change.
 
