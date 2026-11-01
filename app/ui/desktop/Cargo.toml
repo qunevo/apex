@@ -9,7 +9,7 @@ license-file = "../../LICENSE"
 [dependencies]
 apex-control = { path = "../../middleware/control" }
 chrono.workspace = true
-gpui-kit = "0.7"
+gpui-kit = "0.8"
 serde.workspace = true
 serde_json.workspace = true
 ureq = { version = "3", features = ["json"] }
